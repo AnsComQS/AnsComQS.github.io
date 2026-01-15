@@ -3,864 +3,714 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AnsCom Quantitative Suite | Aditya Narayan Singh | PC5518</title>
+    <title>AnsCom Quantitative Suite | Research & Infrastructure</title>
+    
+    <!-- Google Fonts: Inter for a modern Fintech look -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
     
     <style>
         /* 
-           DESIGN SYSTEM: ADAPTED MAKER PORTFOLIO
-           THEME ENGINE & LAYOUT
+           DESIGN SYSTEM: FINTECH MODERN (NASDAQ INSPIRED)
         */
 
         :root {
-            /* Default (Light) Theme Variables */
-            --accent-color: #A31F34; 
-            --accent-gray: #8A8B8C;
-            --text-black: #111;
-            --text-light: #555;
-            --bg-color: #fff;
-            --card-bg: #fff;
-            --header-bg: #fff;
-            --border-color: #e0e0e0;
-            --sidebar-bg: #fff;
-            --icon-bg: #f8f9fa;
-            --nav-bg: #f4f4f4;
-            --marquee-bg: #111;
-            --marquee-text: #fff;
+            /* Corporate Palette */
+            --primary-blue: #0057B8; /* Nasdaq Blue-ish */
+            --dark-navy: #0A1E33;
+            --action-cyan: #00C4CC;
             
-            /* Status Badge Colors (Light) */
-            --badge-bg: #f0f0f0;
-            --badge-text: #333;
-            --live-red: #d93025;
-            --live-bg: #fce8e6;
+            /* Backgrounds */
+            --bg-body: #F7F9FC;
+            --bg-card: #FFFFFF;
+            --bg-header: #FFFFFF;
+            
+            /* Text */
+            --text-main: #1A1B1E;
+            --text-secondary: #5F6B7C;
+            --text-meta: #8893A3;
+
+            /* UI Elements */
+            --border-light: #E6E9EF;
+            --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 8px 24px rgba(0, 87, 184, 0.12);
+            --radius: 8px;
+
+            /* Status Colors */
+            --status-live-bg: #E6F7F5;
+            --status-live-text: #00877A;
+            --status-new-bg: #FFF4E5;
+            --status-new-text: #B95000;
+            --status-beta-bg: #F2F4F8;
+            --status-beta-text: #5F6B7C;
         }
 
-        /* THEME OVERRIDES */
+        /* DARK THEME OVERRIDES */
         [data-theme="dark"] {
-            --accent-color: #FF5A5F;
-            --accent-gray: #aaa;
-            --text-black: #f0f0f0;
-            --text-light: #ccc;
-            --bg-color: #121212;
-            --card-bg: #1e1e1e;
-            --header-bg: #1e1e1e;
-            --border-color: #333;
-            --sidebar-bg: #1e1e1e;
-            --icon-bg: #2d2d2d;
-            --nav-bg: #2d2d2d;
-            --marquee-bg: #000;
-            
-            /* Status Badge Colors (Dark) */
-            --badge-bg: #333;
-            --badge-text: #eee;
-            --live-red: #ff5252;
-            --live-bg: #3e1b1b;
+            --primary-blue: #4FA3FF;
+            --dark-navy: #F0F2F5;
+            --action-cyan: #00E5FF;
+            --bg-body: #0B1219;
+            --bg-card: #151E29;
+            --bg-header: #151E29;
+            --text-main: #FFFFFF;
+            --text-secondary: #A0AAB8;
+            --text-meta: #6B7888;
+            --border-light: #2A3645;
+            --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.3);
         }
 
-        [data-theme="blue"] {
-            --accent-color: #4facfe;
-            --accent-gray: #93a5cf;
-            --text-black: #e0f7fa;
-            --text-light: #b3e5fc;
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --header-bg: #1e293b;
-            --border-color: #334155;
-            --sidebar-bg: #1e293b;
-            --icon-bg: #334155;
-            --nav-bg: #334155;
-            --marquee-bg: #020617;
-            
-            --badge-bg: #2d3748;
-            --badge-text: #fff;
-            --live-red: #fc8181;
-            --live-bg: #4c2d30;
-        }
-
-        [data-theme="high-contrast"] {
-            --accent-color: #ffff00;
-            --accent-gray: #fff;
-            --text-black: #fff;
-            --text-light: #fff;
-            --bg-color: #000;
-            --card-bg: #000;
-            --header-bg: #000;
-            --border-color: #fff;
-            --sidebar-bg: #000;
-            --icon-bg: #000;
-            --nav-bg: #000;
-            --marquee-bg: #fff;
-            --marquee-text: #000;
-            
-            --badge-bg: #000;
-            --badge-text: #fff;
-            --live-red: #f00;
-            --live-bg: #fff;
-        }
-        
-        [data-theme="low-contrast"] {
-            --accent-color: #8c7b75;
-            --accent-gray: #8c8c8c;
-            --text-black: #4a4a4a;
-            --text-light: #6e6e6e;
-            --bg-color: #fdf6e3;
-            --card-bg: #fdf6e3;
-            --header-bg: #fdf6e3;
-            --border-color: #d6d6d6;
-            --sidebar-bg: #fdf6e3;
-            --icon-bg: #eee8d5;
-            --nav-bg: #eee8d5;
-            --marquee-bg: #4a4a4a;
-            
-            --badge-bg: #e6e1d3;
-            --badge-text: #555;
-            --live-red: #c75c5c;
-            --live-bg: #eee;
-        }
-
-        /* High Contrast Specific Borders */
-        [data-theme="high-contrast"] .project-card, 
-        [data-theme="high-contrast"] .sidebar-box,
-        [data-theme="high-contrast"] nav a,
-        [data-theme="high-contrast"] .project-icon,
-        [data-theme="high-contrast"] .status-pill,
-        [data-theme="high-contrast"] .live-tag,
-        [data-theme="high-contrast"] .clock-widget {
-            border: 2px solid #fff !important;
-        }
-        [data-theme="high-contrast"] .repo-btn-big {
-            background: #000; color: #fff; border: 2px solid #fff;
-        }
-
-        * { box-sizing: border-box; transition: background-color 0.3s, color 0.3s; }
+        * { box-sizing: border-box; outline: none; }
 
         body {
             margin: 0;
             padding: 0;
-            font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-black);
-            line-height: 1.6;
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            line-height: 1.5;
             -webkit-font-smoothing: antialiased;
+            transition: background 0.3s ease, color 0.3s ease;
         }
 
-        /* MARQUEE STYLES */
-        .marquee-container {
-            width: 100%;
-            background-color: var(--marquee-bg);
-            color: var(--marquee-text);
+        a { text-decoration: none; color: inherit; transition: 0.2s; }
+
+        /* --- MARQUEE --- */
+        .market-ticker {
+            background-color: var(--dark-navy);
+            color: #fff;
             padding: 8px 0;
             overflow: hidden;
+            font-size: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
             position: relative;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+            z-index: 100;
         }
-        
-        .marquee-content {
+        .ticker-content {
             display: inline-block;
             white-space: nowrap;
-            will-change: transform;
-            animation: marquee 25s linear infinite;
+            animation: scroll 30s linear infinite;
+        }
+        .ticker-content span { margin-right: 40px; opacity: 0.9; }
+        .ticker-content span::before { content: "▲"; color: #00E676; margin-right: 8px; font-size: 10px; }
+        .ticker-content span.alert::before { content: "!"; color: #FF9100; }
+
+        @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
+
+        /* --- HEADER --- */
+        header {
+            background: var(--bg-header);
+            border-bottom: 1px solid var(--border-light);
+            position: sticky;
+            top: 0;
+            z-index: 99;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+        }
+
+        .nav-container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 0 24px;
+            height: 70px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .brand-section {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-box {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary-blue), #003C82);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            border-radius: 6px;
+            font-size: 18px;
+        }
+
+        .brand-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .brand-title { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; color: var(--text-main); }
+        .brand-sub { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-weight: 600; }
+
+        .nav-links {
+            display: flex;
+            gap: 30px;
+        }
+
+        .nav-links a {
             font-size: 14px;
             font-weight: 600;
-            letter-spacing: 1px;
-            font-family: "Courier New", monospace;
+            color: var(--text-secondary);
+            padding: 8px 0;
+            border-bottom: 2px solid transparent;
         }
 
-        .marquee-content span {
-            margin-right: 50px;
-        }
-        
-        .marquee-content span::before {
-            content: "✦";
-            color: var(--accent-color);
-            margin-right: 10px;
+        .nav-links a:hover, .nav-links a.active {
+            color: var(--primary-blue);
+            border-bottom-color: var(--primary-blue);
         }
 
-        @keyframes marquee {
-            0% { transform: translateX(100%); }
-            100% { transform: translateX(-100%); }
+        .header-utilities {
+            display: flex;
+            align-items: center;
+            gap: 16px;
         }
 
-        .marquee-container:hover .marquee-content {
-            animation-play-state: paused;
+        /* SEARCH BAR */
+        .search-wrapper {
+            position: relative;
+            width: 200px;
         }
-
-        /* TOP COLOR BAR */
-        .top-bar {
-            height: 4px;
+        .search-input {
             width: 100%;
-            background: linear-gradient(90deg, 
-                #4285F4 0%, #4285F4 25%, 
-                #EA4335 25%, #EA4335 50%, 
-                #FBBC05 50%, #FBBC05 75%, 
-                #34A853 75%, #34A853 100% 
-            );
-        }
-
-        /* HEADER */
-        header {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid var(--border-color);
-            background-color: var(--header-bg);
-        }
-
-        .header-left {
-            display: flex;
-            align-items: center;
-            flex: 1;
-        }
-
-        .profile-section {
-            display: flex;
-            align-items: center;
-            text-decoration: none;
-            color: var(--text-black);
-        }
-
-        .profile-pic {
-            width: 65px;
-            height: 65px;
-            border-radius: 50%;
-            border: 2px solid var(--border-color);
-            margin-right: 18px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-
-        .brand-name {
-            font-size: 24px;
-            font-weight: 800;
-            letter-spacing: -0.5px;
-            line-height: 1;
-            display: block;
-        }
-
-        .profile-link-text {
-            font-size: 12px;
-            color: var(--text-light);
-            font-weight: 600;
-            margin-top: 4px;
-            text-transform: uppercase;
-            display: block;
-        }
-
-        .header-center {
-            flex: 1;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 20px;
-        }
-
-        .header-nav a {
-            text-decoration: none;
-            color: var(--text-black);
-            font-weight: 600;
-            font-size: 13px;
-            transition: 0.2s;
-        }
-        .header-nav a:hover { color: var(--accent-color); }
-
-        .header-right {
-            flex: 0 0 auto;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-
-        /* THEME SWITCHER */
-        .theme-select {
-            padding: 5px 10px;
+            padding: 8px 12px 8px 35px;
             border-radius: 4px;
-            border: 1px solid var(--border-color);
-            background-color: var(--bg-color);
-            color: var(--text-black);
+            border: 1px solid var(--border-light);
+            background: var(--bg-body);
+            font-size: 13px;
+            color: var(--text-main);
+        }
+        .search-icon {
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
             font-size: 12px;
-            cursor: pointer;
-            outline: none;
         }
 
-        /* LOGO RIGHT */
-        .right-logo {
+        /* TRANSLATE WIDGET CUSTOMIZATION */
+        #google_translate_element {
+            overflow: hidden;
+            height: 28px;
+            border: 1px solid var(--border-light);
+            border-radius: 4px;
+            background: var(--bg-body);
+        }
+        .goog-te-gadget-simple {
+            background-color: transparent !important;
+            border: none !important;
+            padding: 4px 8px !important;
+        }
+        .goog-te-gadget-simple span { color: var(--text-main) !important; font-weight: 600; font-size: 12px; }
+
+        /* THEME TOGGLE */
+        .theme-btn {
+            background: none;
+            border: 1px solid var(--border-light);
+            padding: 6px;
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--text-main);
+        }
+
+        /* --- MAIN LAYOUT --- */
+        .main-container {
+            max-width: 1280px;
+            margin: 40px auto;
+            padding: 0 24px;
+            display: grid;
+            grid-template-columns: 2.5fr 1fr;
+            gap: 40px;
+        }
+
+        /* --- CARDS --- */
+        .section-header {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .section-count {
+            font-size: 12px;
+            background: var(--border-light);
+            padding: 4px 10px;
+            border-radius: 20px;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: var(--shadow-card);
+            border: 1px solid var(--border-light);
+            display: flex;
+            gap: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        /* NEW RIBBON FOR ANSCOM LIB */
+        .ribbon {
+            position: absolute;
+            top: -10px;
+            right: 20px;
+            background: var(--primary-blue);
+            color: white;
+            font-size: 10px;
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 4px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            z-index: 2;
+        }
+
+        .card-icon {
             width: 50px;
             height: 50px;
-            border-radius: 50%;
-            object-fit: cover;
-            border: 2px solid var(--accent-color);
-            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-        }
-
-        /* MAIN LAYOUT */
-        .container {
-            max-width: 1100px;
-            margin: 40px auto;
-            display: flex;
-            padding: 0 20px;
-            gap: 60px;
-        }
-
-        .main-column { flex: 2; }
-        .sidebar { flex: 1; padding-top: 10px; }
-
-        /* SECTION TITLE */
-        .section-title {
-            font-size: 14px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            margin-bottom: 30px;
-            padding-bottom: 10px;
-            border-bottom: 2px solid var(--text-black);
-            display: flex;
-            justify-content: space-between;
-            color: var(--text-black);
-        }
-        
-        .section-title span.count { color: var(--accent-gray); font-weight: 400; }
-
-        /* PROJECT CARD */
-        .project-card {
-            display: flex;
-            margin-bottom: 60px;
-            gap: 20px;
-            align-items: flex-start;
-            background-color: var(--card-bg);
-            position: relative;
-        }
-
-        .project-icon {
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background-color: var(--icon-bg);
-            flex-shrink: 0;
+            background: var(--bg-body);
+            border-radius: 8px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: 800;
-            color: var(--text-black);
-            border: 1px solid var(--border-color);
+            color: var(--primary-blue);
+            flex-shrink: 0;
         }
 
-        .project-content { flex-grow: 1; }
+        .card-body { flex: 1; }
 
-        /* NEW STATUS BAR */
-        .status-row {
+        .card-meta-row {
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
             gap: 10px;
-        }
-
-        .status-pill {
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            padding: 3px 8px;
-            background-color: var(--badge-bg);
-            color: var(--badge-text);
-            border-radius: 4px;
-            letter-spacing: 0.5px;
-            border: 1px solid var(--border-color);
-        }
-
-        .live-tag {
-            display: flex;
-            align-items: center;
-            font-size: 10px;
-            font-weight: 800;
-            color: var(--live-red);
-            background-color: var(--live-bg);
-            padding: 3px 8px;
-            border-radius: 4px;
-            text-transform: uppercase;
-        }
-
-        .blink-dot {
-            width: 6px;
-            height: 6px;
-            background-color: var(--live-red);
-            border-radius: 50%;
-            margin-right: 6px;
-            animation: blinker 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
-            box-shadow: 0 0 5px var(--live-red);
-        }
-
-        @keyframes blinker {
-            50% { opacity: 0; transform: scale(0.8); }
-        }
-
-        .project-header {
-            display: flex;
-            justify-content: space-between; 
-            align-items: flex-start;
             margin-bottom: 8px;
         }
 
-        .project-header h2 {
-            margin: 0;
-            font-size: 22px;
-            font-weight: 700;
-            line-height: 1.2;
-            max-width: 65%;
-            color: var(--text-black);
-        }
-
-        /* REPO BUTTON */
-        .repo-btn-big {
-            display: flex;
-            align-items: center;
-            background-color: var(--bg-color);
-            border: 1px solid #ccc;
-            padding: 6px 10px;
-            border-radius: 4px;
-            text-decoration: none;
-            color: var(--text-black);
-            font-size: 11px;
+        .status-badge {
+            font-size: 10px;
             font-weight: 700;
             text-transform: uppercase;
-            transition: all 0.2s;
+            padding: 4px 8px;
+            border-radius: 4px;
         }
-        .repo-btn-big:hover { border-color: var(--accent-color); color: var(--accent-color); }
-        .repo-btn-big img { width: 14px; height: 14px; margin-right: 6px; }
+        .status-new { background: var(--status-new-bg); color: var(--status-new-text); }
+        .status-live { background: var(--status-live-bg); color: var(--status-live-text); }
+        .status-beta { background: var(--status-beta-bg); color: var(--status-beta-text); }
 
-        .project-meta {
-            font-size: 13px;
-            color: var(--accent-gray);
-            margin-bottom: 12px;
-            font-family: monospace;
+        .blink {
+            display: inline-block;
+            width: 6px;
+            height: 6px;
+            background-color: currentColor;
+            border-radius: 50%;
+            margin-right: 4px;
+            animation: blink 1.5s infinite;
+        }
+        @keyframes blink { 50% { opacity: 0; } }
+
+        .card-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin: 0 0 8px 0;
+            color: var(--text-main);
         }
 
-        .project-desc {
+        .card-desc {
             font-size: 15px;
-            color: var(--text-black);
-            margin-bottom: 15px;
+            color: var(--text-secondary);
+            margin-bottom: 16px;
+            line-height: 1.6;
         }
 
-        /* PROCESS LINKS */
-        .pipeline-nav {
+        .tech-tags {
             display: flex;
             flex-wrap: wrap;
-            gap: 12px;
-            font-family: "Courier New", monospace;
-            font-size: 12px;
-            background: var(--nav-bg);
-            padding: 12px;
-            border-radius: 4px;
-            border-left: 3px solid var(--text-black);
+            gap: 8px;
+            margin-bottom: 20px;
         }
-
-        .pipeline-nav a {
-            text-decoration: none;
-            color: var(--accent-color);
-            font-weight: 700;
-            position: relative;
-            padding-right: 14px;
-        }
-
-        .pipeline-nav a::after {
-            content: "→";
-            position: absolute;
-            right: 0;
-            color: var(--accent-gray);
-            font-size: 10px;
-            top: 1px;
-        }
-        .pipeline-nav a:last-child::after { content: ""; }
-        .pipeline-nav a:hover { text-decoration: underline; }
-
-        /* SIDEBAR */
-        .sidebar-box { margin-bottom: 40px; }
-        .sidebar-header { font-size: 18px; font-weight: 700; margin-bottom: 15px; color: var(--text-black); }
-        
-        .sidebar-text {
-            font-size: 14px;
-            color: var(--text-light);
-            margin-bottom: 15px;
-            border-left: 2px solid var(--border-color);
-            padding-left: 15px;
-        }
-        
-        .tech-stack-tag {
-            display: inline-block;
-            background: var(--icon-bg);
-            color: var(--text-black);
+        .tech-tag {
+            font-size: 11px;
+            font-family: 'JetBrains Mono', monospace;
+            color: var(--text-meta);
+            background: var(--bg-body);
             padding: 2px 6px;
             border-radius: 3px;
-            font-size: 11px;
-            margin: 2px;
-            font-weight: 600;
-            border: 1px solid transparent;
+            border: 1px solid var(--border-light);
         }
 
-        /* NEW CLOCK STYLES */
-        .clock-widget {
-            background-color: var(--nav-bg);
-            border: 1px solid var(--border-color);
-            padding: 15px;
-            border-radius: 6px;
-            font-family: "Courier New", monospace;
+        .card-actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            border-top: 1px solid var(--border-light);
+            padding-top: 16px;
+        }
+
+        .btn-action {
+            display: inline-flex;
+            align-items: center;
+            font-size: 12px;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 50px;
+            text-decoration: none;
+            transition: 0.2s;
         }
         
-        .local-time-wrapper {
-            text-align: center;
-            padding-bottom: 12px;
-            margin-bottom: 12px;
-            border-bottom: 2px solid var(--border-color);
+        .btn-primary {
+            background-color: var(--primary-blue);
+            color: white;
+        }
+        .btn-primary:hover { background-color: #004494; }
+
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--border-light);
+            color: var(--text-main);
+        }
+        .btn-outline:hover { border-color: var(--text-main); }
+        
+        .btn-text {
+            color: var(--primary-blue);
+            padding: 8px 0;
+        }
+        .btn-text:hover { text-decoration: underline; }
+
+        /* --- SIDEBAR --- */
+        .sidebar-widget {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            border: 1px solid var(--border-light);
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-card);
         }
 
-        .local-label {
-            font-size: 10px;
-            font-weight: 800;
-            text-transform: uppercase;
-            color: var(--text-light);
-            letter-spacing: 1px;
-        }
-
-        .local-clock {
-            font-size: 26px;
+        .widget-title {
+            font-size: 14px;
             font-weight: 700;
-            color: var(--accent-color);
-            margin-top: 5px;
+            text-transform: uppercase;
+            color: var(--text-secondary);
+            margin-bottom: 15px;
+            border-bottom: 1px solid var(--border-light);
+            padding-bottom: 10px;
+            letter-spacing: 0.5px;
         }
 
-        .world-time-row {
+        .time-display {
+            font-family: 'JetBrains Mono', monospace;
+        }
+        .local-time {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary-blue);
+            text-align: center;
+            margin: 10px 0 20px 0;
+        }
+        
+        .market-row {
             display: flex;
             justify-content: space-between;
             font-size: 13px;
             margin-bottom: 8px;
-            color: var(--text-black);
+            color: var(--text-main);
         }
-        
-        .city-name { font-weight: 600; }
-        .city-time { color: var(--text-light); }
+        .market-row span.closed { color: var(--text-meta); }
 
-        hr {
-            border: 0; border-top: 1px solid var(--border-color); margin: 30px 0;
+        .focus-list li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            padding-left: 12px;
+            position: relative;
+        }
+        .focus-list li::before {
+            content: "•";
+            color: var(--primary-blue);
+            position: absolute;
+            left: 0;
         }
 
         @media (max-width: 900px) {
-            header { flex-direction: column; gap: 15px; text-align: center; }
-            .header-left, .header-center, .header-right { justify-content: center; width: 100%; }
-            .container { flex-direction: column; }
-            .sidebar { border-top: 1px solid var(--border-color); padding-top: 30px; }
-            .project-header { flex-direction: column; gap: 10px; }
-            .project-header h2 { max-width: 100%; }
-            .status-row { flex-wrap: wrap; }
+            .nav-container { height: auto; flex-direction: column; padding: 15px; gap: 15px; }
+            .nav-links { overflow-x: auto; width: 100%; justify-content: center; }
+            .header-utilities { width: 100%; justify-content: center; flex-wrap: wrap; }
+            .main-container { grid-template-columns: 1fr; }
+            .ribbon { position: relative; top: 0; right: 0; display: inline-block; margin-bottom: 10px; }
         }
-
     </style>
 </head>
 <body>
 
-    <div class="top-bar"></div>
-
-    <!-- MARQUEE SECTION -->
-    <div class="marquee-container">
-        <div class="marquee-content">
-            <span>RELEASED: 'anscom' Python Library now available on PyPI (Jan 15, 2026).</span>
-            <span>Updates: Research paper to gold etf fair value engine is available. Check the github README.md</span>
-            <span>For research analysis contact us.</span>
-            <span>Important Notice: Gold ETF, fair value engine may need Xpath analysis for NSE.</span>
-            <span>AnsCom Terminal: Real-time Telemetry Active.</span>
-            <span>Updates: NIFTY-500 Module Live.</span>
+    <!-- MARKET TICKER -->
+    <div class="market-ticker">
+        <div class="ticker-content">
+            <span class="alert">NEW RELEASE: 'anscom' Python Library v1.0.0 (Jan 15, 2026)</span>
+            <span>Gold ETF Engine: Forensic Pricing Paper Published</span>
+            <span>AnsCom Terminal: Active Telemetry</span>
+            <span>NIFTY-500 Analyser: Live</span>
+            <span>ZENTEC Model: Inference Stable</span>
+            <span>AI10 Tech Index: Rebalanced</span>
         </div>
     </div>
 
+    <!-- MODERN HEADER -->
     <header>
-        <div class="header-left">
-            <a href="https://github.com/PC5518/" class="profile-section">
-                <img src="https://github.com/PC5518.png" class="profile-pic" alt="Aditya N. Singh">
-                <div class="profile-info">
-                    <span class="brand-name">AnsCom Quantitative Suite</span>
-                    <span class="profile-link-text">Aditya Narayan Singh (PC5518)</span>
+        <div class="nav-container">
+            <a href="https://github.com/PC5518" class="brand-section">
+                <div class="logo-box">A</div>
+                <div class="brand-text">
+                    <span class="brand-title">AnsCom Quantitative</span>
+                    <span class="brand-sub">Suite & Research Infrastructure</span>
                 </div>
             </a>
-        </div>
 
-        <nav class="header-center header-nav">
-            <a href="#">Quantitative Research</a>
-            <a href="#">Telemetry</a>
-            <a href="https://pc5518.github.io/AnsComfinancialsuite/contact/">Contact us/Suggest Changes</a>
-        </nav>
+            <nav class="nav-links">
+                <a href="#" class="active">Research Modules</a>
+                <a href="#">Telemetry</a>
+                <a href="#">Publications</a>
+                <a href="https://pc5518.github.io/AnsComfinancialsuite/contact/">Contact</a>
+            </nav>
 
-        <div class="header-right">
-            <!-- THEME SWITCHER -->
-            <select id="themeSwitcher" class="theme-select" onchange="setTheme(this.value)">
-                <option value="light">Light Theme</option>
-                <option value="dark">Dark Theme</option>
-                <option value="blue">Blue Theme</option>
-                <option value="high-contrast">High Contrast</option>
-                <option value="low-contrast">Low Contrast</option>
-            </select>
-            
-            <!-- RIGHT SIDE LOGO -->
-            <img src="https://yt3.googleusercontent.com/x-u83dWZlsQSHiaxO1FcxCBG3_mIHskESvkx_wMXqaA5EwZyIHUxZLZroI-IkYtxqQwoqcA7DRQ=s160-c-k-c0x00ffffff-no-rj" class="right-logo" alt="Logo">
+            <div class="header-utilities">
+                <!-- Search Bar -->
+                <div class="search-wrapper">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" class="search-input" placeholder="Search Symbols...">
+                </div>
+
+                <!-- Google Translate Widget -->
+                <div id="google_translate_element"></div>
+
+                <!-- Theme Switcher -->
+                <button class="theme-btn" onclick="toggleTheme()" title="Toggle Dark Mode">
+                    ◑
+                </button>
+            </div>
         </div>
     </header>
 
-    <div class="container">
+    <div class="main-container">
 
-        <!-- LEFT COLUMN: PROJECTS -->
-        <main class="main-column">
-            
-            <div class="section-title">
+        <!-- MAIN COLUMN -->
+        <main>
+            <div class="section-header">
                 Active Research Modules
-                <span class="count">6 Selected Projects</span>
+                <span class="section-count">6 Projects</span>
             </div>
 
-            <!-- NEW PROJECT: ANSCOM LIBRARY -->
-            <article class="project-card">
-                <div class="project-icon" style="color: #3776ab;">Py</div>
-                <div class="project-content">
-                    <div class="status-row">
-                        <span class="status-pill" style="border: 1px solid var(--accent-color); color: var(--accent-color);">Released Jan 15, 2026</span>
-                        <div class="live-tag">
-                            <div class="blink-dot"></div> New Release
-                        </div>
+            <!-- CARD 1: ANSCOM LIBRARY (FEATURED) -->
+            <article class="card">
+                <div class="ribbon">NEW RELEASE</div>
+                <div class="card-icon">Py</div>
+                <div class="card-body">
+                    <div class="card-meta-row">
+                        <span class="status-badge status-new"><span class="blink"></span>Released Jan 15, 2026</span>
                     </div>
-                    <div class="project-header">
-                        <h2>AnsCom Python Library</h2>
-                        <a href="https://pypi.org/project/anscom/" class="repo-btn-big" target="_blank">
-                            <img src="https://upload.wikimedia.org/wikipedia/commons/c/c3/Python-logo-notext.svg" alt="PyPI" style="width: 14px; height: 14px;"> View on PyPI
-                        </a>
+                    <h2 class="card-title">AnsCom Python Library</h2>
+                    <div class="tech-tags">
+                        <span class="tech-tag">C-ACCELERATED</span>
+                        <span class="tech-tag">FILESYSTEM INTELLIGENCE</span>
+                        <span class="tech-tag">DATA LAKES</span>
                     </div>
-                    <div class="project-meta">C-ACCELERATED • FILESYSTEM INTELLIGENCE • DATA LAKES</div>
-                    <div class="project-desc">
+                    <div class="card-desc">
                         A C-accelerated recursive filesystem intelligence engine with Python bindings, built for high-throughput analysis, classification, and partitioning of massive research / engineering data lakes.
                     </div>
-                    <div class="pipeline-nav">
-                        <a href="https://pypi.org/project/anscom/">pip install anscom</a>
-                        <a href="#">C-Extensions</a>
-                        <a href="#">Data Partitioning</a>
-                        <a href="https://pypi.org/project/anscom/">Docs</a>
+                    <div class="card-actions">
+                        <!-- BUTTONS SIDE BY SIDE AS REQUESTED -->
+                        <a href="https://pypi.org/project/anscom/" target="_blank" class="btn-action btn-primary">
+                            View on PyPI
+                        </a>
+                        <a href="https://github.com/PC5518/anscom-nfie-python-extension" target="_blank" class="btn-action btn-outline">
+                            View on GitHub
+                        </a>
+                        <a href="#" class="btn-action btn-text" style="margin-left: auto;">Read Docs →</a>
                     </div>
                 </div>
             </article>
 
-            <hr>
-
-            <!-- PROJECT 1: GOLD FAIR VALUE (Pricing) -->
-            <article class="project-card">
-                <div class="project-icon">Au</div>
-                <div class="project-content">
-                    <div class="status-row">
-                        <span class="status-pill">Module Construction Completed</span>
-                        <div class="live-tag">
-                            <div class="blink-dot"></div> Live Pricing
-                        </div>
+            <!-- CARD 2: GOLD ETF -->
+            <article class="card">
+                <div class="card-icon">Au</div>
+                <div class="card-body">
+                    <div class="card-meta-row">
+                        <span class="status-badge status-live"><span class="blink"></span>Live Pricing</span>
                     </div>
-                    <div class="project-header">
-                        <h2>Gold ETF Fair Value Engine</h2>
-                        <a href="https://github.com/PC5518/gold-etf-postmarket-fair-value-engine" class="repo-btn-big" target="_blank">
-                            <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="GH"> Repository
-                        </a>
+                    <h2 class="card-title">Gold ETF Fair Value Engine</h2>
+                    <div class="tech-tags">
+                        <span class="tech-tag">ARBITRAGE</span>
+                        <span class="tech-tag">FOREX PARITY</span>
+                        <span class="tech-tag">NSE/COMEX</span>
                     </div>
-                    <div class="project-meta">PRICING INFRASTRUCTURE • FOREX PARITY • ARBITRAGE</div>
-                    <div class="project-desc">
+                    <div class="card-desc">
                         A live terminal that approximates the ICICI Prudential Gold ETF (GOLDIETF) price after NSE market hours. Utilizes real-time XAUUSD (Global Spot) and USDINR feeds to calculate fair-value gaps for next-day open.
                     </div>
-                    <div class="pipeline-nav">
-                        <a href="#">Gap Analysis</a>
-                        <a href="#">Currency Hedge</a>
-                        <a href="#">Forensic Pricing</a>
-                        <a href="https://github.com/PC5518/gold-etf-postmarket-fair-value-engine">Source Code</a>
+                    <div class="card-actions">
+                        <a href="https://github.com/PC5518/gold-etf-postmarket-fair-value-engine" target="_blank" class="btn-action btn-outline">Repository</a>
+                        <a href="#" class="btn-action btn-text">Gap Analysis →</a>
                     </div>
                 </div>
             </article>
 
-            <hr>
-
-            <!-- PROJECT 2: TELEMETRY & TERMINAL -->
-            <article class="project-card">
-                <div class="project-icon">Tx</div>
-                <div class="project-content">
-                    <div class="status-row">
-                        <span class="status-pill">System Stable</span>
-                        <div class="live-tag">
-                            <div class="blink-dot"></div> Live Telemetry
-                        </div>
+            <!-- CARD 3: TELEMETRY -->
+            <article class="card">
+                <div class="card-icon">Tx</div>
+                <div class="card-body">
+                    <div class="card-meta-row">
+                        <span class="status-badge status-live"><span class="blink"></span>Live Telemetry</span>
                     </div>
-                    <div class="project-header">
-                        <h2>AnsCom netDepth Monitoring</h2>
-                        <a href="https://github.com/PC5518/anscom-netDepth-ultimate" class="repo-btn-big" target="_blank">
-                            <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="GH"> Repository
-                        </a>
+                    <h2 class="card-title">AnsCom netDepth Monitoring</h2>
+                    <div class="tech-tags">
+                        <span class="tech-tag">NETWORK ANALYTICS</span>
+                        <span class="tech-tag">DASHBOARDING</span>
+                        <span class="tech-tag">MULTI-THREADING</span>
                     </div>
-                    <div class="project-meta">TELEMETRY ANALYTICS • MULTI-THREADING • DASHBOARD • Built with Ookla</div>
-                    <div class="project-desc">
-                        A suite of telemetry tools including <strong>AnsCom Terminal</strong> (real-time equity/crypto profit tracking built from scratch) and <strong>netDepth Ultimate</strong> (high-performance network telemetry dashboard). Monitors 40+ metrics in real-time.
+                    <div class="card-desc">
+                        Suite of telemetry tools including AnsCom Terminal (equity/crypto profit tracking) and netDepth Ultimate. Monitors 40+ network and market metrics in real-time.
                     </div>
-                    <div class="pipeline-nav">
-                        <a href="#">Custom TradingView</a>
-                        <a href="#">Multi-threading</a>
-                        <a href="#">Network Telemetry</a>
-                        <a href="https://github.com/PC5518/anscom-netDepth-ultimate">View netDepth Repo</a>
+                    <div class="card-actions">
+                        <a href="https://github.com/PC5518/anscom-netDepth-ultimate" target="_blank" class="btn-action btn-outline">Repository</a>
                     </div>
                 </div>
             </article>
 
-            <hr>
-
-            <!-- PROJECT 3: ML PREDICTION -->
-            <article class="project-card">
-                <div class="project-icon">ML</div>
-                <div class="project-content">
-                    <div class="status-row">
-                        <span class="status-pill">Model Construction Completed</span>
-                        <div class="live-tag">
-                            <div class="blink-dot"></div> Active Inference
-                        </div>
+            <!-- CARD 4: ML PREDICTION -->
+            <article class="card">
+                <div class="card-icon">ML</div>
+                <div class="card-body">
+                    <div class="card-meta-row">
+                        <span class="status-badge status-beta">Inference Active</span>
                     </div>
-                    <div class="project-header">
-                        <h2>ZENTEC Stock Prediction</h2>
-                        <a href="https://github.com/PC5518/nse-zentec-stock-prediction-ml" class="repo-btn-big" target="_blank">
-                            <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="GH"> Repository
-                        </a>
+                    <h2 class="card-title">ZENTEC Stock Prediction</h2>
+                    <div class="tech-tags">
+                        <span class="tech-tag">RANDOM FOREST</span>
+                        <span class="tech-tag">TIME-SERIES</span>
+                        <span class="tech-tag">SCIKIT-LEARN</span>
                     </div>
-                    <div class="project-meta">TIME-SERIES MODELING • RANDOM FOREST • TECHNICALS</div>
-                    <div class="project-desc">
+                    <div class="card-desc">
                         Machine-learning model predicting next-day move and BUY/SELL/HOLD recommendations for NSE:ZENTEC. Trained on 10+ years of OHLC data combined with SMA, EMA, and RSI technical indicators.
                     </div>
-                    <div class="pipeline-nav">
-                        <a href="#">Data Cleaning</a>
-                        <a href="#">Feature Engineering</a>
-                        <a href="#">Backtesting</a>
-                        <a href="https://github.com/PC5518/nse-zentec-stock-prediction-ml">Source Code</a>
+                    <div class="card-actions">
+                        <a href="https://github.com/PC5518/nse-zentec-stock-prediction-ml" target="_blank" class="btn-action btn-outline">Repository</a>
                     </div>
                 </div>
             </article>
 
-            <hr>
-
-            <!-- PROJECT 4: INDEX CONSTRUCTION -->
-            <article class="project-card">
-                <div class="project-icon">Ix</div>
-                <div class="project-content">
-                    <div class="status-row">
-                        <span class="status-pill">Index Rebalanced</span>
-                        <div class="live-tag">
-                            <div class="blink-dot"></div> Live Ticks
-                        </div>
+            <!-- CARD 5: INDEX -->
+            <article class="card">
+                <div class="card-icon">Ix</div>
+                <div class="card-body">
+                    <div class="card-meta-row">
+                        <span class="status-badge status-live"><span class="blink"></span>Live Ticks</span>
                     </div>
-                    <div class="project-header">
-                        <h2>AnsCom AI10 Tech Index</h2>
-                        <a href="https://github.com/PC5518/anscom-ai10-tech-index" class="repo-btn-big" target="_blank">
-                            <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="GH"> Repository
-                        </a>
+                    <h2 class="card-title">AnsCom AI10 Tech Index</h2>
+                    <div class="tech-tags">
+                        <span class="tech-tag">INDEX CONSTRUCTION</span>
+                        <span class="tech-tag">ALTERNATIVE DATA</span>
                     </div>
-                    <div class="project-meta">INDEX CONSTRUCTION • ALTERNATIVE DATA</div>
-                    <div class="project-desc">
+                    <div class="card-desc">
                         A personalized technology index created to track the top 10 U.S.-listed tech companies based on artificial intelligence exposure. Updates live index values using real-time market data feeds.
                     </div>
-                    <div class="pipeline-nav">
-                        <a href="#">Weighting Methodology</a>
-                        <a href="#">Rebalancing</a>
-                        <a href="https://github.com/PC5518/anscom-ai10-tech-index">Source Code</a>
+                    <div class="card-actions">
+                        <a href="https://github.com/PC5518/anscom-ai10-tech-index" target="_blank" class="btn-action btn-outline">Repository</a>
                     </div>
                 </div>
             </article>
 
-            <hr>
-
-            <!-- PROJECT 5: NIFTY 500 ANALYSER -->
-            <article class="project-card">
-                <div class="project-icon">N5</div>
-                <div class="project-content">
-                    <div class="status-row">
-                        <span class="status-pill">Module Construction Completed</span>
-                        <div class="live-tag">
-                            <div class="blink-dot"></div> Live Scanner
-                        </div>
+            <!-- CARD 6: NIFTY 500 -->
+            <article class="card">
+                <div class="card-icon">N5</div>
+                <div class="card-body">
+                    <div class="card-meta-row">
+                        <span class="status-badge status-live">Live Scanner</span>
                     </div>
-                    <div class="project-header">
-                        <h2>AnsCom Terminal NIFTY-500 Analyser</h2>
-                        <a href="https://github.com/PC5518/ansCom-terminal-equity_marketos" class="repo-btn-big" target="_blank">
-                            <img src="https://github.githubassets.com/assets/GitHub-Mark-ea2971cee799.png" alt="GH"> Visit Repository
-                        </a>
+                    <h2 class="card-title">NIFTY-500 MarketOS</h2>
+                    <div class="tech-tags">
+                        <span class="tech-tag">SCREENER</span>
+                        <span class="tech-tag">LIQUIDITY VOIDS</span>
+                        <span class="tech-tag">NSE INDIA</span>
                     </div>
-                    <div class="project-meta">SCREENING INFRASTRUCTURE • INDIA NSE • DEPLOYED SEPT 2024</div>
-                    <div class="project-desc">
-                        Advanced screening module integrated into the AnsCom Terminal. Scans all NIFTY-500 stocks to identify volatile movers, structural breakouts, and liquidity voids. Includes automated gainers/losers sorting and heatmaps.
+                    <div class="card-desc">
+                        Advanced screening module integrated into the AnsCom Terminal. Scans all NIFTY-500 stocks to identify volatile movers, structural breakouts, and liquidity voids.
                     </div>
-                    <div class="pipeline-nav">
-                        <a href="#">Market Screening</a>
-                        <a href="#">Technical Filters</a>
-                        <a href="#">Trend Analysis</a>
-                        <a href="https://github.com/PC5518/ansCom-terminal-equity_marketos">Source Code</a>
+                    <div class="card-actions">
+                        <a href="https://github.com/PC5518/ansCom-terminal-equity_marketos" target="_blank" class="btn-action btn-outline">Repository</a>
                     </div>
                 </div>
             </article>
-
         </main>
 
-        <!-- RIGHT SIDEBAR -->
-        <aside class="sidebar">
-            
-            <!-- NEW CLOCK WIDGET -->
-            <div class="sidebar-box">
-                <div class="sidebar-header">Global Markets</div>
-                <div class="clock-widget">
-                    <div class="local-time-wrapper">
-                        <div class="local-label">Your Local Time</div>
-                        <div id="local-clock" class="local-clock">Loading...</div>
+        <!-- SIDEBAR -->
+        <aside>
+            <!-- GLOBAL MARKETS CLOCK -->
+            <div class="sidebar-widget">
+                <div class="widget-title">Global Markets</div>
+                <div class="time-display">
+                    <div class="local-time" id="local-clock">--:--:--</div>
+                    <div class="market-row">
+                        <span>New Delhi (NSE)</span>
+                        <span id="time-delhi">--:--</span>
                     </div>
-                    
-                    <div class="world-time-row">
-                        <span class="city-name">New Delhi</span>
-                        <span id="time-delhi" class="city-time">--:--</span>
+                    <div class="market-row">
+                        <span>New York (NYSE)</span>
+                        <span id="time-ny">--:--</span>
                     </div>
-                    <div class="world-time-row">
-                        <span class="city-name">Tokyo</span>
-                        <span id="time-tokyo" class="city-time">--:--</span>
+                    <div class="market-row">
+                        <span>London (LSE)</span>
+                        <span id="time-london">--:--</span>
                     </div>
-                    <div class="world-time-row">
-                        <span class="city-name">Hong Kong</span>
-                        <span id="time-hk" class="city-time">--:--</span>
+                    <div class="market-row">
+                        <span>Tokyo (TSE)</span>
+                        <span id="time-tokyo">--:--</span>
                     </div>
-                    <div class="world-time-row">
-                        <span class="city-name">London</span>
-                        <span id="time-london" class="city-time">--:--</span>
-                    </div>
-                    <div class="world-time-row">
-                        <span class="city-name">New York</span>
-                        <span id="time-ny" class="city-time">--:--</span>
+                    <div class="market-row">
+                        <span>Hong Kong (HKSE)</span>
+                        <span id="time-hk">--:--</span>
                     </div>
                 </div>
             </div>
 
-            <div class="sidebar-box">
-                <div class="sidebar-header">About the Suite</div>
-                <p class="sidebar-text" style="font-weight: 500; color: var(--text-black);">
-                    Built quantitative research infrastructure for fair-value pricing, telemetry analytics, and ML time-series modeling in Indian capital markets.
-                </p>
-                <p class="sidebar-text">
-                    This portfolio separates the quantitative signal processing and infrastructure tools from general utility projects, focusing on financial engineering. The site may not be updated. We request you to visit the github PC5518 Aditya Narayan Singh.
+            <div class="sidebar-widget">
+                <div class="widget-title">About Suite</div>
+                <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.6;">
+                    Built quantitative research infrastructure for fair-value pricing, telemetry analytics, and ML time-series modeling in Indian capital markets. 
+                    <br><br>
+                    <strong>Lead:</strong> Aditya Narayan Singh (PC5518)
                 </p>
             </div>
 
-            <div class="sidebar-box">
-                <div class="sidebar-header">Tech Stack</div>
-                <div>
-                    <span class="tech-stack-tag">Python</span>
-                    <span class="tech-stack-tag">C/C++</span>
-                    <span class="tech-stack-tag">Pandas/Numpy</span>
-                    <span class="tech-stack-tag">Scikit-Learn</span>
-                    <span class="tech-stack-tag">Matplotlib</span>
-                    <span class="tech-stack-tag">CustomTkinter</span>
-                    <span class="tech-stack-tag">NSEPy</span>
+            <div class="sidebar-widget">
+                <div class="widget-title">Tech Stack</div>
+                <div class="tech-tags">
+                    <span class="tech-tag">Python 3.12</span>
+                    <span class="tech-tag">C/C++</span>
+                    <span class="tech-tag">Pandas</span>
+                    <span class="tech-tag">NumPy</span>
+                    <span class="tech-tag">Scikit-Learn</span>
+                    <span class="tech-tag">CustomTkinter</span>
+                    <span class="tech-tag">NSEPy</span>
                 </div>
             </div>
 
-            <div class="sidebar-box">
-                <div class="sidebar-header">Focus Areas</div>
-                <ul style="padding-left: 20px; font-size: 14px; color: var(--text-light);">
+            <div class="sidebar-widget">
+                <div class="widget-title">Research Focus</div>
+                <ul class="focus-list" style="list-style: none; padding: 0;">
                     <li>Post-Market Fair Value</li>
-                    <li>Architectural Skeptism</li>
+                    <li>Architectural Skepticism</li>
                     <li>Network Telemetry</li>
                     <li>Algorithmic Trading Infra</li>
                     <li>Statistical Arbitrage</li>
@@ -871,44 +721,46 @@
 
     </div>
 
+    <!-- GOOGLE TRANSLATE SCRIPT -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+          new google.translate.TranslateElement({
+            pageLanguage: 'en', 
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+            autoDisplay: false
+          }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
     <script>
-        function setTheme(themeName) {
-            if (themeName === 'light') {
-                document.body.removeAttribute('data-theme');
+        // THEME LOGIC
+        let isDark = false;
+        function toggleTheme() {
+            isDark = !isDark;
+            if (isDark) {
+                document.body.setAttribute('data-theme', 'dark');
             } else {
-                document.body.setAttribute('data-theme', themeName);
+                document.body.removeAttribute('data-theme');
             }
         }
 
         // CLOCK LOGIC
         function updateClocks() {
             const now = new Date();
-            
-            // Format options for hours:minutes:seconds
             const localOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
             const cityOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
+            const getCityTime = (timeZone) => new Intl.DateTimeFormat('en-US', { ...cityOptions, timeZone }).format(now);
 
-            // 1. Local Time (Large Display)
             document.getElementById('local-clock').innerText = now.toLocaleTimeString([], localOptions);
-
-            // 2. City Times
-            const getCityTime = (timeZone) => {
-                return new Intl.DateTimeFormat('en-US', {
-                    ...cityOptions,
-                    timeZone: timeZone
-                }).format(now);
-            };
-
             document.getElementById('time-delhi').innerText = getCityTime('Asia/Kolkata');
+            document.getElementById('time-ny').innerText = getCityTime('America/New_York');
+            document.getElementById('time-london').innerText = getCityTime('Europe/London');
             document.getElementById('time-tokyo').innerText = getCityTime('Asia/Tokyo');
             document.getElementById('time-hk').innerText = getCityTime('Asia/Hong_Kong');
-            document.getElementById('time-london').innerText = getCityTime('Europe/London');
-            document.getElementById('time-ny').innerText = getCityTime('America/New_York');
         }
-
-        // Run immediately and then every second
-        updateClocks();
         setInterval(updateClocks, 1000);
+        updateClocks();
     </script>
 
 </body>
