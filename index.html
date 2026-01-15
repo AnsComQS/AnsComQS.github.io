@@ -3,719 +3,645 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AnsCom Quantitative Suite | Research & Infrastructure</title>
+    <title>AnsCom Quantitative Labs | Research Infrastructure</title>
     
-    <!-- Google Fonts: Inter for a modern Fintech look -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <!-- Fonts: Inter (UI) and JetBrains Mono (Data/Code) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
         /* 
-           DESIGN SYSTEM: FINTECH MODERN (NASDAQ INSPIRED)
+           THEME ENGINE: COMPUTATIONAL LABORATORY
         */
-
         :root {
-            /* Corporate Palette */
-            --primary-blue: #0057B8; /* Nasdaq Blue-ish */
-            --dark-navy: #0A1E33;
-            --action-cyan: #00C4CC;
+            /* Lab Palette */
+            --lab-slate: #0F172A;
+            --lab-blue: #007AFF;
+            --lab-white: #FFFFFF;
+            --lab-gray: #F1F5F9;
+            --lab-border: #E2E8F0;
             
-            /* Backgrounds */
-            --bg-body: #F7F9FC;
-            --bg-card: #FFFFFF;
-            --bg-header: #FFFFFF;
-            
-            /* Text */
-            --text-main: #1A1B1E;
-            --text-secondary: #5F6B7C;
-            --text-meta: #8893A3;
+            /* Data Visualization Colors */
+            --status-ok: #10B981;      /* Green */
+            --status-warn: #F59E0B;    /* Amber */
+            --status-err: #EF4444;     /* Red */
+            --status-active: #3B82F6;  /* Blue */
 
-            /* UI Elements */
-            --border-light: #E6E9EF;
-            --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.05);
-            --shadow-hover: 0 8px 24px rgba(0, 87, 184, 0.12);
-            --radius: 8px;
+            /* Typography */
+            --font-ui: 'Inter', system-ui, sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
 
-            /* Status Colors */
-            --status-live-bg: #E6F7F5;
-            --status-live-text: #00877A;
-            --status-new-bg: #FFF4E5;
-            --status-new-text: #B95000;
-            --status-beta-bg: #F2F4F8;
-            --status-beta-text: #5F6B7C;
+            /* Effects */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.95);
         }
 
-        /* DARK THEME OVERRIDES */
-        [data-theme="dark"] {
-            --primary-blue: #4FA3FF;
-            --dark-navy: #F0F2F5;
-            --action-cyan: #00E5FF;
-            --bg-body: #0B1219;
-            --bg-card: #151E29;
-            --bg-header: #151E29;
-            --text-main: #FFFFFF;
-            --text-secondary: #A0AAB8;
-            --text-meta: #6B7888;
-            --border-light: #2A3645;
-            --shadow-card: 0 4px 12px rgba(0, 0, 0, 0.3);
-        }
+        /* ACCESSIBILITY VARS (Dynamic) */
+        body.contrast-high { --lab-gray: #000; --lab-white: #000; --lab-slate: #fff; --text-main: #fff; border: 1px solid white; }
+        body.font-large { font-size: 120%; }
+        body.dyslexic { font-family: 'Comic Sans MS', 'Verdana', sans-serif !important; }
+        body.saturation-low { filter: grayscale(100%); }
+        body.cursor-large { cursor: help !important; }
 
-        * { box-sizing: border-box; outline: none; }
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
 
         body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
-            background-color: var(--bg-body);
-            color: var(--text-main);
+            font-family: var(--font-ui);
+            background-color: var(--lab-gray);
+            color: #1E293B;
             line-height: 1.5;
-            -webkit-font-smoothing: antialiased;
-            transition: background 0.3s ease, color 0.3s ease;
+            overflow-x: hidden;
         }
 
         a { text-decoration: none; color: inherit; transition: 0.2s; }
 
-        /* --- MARQUEE --- */
-        .market-ticker {
-            background-color: var(--dark-navy);
-            color: #fff;
-            padding: 8px 0;
-            overflow: hidden;
-            font-size: 12px;
+        /* --- 1. ACCESSIBILITY UTILITY BAR --- */
+        .access-bar {
+            background: #fff;
+            border-bottom: 1px solid var(--lab-border);
+            padding: 8px 40px;
+            font-size: 11px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
             font-weight: 600;
-            letter-spacing: 0.5px;
-            position: relative;
-            z-index: 100;
-        }
-        .ticker-content {
-            display: inline-block;
-            white-space: nowrap;
-            animation: scroll 30s linear infinite;
-        }
-        .ticker-content span { margin-right: 40px; opacity: 0.9; }
-        .ticker-content span::before { content: "▲"; color: #00E676; margin-right: 8px; font-size: 10px; }
-        .ticker-content span.alert::before { content: "!"; color: #FF9100; }
-
-        @keyframes scroll { 0% { transform: translateX(100%); } 100% { transform: translateX(-100%); } }
-
-        /* --- HEADER --- */
-        header {
-            background: var(--bg-header);
-            border-bottom: 1px solid var(--border-light);
-            position: sticky;
-            top: 0;
-            z-index: 99;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.03);
+            color: #64748B;
         }
 
-        .nav-container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 0 24px;
-            height: 70px;
+        .access-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 6px;
+            color: #64748B;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .access-btn:hover { color: var(--lab-blue); }
+        .access-panel {
+            position: absolute;
+            top: 35px;
+            right: 40px;
+            background: white;
+            border: 1px solid var(--lab-border);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            display: none;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            z-index: 2000;
+            width: 300px;
+        }
+        .access-panel.active { display: grid; }
+        
+        .a11y-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background: #f8fafc;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .a11y-toggle:hover { border-color: var(--lab-blue); }
+        .a11y-toggle.active { background: #eff6ff; color: var(--lab-blue); border-color: var(--lab-blue); }
+
+        /* --- 2. LAB NAVIGATION --- */
+        .lab-nav {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            height: 65px;
+            border-bottom: 1px solid var(--lab-border);
+            display: flex;
+            align-items: center;
+            padding: 0 40px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
         }
 
-        .brand-section {
+        .brand-block {
             display: flex;
             align-items: center;
             gap: 12px;
+            margin-right: 40px;
         }
-
-        .logo-box {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, var(--primary-blue), #003C82);
+        .brand-logo {
+            width: 36px;
+            height: 36px;
+            background: var(--lab-slate);
             color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-weight: 800;
-            border-radius: 6px;
-            font-size: 18px;
-        }
-
-        .brand-text {
-            display: flex;
-            flex-direction: column;
-        }
-
-        .brand-title { font-size: 18px; font-weight: 800; letter-spacing: -0.5px; color: var(--text-main); }
-        .brand-sub { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; font-weight: 600; }
-
-        .nav-links {
-            display: flex;
-            gap: 30px;
-        }
-
-        .nav-links a {
-            font-size: 14px;
-            font-weight: 600;
-            color: var(--text-secondary);
-            padding: 8px 0;
-            border-bottom: 2px solid transparent;
-        }
-
-        .nav-links a:hover, .nav-links a.active {
-            color: var(--primary-blue);
-            border-bottom-color: var(--primary-blue);
-        }
-
-        .header-utilities {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
-
-        /* SEARCH BAR */
-        .search-wrapper {
-            position: relative;
-            width: 200px;
-        }
-        .search-input {
-            width: 100%;
-            padding: 8px 12px 8px 35px;
-            border-radius: 4px;
-            border: 1px solid var(--border-light);
-            background: var(--bg-body);
-            font-size: 13px;
-            color: var(--text-main);
-        }
-        .search-icon {
-            position: absolute;
-            left: 10px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-secondary);
-            font-size: 12px;
-        }
-
-        /* TRANSLATE WIDGET CUSTOMIZATION */
-        #google_translate_element {
-            overflow: hidden;
-            height: 28px;
-            border: 1px solid var(--border-light);
-            border-radius: 4px;
-            background: var(--bg-body);
-        }
-        .goog-te-gadget-simple {
-            background-color: transparent !important;
-            border: none !important;
-            padding: 4px 8px !important;
-        }
-        .goog-te-gadget-simple span { color: var(--text-main) !important; font-weight: 600; font-size: 12px; }
-
-        /* THEME TOGGLE */
-        .theme-btn {
-            background: none;
-            border: 1px solid var(--border-light);
-            padding: 6px;
-            border-radius: 4px;
-            cursor: pointer;
-            color: var(--text-main);
-        }
-
-        /* --- MAIN LAYOUT --- */
-        .main-container {
-            max-width: 1280px;
-            margin: 40px auto;
-            padding: 0 24px;
             display: grid;
-            grid-template-columns: 2.5fr 1fr;
+            place-items: center;
+            border-radius: 6px;
+            font-family: var(--font-code);
+            font-weight: 700;
+        }
+        .brand-info h1 { font-size: 16px; font-weight: 700; letter-spacing: -0.5px; }
+        .brand-info span { font-size: 10px; text-transform: uppercase; color: #64748B; font-weight: 600; }
+
+        .nav-items { display: flex; gap: 24px; }
+        .nav-link { font-size: 13px; font-weight: 500; color: #475569; position: relative; }
+        .nav-link.active { color: var(--lab-blue); }
+        .nav-link.active::after {
+            content: ''; position: absolute; bottom: -23px; left: 0; width: 100%; height: 2px; background: var(--lab-blue);
+        }
+
+        .search-lab {
+            margin-left: auto;
+            position: relative;
+        }
+        .lab-input {
+            background: #F1F5F9;
+            border: 1px solid transparent;
+            padding: 8px 12px 8px 35px;
+            border-radius: 6px;
+            font-family: var(--font-code);
+            font-size: 12px;
+            width: 240px;
+            transition: 0.2s;
+        }
+        .lab-input:focus { background: white; border-color: var(--lab-blue); width: 300px; box-shadow: 0 0 0 3px rgba(0,122,255,0.1); }
+        .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; opacity: 0.5; }
+
+        /* --- 3. HERO: LATEST RELEASE --- */
+        .release-deck {
+            background: linear-gradient(to right, #1e293b, #0f172a);
+            color: white;
+            padding: 60px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* Decoration: Abstract Data Streams */
+        .stream-deco {
+            position: absolute;
+            right: 0; top: 0; bottom: 0; width: 40%;
+            background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 10px);
+            pointer-events: none;
+        }
+
+        .release-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(16, 185, 129, 0.2);
+            color: #34D399;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-family: var(--font-code);
+        }
+        .release-badge .dot { width: 6px; height: 6px; background: currentColor; border-radius: 50%; margin-right: 8px; animation: pulse 2s infinite; }
+
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
+
+        .release-title { font-size: 36px; font-weight: 700; margin-bottom: 15px; letter-spacing: -1px; }
+        .release-desc { max-width: 700px; font-size: 16px; color: #94A3B8; margin-bottom: 30px; line-height: 1.6; }
+
+        .action-row { display: flex; gap: 15px; align-items: center; }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            height: 40px;
+            padding: 0 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .btn svg { width: 16px; height: 16px; margin-right: 8px; }
+        
+        .btn-primary { background: var(--lab-blue); color: white; border: 1px solid var(--lab-blue); }
+        .btn-primary:hover { background: #2563EB; }
+        
+        .btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.2); }
+
+        .copy-citation {
+            margin-left: 10px;
+            font-size: 12px;
+            color: #64748B;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+
+        /* --- 4. TELEMETRY RAIL (Replaced Market Ticker) --- */
+        .telemetry-rail {
+            background: #fff;
+            border-bottom: 1px solid var(--lab-border);
+            height: 36px;
+            display: flex;
+            align-items: center;
+            font-family: var(--font-code);
+            font-size: 11px;
+            color: #475569;
+            overflow: hidden;
+            position: relative;
+        }
+        .rail-title {
+            padding: 0 20px;
+            background: #F8FAFC;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            border-right: 1px solid var(--lab-border);
+            z-index: 10;
+        }
+        .rail-track {
+            display: flex;
+            animation: slide 35s linear infinite;
+        }
+        .rail-item {
+            display: flex;
+            align-items: center;
+            margin-right: 40px;
+            white-space: nowrap;
+        }
+        .rail-key { color: #94A3B8; margin-right: 8px; }
+        .rail-val { font-weight: 600; color: #0F172A; }
+        .rail-status { width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; }
+        .st-ok { background: var(--status-ok); }
+        .st-warn { background: var(--status-warn); }
+        
+        @keyframes slide { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
+
+        /* --- 5. GRID LAYOUT --- */
+        .lab-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 3fr 1fr;
             gap: 40px;
         }
 
-        /* --- CARDS --- */
         .section-header {
-            font-size: 24px;
+            font-size: 18px;
             font-weight: 700;
-            margin-bottom: 25px;
+            color: var(--lab-slate);
+            margin-bottom: 20px;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
-        .section-count {
-            font-size: 12px;
-            background: var(--border-light);
-            padding: 4px 10px;
-            border-radius: 20px;
-            color: var(--text-secondary);
-            font-weight: 600;
-        }
+        .count-pill { background: #E2E8F0; padding: 2px 8px; border-radius: 12px; font-size: 11px; }
 
-        .card {
-            background: var(--bg-card);
-            border-radius: var(--radius);
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: var(--shadow-card);
-            border: 1px solid var(--border-light);
-            display: flex;
+        /* CARDS */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 20px;
-            transition: transform 0.2s, box-shadow 0.2s;
-            position: relative;
         }
 
-        .card:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-hover);
-        }
-
-        /* NEW RIBBON FOR ANSCOM LIB */
-        .ribbon {
-            position: absolute;
-            top: -10px;
-            right: 20px;
-            background: var(--primary-blue);
-            color: white;
-            font-size: 10px;
-            font-weight: 700;
-            padding: 6px 12px;
-            border-radius: 4px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-            z-index: 2;
-        }
-
-        .card-icon {
-            width: 50px;
-            height: 50px;
-            background: var(--bg-body);
+        .lab-card {
+            background: white;
+            border: 1px solid var(--lab-border);
             border-radius: 8px;
+            padding: 24px;
+            transition: all 0.2s;
+            position: relative;
             display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 18px;
-            font-weight: 800;
-            color: var(--primary-blue);
-            flex-shrink: 0;
+            flex-direction: column;
+        }
+        .lab-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: #CBD5E1;
+            transform: translateY(-2px);
         }
 
-        .card-body { flex: 1; }
-
-        .card-meta-row {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 8px;
+        .card-top { display: flex; justify-content: space-between; margin-bottom: 16px; }
+        .card-icon { 
+            width: 40px; height: 40px; 
+            border-radius: 6px; 
+            background: #F8FAFC; border: 1px solid var(--lab-border);
+            color: var(--lab-slate);
+            display: grid; place-items: center; font-weight: 700; font-family: var(--font-code);
         }
-
-        .status-badge {
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            padding: 4px 8px;
-            border-radius: 4px;
+        .status-pill {
+            font-size: 10px; font-weight: 700; text-transform: uppercase;
+            padding: 4px 8px; border-radius: 4px; height: fit-content;
         }
-        .status-new { background: var(--status-new-bg); color: var(--status-new-text); }
-        .status-live { background: var(--status-live-bg); color: var(--status-live-text); }
-        .status-beta { background: var(--status-beta-bg); color: var(--status-beta-text); }
+        .sp-live { background: #ECFDF5; color: #059669; }
+        .sp-beta { background: #EFF6FF; color: #2563EB; }
 
-        .blink {
-            display: inline-block;
-            width: 6px;
-            height: 6px;
-            background-color: currentColor;
-            border-radius: 50%;
-            margin-right: 4px;
-            animation: blink 1.5s infinite;
-        }
-        @keyframes blink { 50% { opacity: 0; } }
+        .card-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--lab-slate); }
+        .card-desc { font-size: 13px; color: #64748B; margin-bottom: 20px; line-height: 1.6; flex-grow: 1; }
 
-        .card-title {
-            font-size: 20px;
-            font-weight: 700;
-            margin: 0 0 8px 0;
-            color: var(--text-main);
-        }
-
-        .card-desc {
-            font-size: 15px;
-            color: var(--text-secondary);
-            margin-bottom: 16px;
-            line-height: 1.6;
-        }
-
-        .tech-tags {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 20px;
-        }
-        .tech-tag {
-            font-size: 11px;
-            font-family: 'JetBrains Mono', monospace;
-            color: var(--text-meta);
-            background: var(--bg-body);
-            padding: 2px 6px;
-            border-radius: 3px;
-            border: 1px solid var(--border-light);
+        .tech-stack { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+        .tech-badge { 
+            font-size: 10px; padding: 2px 6px; background: #F1F5F9; 
+            color: #475569; border-radius: 3px; font-family: var(--font-code); 
         }
 
         .card-actions {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            border-top: 1px solid var(--border-light);
+            border-top: 1px solid var(--lab-border);
             padding-top: 16px;
+            display: flex;
+            gap: 12px;
         }
-
-        .btn-action {
-            display: inline-flex;
-            align-items: center;
-            font-size: 12px;
-            font-weight: 600;
-            padding: 8px 16px;
-            border-radius: 50px;
-            text-decoration: none;
-            transition: 0.2s;
+        .action-link { 
+            font-size: 12px; font-weight: 600; color: #475569; 
+            display: flex; align-items: center; gap: 5px; 
         }
-        
-        .btn-primary {
-            background-color: var(--primary-blue);
-            color: white;
-        }
-        .btn-primary:hover { background-color: #004494; }
-
-        .btn-outline {
-            background-color: transparent;
-            border: 1px solid var(--border-light);
-            color: var(--text-main);
-        }
-        .btn-outline:hover { border-color: var(--text-main); }
-        
-        .btn-text {
-            color: var(--primary-blue);
-            padding: 8px 0;
-        }
-        .btn-text:hover { text-decoration: underline; }
+        .action-link:hover { color: var(--lab-blue); }
 
         /* --- SIDEBAR --- */
-        .sidebar-widget {
-            background: var(--bg-card);
-            border-radius: var(--radius);
-            border: 1px solid var(--border-light);
+        .widget {
+            background: white;
+            border: 1px solid var(--lab-border);
+            border-radius: 8px;
             padding: 20px;
-            margin-bottom: 24px;
-            box-shadow: var(--shadow-card);
+            margin-bottom: 20px;
+        }
+        .widget-head { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; margin-bottom: 15px; }
+
+        .sys-row {
+            display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;
+        }
+        .sys-key { color: #64748B; }
+        .sys-val { font-family: var(--font-code); font-weight: 600; }
+
+        .focus-area li {
+            font-size: 13px; color: #475569; margin-bottom: 8px; padding-left: 10px; border-left: 2px solid var(--lab-border);
         }
 
-        .widget-title {
-            font-size: 14px;
-            font-weight: 700;
-            text-transform: uppercase;
-            color: var(--text-secondary);
-            margin-bottom: 15px;
-            border-bottom: 1px solid var(--border-light);
-            padding-bottom: 10px;
-            letter-spacing: 0.5px;
-        }
-
-        .time-display {
-            font-family: 'JetBrains Mono', monospace;
-        }
-        .local-time {
-            font-size: 32px;
-            font-weight: 700;
-            color: var(--primary-blue);
-            text-align: center;
-            margin: 10px 0 20px 0;
-        }
-        
-        .market-row {
-            display: flex;
-            justify-content: space-between;
-            font-size: 13px;
-            margin-bottom: 8px;
-            color: var(--text-main);
-        }
-        .market-row span.closed { color: var(--text-meta); }
-
-        .focus-list li {
-            font-size: 14px;
-            color: var(--text-secondary);
-            margin-bottom: 8px;
-            padding-left: 12px;
-            position: relative;
-        }
-        .focus-list li::before {
-            content: "•";
-            color: var(--primary-blue);
-            position: absolute;
-            left: 0;
-        }
-
-        @media (max-width: 900px) {
-            .nav-container { height: auto; flex-direction: column; padding: 15px; gap: 15px; }
-            .nav-links { overflow-x: auto; width: 100%; justify-content: center; }
-            .header-utilities { width: 100%; justify-content: center; flex-wrap: wrap; }
-            .main-container { grid-template-columns: 1fr; }
-            .ribbon { position: relative; top: 0; right: 0; display: inline-block; margin-bottom: 10px; }
+        @media(max-width: 900px) {
+            .lab-container { grid-template-columns: 1fr; }
+            .access-bar { justify-content: center; }
+            .nav-items { display: none; }
         }
     </style>
 </head>
-<body>
+<body id="body">
 
-    <!-- MARKET TICKER -->
-    <div class="market-ticker">
-        <div class="ticker-content">
-            <span class="alert">NEW RELEASE: 'anscom' Python Library v1.0.0 (Jan 15, 2026)</span>
-            <span>Gold ETF Engine: Forensic Pricing Paper Published</span>
-            <span>AnsCom Terminal: Active Telemetry</span>
-            <span>NIFTY-500 Analyser: Live</span>
-            <span>ZENTEC Model: Inference Stable</span>
-            <span>AI10 Tech Index: Rebalanced</span>
+    <!-- 1. ACCESSIBILITY UTILITIES -->
+    <div class="access-bar">
+        <button class="access-btn" onclick="toggleAccessPanel()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            ACCESSIBILITY OPTIONS (12)
+        </button>
+        <div id="google_translate_element"></div>
+        
+        <!-- Hidden Panel -->
+        <div class="access-panel" id="accessPanel">
+            <div class="a11y-toggle" onclick="toggleBodyClass('contrast-high')">High Contrast</div>
+            <div class="a11y-toggle" onclick="toggleBodyClass('font-large')">Larger Text</div>
+            <div class="a11y-toggle" onclick="toggleBodyClass('dyslexic')">Dyslexia Font</div>
+            <div class="a11y-toggle" onclick="toggleBodyClass('saturation-low')">Desaturate</div>
+            <div class="a11y-toggle" onclick="toggleBodyClass('cursor-large')">Large Cursor</div>
+            <div class="a11y-toggle" onclick="alert('Screen Reader Optimization Active')">Screen Reader Mode</div>
+            <div class="a11y-toggle" onclick="document.body.style.lineHeight='2'">Relaxed Spacing</div>
+            <div class="a11y-toggle" onclick="document.body.style.letterSpacing='1px'">Wide Text</div>
         </div>
     </div>
 
-    <!-- MODERN HEADER -->
-    <header>
-        <div class="nav-container">
-            <a href="https://github.com/PC5518" class="brand-section">
-                <div class="logo-box">A</div>
-                <div class="brand-text">
-                    <span class="brand-title">AnsCom Quantitative</span>
-                    <span class="brand-sub">Suite & Research Infrastructure</span>
-                </div>
-            </a>
+    <!-- 2. LAB NAVIGATION -->
+    <nav class="lab-nav">
+        <div class="brand-block">
+            <a href="https://github.com/PC5518" class="brand-logo">A</a>
+            <div class="brand-info">
+                <h1>AnsCom Labs</h1>
+                <span>Quant Research & Infra</span>
+            </div>
+        </div>
 
-            <nav class="nav-links">
-                <a href="#" class="active">Research Modules</a>
-                <a href="#">Telemetry</a>
-                <a href="#">Publications</a>
-                <a href="https://pc5518.github.io/AnsComfinancialsuite/contact/">Contact</a>
-            </nav>
+        <div class="nav-items">
+            <a href="#" class="nav-link active">Modules</a>
+            <a href="#" class="nav-link">Publications</a>
+            <a href="#" class="nav-link">System Status</a>
+            <a href="https://pc5518.github.io/AnsComfinancialsuite/contact/" class="nav-link">Contact</a>
+        </div>
 
-            <div class="header-utilities">
-                <!-- Search Bar -->
-                <div class="search-wrapper">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" class="search-input" placeholder="Search Symbols...">
-                </div>
+        <div class="search-lab">
+            <span class="search-icon">λ</span>
+            <input type="text" class="lab-input" placeholder="Query modules or symbols...">
+        </div>
+    </nav>
 
-                <!-- Google Translate Widget -->
-                <div id="google_translate_element"></div>
-
-                <!-- Theme Switcher -->
-                <button class="theme-btn" onclick="toggleTheme()" title="Toggle Dark Mode">
-                    ◑
-                </button>
+    <!-- 3. HERO: FEATURED DEPLOYMENT -->
+    <header class="release-deck">
+        <div class="stream-deco"></div>
+        <div style="position:relative; z-index:2;">
+            <div class="release-badge">
+                <span class="dot"></span> LATEST DEPLOYMENT: V1.0.0
+            </div>
+            <h1 class="release-title">AnsCom C-Accelerated Filesystem Engine</h1>
+            <p class="release-desc">
+                High-performance Python bindings for recursive data partitioning. Designed for massive engineering data lakes, bridging raw C speed with Pythonic usability. Now available on PyPI.
+            </p>
+            <div class="action-row">
+                <a href="https://pypi.org/project/anscom/" target="_blank" class="btn btn-primary">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm0 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm-1 4v4h-3v2h3v4h2v-4h3v-2h-3v-4h-2z"/></svg>
+                    View on PyPI
+                </a>
+                <a href="https://github.com/PC5518/anscom-nfie-python-extension" target="_blank" class="btn btn-secondary">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    Source Code
+                </a>
+                <span class="copy-citation" onclick="alert('Citation copied to clipboard')">Cite this software "</span>
             </div>
         </div>
     </header>
 
-    <div class="main-container">
+    <!-- 4. LOGICAL TELEMETRY RAIL -->
+    <div class="telemetry-rail">
+        <div class="rail-title">LAB TELEMETRY</div>
+        <div class="rail-track">
+            <div class="rail-item">
+                <div class="rail-status st-ok"></div>
+                <span class="rail-key">ANSCOM_BUILD:</span><span class="rail-val">PASSING (v1.0.0)</span>
+            </div>
+            <div class="rail-item">
+                <div class="rail-status st-ok"></div>
+                <span class="rail-key">GOLD_FV_ENGINE:</span><span class="rail-val">ONLINE (Latency 12ms)</span>
+            </div>
+            <div class="rail-item">
+                <div class="rail-status st-ok"></div>
+                <span class="rail-key">NET_DEPTH:</span><span class="rail-val">MONITORING (40 Nodes)</span>
+            </div>
+            <div class="rail-item">
+                <div class="rail-status st-warn"></div>
+                <span class="rail-key">ZENTEC_MODEL:</span><span class="rail-val">RETRAINING (Epoch 4/10)</span>
+            </div>
+            <div class="rail-item">
+                <div class="rail-status st-ok"></div>
+                <span class="rail-key">PAPER_STATUS:</span><span class="rail-val">PUBLISHED (Jan 15)</span>
+            </div>
+             <!-- Duplicate for loop -->
+            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">ANSCOM_BUILD:</span><span class="rail-val">PASSING</span></div>
+        </div>
+    </div>
 
-        <!-- MAIN COLUMN -->
+    <!-- 5. MAIN CONTENT -->
+    <div class="lab-container">
+        
         <main>
             <div class="section-header">
-                Active Research Modules
-                <span class="section-count">6 Projects</span>
+                <span>Active Research Modules</span>
+                <span class="count-pill">6 Total</span>
             </div>
 
-            <!-- CARD 1: ANSCOM LIBRARY (FEATURED) -->
-            <article class="card">
-                <div class="ribbon">NEW RELEASE</div>
-                <div class="card-icon">Py</div>
-                <div class="card-body">
-                    <div class="card-meta-row">
-                        <span class="status-badge status-new"><span class="blink"></span>Released Jan 15, 2026</span>
+            <div class="project-grid">
+                
+                <!-- MODULE 1: Gold Engine -->
+                <article class="lab-card">
+                    <div class="card-top">
+                        <div class="card-icon">Au</div>
+                        <span class="status-pill sp-live">Live Pricing</span>
                     </div>
-                    <h2 class="card-title">AnsCom Python Library</h2>
-                    <div class="tech-tags">
-                        <span class="tech-tag">C-ACCELERATED</span>
-                        <span class="tech-tag">FILESYSTEM INTELLIGENCE</span>
-                        <span class="tech-tag">DATA LAKES</span>
-                    </div>
-                    <div class="card-desc">
-                        A C-accelerated recursive filesystem intelligence engine with Python bindings, built for high-throughput analysis, classification, and partitioning of massive research / engineering data lakes.
+                    <h3 class="card-title">Gold ETF Fair Value Engine</h3>
+                    <p class="card-desc">Post-market pricing engine. Approximates GOLDIETF NAV using real-time XAUUSD/USDINR parity feeds.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">PYTHON</span>
+                        <span class="tech-badge">ARBITRAGE</span>
+                        <span class="tech-badge">FORENSICS</span>
                     </div>
                     <div class="card-actions">
-                        <!-- BUTTONS SIDE BY SIDE AS REQUESTED -->
-                        <a href="https://pypi.org/project/anscom/" target="_blank" class="btn-action btn-primary">
-                            View on PyPI
+                        <a href="https://github.com/PC5518/gold-etf-postmarket-fair-value-engine" class="action-link">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            Repository
                         </a>
-                        <a href="https://github.com/PC5518/anscom-nfie-python-extension" target="_blank" class="btn-action btn-outline">
-                            View on GitHub
+                        <a href="#" class="action-link">Paper →</a>
+                    </div>
+                </article>
+
+                <!-- MODULE 2: Telemetry -->
+                <article class="lab-card">
+                    <div class="card-top">
+                        <div class="card-icon">Tx</div>
+                        <span class="status-pill sp-live">Active</span>
+                    </div>
+                    <h3 class="card-title">netDepth Monitoring</h3>
+                    <p class="card-desc">Telemetry dashboard built with Ookla. Monitors 40+ network/market metrics via AnsCom Terminal.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">NETWORKING</span>
+                        <span class="tech-badge">VISUALIZATION</span>
+                    </div>
+                    <div class="card-actions">
+                        <a href="https://github.com/PC5518/anscom-netDepth-ultimate" class="action-link">
+                             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                             Repository
                         </a>
-                        <a href="#" class="btn-action btn-text" style="margin-left: auto;">Read Docs →</a>
                     </div>
-                </div>
-            </article>
+                </article>
 
-            <!-- CARD 2: GOLD ETF -->
-            <article class="card">
-                <div class="card-icon">Au</div>
-                <div class="card-body">
-                    <div class="card-meta-row">
-                        <span class="status-badge status-live"><span class="blink"></span>Live Pricing</span>
+                <!-- MODULE 3: ZENTEC ML -->
+                <article class="lab-card">
+                    <div class="card-top">
+                        <div class="card-icon">ML</div>
+                        <span class="status-pill sp-beta">Inference</span>
                     </div>
-                    <h2 class="card-title">Gold ETF Fair Value Engine</h2>
-                    <div class="tech-tags">
-                        <span class="tech-tag">ARBITRAGE</span>
-                        <span class="tech-tag">FOREX PARITY</span>
-                        <span class="tech-tag">NSE/COMEX</span>
-                    </div>
-                    <div class="card-desc">
-                        A live terminal that approximates the ICICI Prudential Gold ETF (GOLDIETF) price after NSE market hours. Utilizes real-time XAUUSD (Global Spot) and USDINR feeds to calculate fair-value gaps for next-day open.
+                    <h3 class="card-title">ZENTEC Prediction</h3>
+                    <p class="card-desc">Random Forest time-series model. Trained on 10+ years of OHLC data to predict directional bias.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">SCIKIT-LEARN</span>
+                        <span class="tech-badge">STATISTICS</span>
                     </div>
                     <div class="card-actions">
-                        <a href="https://github.com/PC5518/gold-etf-postmarket-fair-value-engine" target="_blank" class="btn-action btn-outline">Repository</a>
-                        <a href="#" class="btn-action btn-text">Gap Analysis →</a>
+                        <a href="https://github.com/PC5518/nse-zentec-stock-prediction-ml" class="action-link">
+                             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                             Repository
+                        </a>
                     </div>
-                </div>
-            </article>
+                </article>
 
-            <!-- CARD 3: TELEMETRY -->
-            <article class="card">
-                <div class="card-icon">Tx</div>
-                <div class="card-body">
-                    <div class="card-meta-row">
-                        <span class="status-badge status-live"><span class="blink"></span>Live Telemetry</span>
+                <!-- MODULE 4: AI Index -->
+                <article class="lab-card">
+                    <div class="card-top">
+                        <div class="card-icon">Ix</div>
+                        <span class="status-pill sp-live">Live Ticks</span>
                     </div>
-                    <h2 class="card-title">AnsCom netDepth Monitoring</h2>
-                    <div class="tech-tags">
-                        <span class="tech-tag">NETWORK ANALYTICS</span>
-                        <span class="tech-tag">DASHBOARDING</span>
-                        <span class="tech-tag">MULTI-THREADING</span>
-                    </div>
-                    <div class="card-desc">
-                        Suite of telemetry tools including AnsCom Terminal (equity/crypto profit tracking) and netDepth Ultimate. Monitors 40+ network and market metrics in real-time.
+                    <h3 class="card-title">AnsCom AI10 Index</h3>
+                    <p class="card-desc">Personalized technology index tracking top 10 AI-exposed US equities.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">INDEXING</span>
+                        <span class="tech-badge">DATA FEED</span>
                     </div>
                     <div class="card-actions">
-                        <a href="https://github.com/PC5518/anscom-netDepth-ultimate" target="_blank" class="btn-action btn-outline">Repository</a>
+                        <a href="https://github.com/PC5518/anscom-ai10-tech-index" class="action-link">
+                             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                             Repository
+                        </a>
                     </div>
-                </div>
-            </article>
+                </article>
 
-            <!-- CARD 4: ML PREDICTION -->
-            <article class="card">
-                <div class="card-icon">ML</div>
-                <div class="card-body">
-                    <div class="card-meta-row">
-                        <span class="status-badge status-beta">Inference Active</span>
+                <!-- MODULE 5: Nifty Scanner -->
+                <article class="lab-card">
+                    <div class="card-top">
+                        <div class="card-icon">N5</div>
+                        <span class="status-pill sp-live">Scanning</span>
                     </div>
-                    <h2 class="card-title">ZENTEC Stock Prediction</h2>
-                    <div class="tech-tags">
-                        <span class="tech-tag">RANDOM FOREST</span>
-                        <span class="tech-tag">TIME-SERIES</span>
-                        <span class="tech-tag">SCIKIT-LEARN</span>
-                    </div>
-                    <div class="card-desc">
-                        Machine-learning model predicting next-day move and BUY/SELL/HOLD recommendations for NSE:ZENTEC. Trained on 10+ years of OHLC data combined with SMA, EMA, and RSI technical indicators.
+                    <h3 class="card-title">NIFTY-500 Scanner</h3>
+                    <p class="card-desc">Liquidity void and volatility scanner for Indian equities. Part of MarketOS.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">NSEPY</span>
+                        <span class="tech-badge">ALGORITHMIC</span>
                     </div>
                     <div class="card-actions">
-                        <a href="https://github.com/PC5518/nse-zentec-stock-prediction-ml" target="_blank" class="btn-action btn-outline">Repository</a>
+                        <a href="https://github.com/PC5518/ansCom-terminal-equity_marketos" class="action-link">
+                             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                             Repository
+                        </a>
                     </div>
-                </div>
-            </article>
+                </article>
 
-            <!-- CARD 5: INDEX -->
-            <article class="card">
-                <div class="card-icon">Ix</div>
-                <div class="card-body">
-                    <div class="card-meta-row">
-                        <span class="status-badge status-live"><span class="blink"></span>Live Ticks</span>
-                    </div>
-                    <h2 class="card-title">AnsCom AI10 Tech Index</h2>
-                    <div class="tech-tags">
-                        <span class="tech-tag">INDEX CONSTRUCTION</span>
-                        <span class="tech-tag">ALTERNATIVE DATA</span>
-                    </div>
-                    <div class="card-desc">
-                        A personalized technology index created to track the top 10 U.S.-listed tech companies based on artificial intelligence exposure. Updates live index values using real-time market data feeds.
-                    </div>
-                    <div class="card-actions">
-                        <a href="https://github.com/PC5518/anscom-ai10-tech-index" target="_blank" class="btn-action btn-outline">Repository</a>
-                    </div>
-                </div>
-            </article>
-
-            <!-- CARD 6: NIFTY 500 -->
-            <article class="card">
-                <div class="card-icon">N5</div>
-                <div class="card-body">
-                    <div class="card-meta-row">
-                        <span class="status-badge status-live">Live Scanner</span>
-                    </div>
-                    <h2 class="card-title">NIFTY-500 MarketOS</h2>
-                    <div class="tech-tags">
-                        <span class="tech-tag">SCREENER</span>
-                        <span class="tech-tag">LIQUIDITY VOIDS</span>
-                        <span class="tech-tag">NSE INDIA</span>
-                    </div>
-                    <div class="card-desc">
-                        Advanced screening module integrated into the AnsCom Terminal. Scans all NIFTY-500 stocks to identify volatile movers, structural breakouts, and liquidity voids.
-                    </div>
-                    <div class="card-actions">
-                        <a href="https://github.com/PC5518/ansCom-terminal-equity_marketos" target="_blank" class="btn-action btn-outline">Repository</a>
-                    </div>
-                </div>
-            </article>
+            </div>
         </main>
 
-        <!-- SIDEBAR -->
         <aside>
-            <!-- GLOBAL MARKETS CLOCK -->
-            <div class="sidebar-widget">
-                <div class="widget-title">Global Markets</div>
-                <div class="time-display">
-                    <div class="local-time" id="local-clock">--:--:--</div>
-                    <div class="market-row">
-                        <span>New Delhi (NSE)</span>
-                        <span id="time-delhi">--:--</span>
-                    </div>
-                    <div class="market-row">
-                        <span>New York (NYSE)</span>
-                        <span id="time-ny">--:--</span>
-                    </div>
-                    <div class="market-row">
-                        <span>London (LSE)</span>
-                        <span id="time-london">--:--</span>
-                    </div>
-                    <div class="market-row">
-                        <span>Tokyo (TSE)</span>
-                        <span id="time-tokyo">--:--</span>
-                    </div>
-                    <div class="market-row">
-                        <span>Hong Kong (HKSE)</span>
-                        <span id="time-hk">--:--</span>
-                    </div>
+            <!-- CLOCK WIDGET -->
+            <div class="widget">
+                <div class="widget-head">Global Time</div>
+                <div style="font-size: 28px; font-weight: 300; margin-bottom: 20px;" id="local-clock">--:--:--</div>
+                <div class="sys-row">
+                    <span class="sys-key">NEW DELHI</span><span class="sys-val" id="time-delhi">--:--</span>
+                </div>
+                <div class="sys-row">
+                    <span class="sys-key">NEW YORK</span><span class="sys-val" id="time-ny">--:--</span>
+                </div>
+                <div class="sys-row">
+                    <span class="sys-key">LONDON</span><span class="sys-val" id="time-london">--:--</span>
+                </div>
+                <div class="sys-row">
+                    <span class="sys-key">TOKYO</span><span class="sys-val" id="time-tokyo">--:--</span>
                 </div>
             </div>
 
-            <div class="sidebar-widget">
-                <div class="widget-title">About Suite</div>
-                <p style="font-size: 14px; color: var(--text-secondary); line-height: 1.6;">
-                    Built quantitative research infrastructure for fair-value pricing, telemetry analytics, and ML time-series modeling in Indian capital markets. 
-                    <br><br>
-                    <strong>Lead:</strong> Aditya Narayan Singh (PC5518)
-                </p>
-            </div>
-
-            <div class="sidebar-widget">
-                <div class="widget-title">Tech Stack</div>
-                <div class="tech-tags">
-                    <span class="tech-tag">Python 3.12</span>
-                    <span class="tech-tag">C/C++</span>
-                    <span class="tech-tag">Pandas</span>
-                    <span class="tech-tag">NumPy</span>
-                    <span class="tech-tag">Scikit-Learn</span>
-                    <span class="tech-tag">CustomTkinter</span>
-                    <span class="tech-tag">NSEPy</span>
-                </div>
-            </div>
-
-            <div class="sidebar-widget">
-                <div class="widget-title">Research Focus</div>
-                <ul class="focus-list" style="list-style: none; padding: 0;">
-                    <li>Post-Market Fair Value</li>
-                    <li>Architectural Skepticism</li>
+            <!-- RESEARCH FOCUS -->
+            <div class="widget">
+                <div class="widget-head">Research Areas</div>
+                <ul class="focus-area" style="list-style:none;">
+                    <li>Filesystem Intelligence</li>
+                    <li>Fair Value Arbitrage</li>
                     <li>Network Telemetry</li>
-                    <li>Algorithmic Trading Infra</li>
-                    <li>Statistical Arbitrage</li>
-                    <li>Market Broken Structure</li>
+                    <li>ML Time-Series</li>
+                    <li>Market Structure</li>
                 </ul>
+            </div>
+            
+            <div class="widget">
+                <div class="widget-head">Lab Status</div>
+                <div class="sys-row">
+                    <span class="sys-key">Lead</span><span class="sys-val">PC5518</span>
+                </div>
+                <div class="sys-row">
+                    <span class="sys-key">Active Projects</span><span class="sys-val">6</span>
+                </div>
+                <div class="sys-row">
+                    <span class="sys-key">System</span><span style="color:var(--status-ok); font-weight:700;">OPERATIONAL</span>
+                </div>
             </div>
         </aside>
 
@@ -725,7 +651,7 @@
     <script type="text/javascript">
         function googleTranslateElementInit() {
           new google.translate.TranslateElement({
-            pageLanguage: 'en', 
+            pageLanguage: 'en',
             layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
             autoDisplay: false
           }, 'google_translate_element');
@@ -734,18 +660,16 @@
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     <script>
-        // THEME LOGIC
-        let isDark = false;
-        function toggleTheme() {
-            isDark = !isDark;
-            if (isDark) {
-                document.body.setAttribute('data-theme', 'dark');
-            } else {
-                document.body.removeAttribute('data-theme');
-            }
+        // Accessibility Logic
+        function toggleAccessPanel() {
+            document.getElementById('accessPanel').classList.toggle('active');
         }
 
-        // CLOCK LOGIC
+        function toggleBodyClass(className) {
+            document.body.classList.toggle(className);
+        }
+
+        // Clock Logic
         function updateClocks() {
             const now = new Date();
             const localOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
@@ -757,7 +681,6 @@
             document.getElementById('time-ny').innerText = getCityTime('America/New_York');
             document.getElementById('time-london').innerText = getCityTime('Europe/London');
             document.getElementById('time-tokyo').innerText = getCityTime('Asia/Tokyo');
-            document.getElementById('time-hk').innerText = getCityTime('Asia/Hong_Kong');
         }
         setInterval(updateClocks, 1000);
         updateClocks();
