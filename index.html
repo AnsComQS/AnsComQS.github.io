@@ -5,423 +5,231 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AnsCom Quantitative Labs | Research Infrastructure</title>
     
-    <!-- Fonts: Inter (UI) and JetBrains Mono (Data/Code) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
-        /* 
-           THEME ENGINE: COMPUTATIONAL LABORATORY
+        /* THEME ENGINE: COMPUTATIONAL LABORATORY
         */
         :root {
-            /* Lab Palette */
-            --lab-slate: #0F172A;
-            --lab-blue: #007AFF;
-            --lab-white: #FFFFFF;
-            --lab-gray: #F1F5F9;
-            --lab-border: #E2E8F0;
+            /* Default Light Theme */
+            --bg-body: #F1F5F9;
+            --bg-nav: rgba(255, 255, 255, 0.85);
+            --bg-card: #FFFFFF;
+            --bg-widget: #FFFFFF;
+            --bg-input: #F1F5F9;
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            --border-color: #E2E8F0;
+            --border-hover: #CBD5E1;
+            --accent-blue: #007AFF;
+            --accent-hover: #2563EB;
+            --drawer-bg: rgba(255, 255, 255, 0.98);
             
             /* Data Visualization Colors */
-            --status-ok: #10B981;      /* Green */
-            --status-warn: #F59E0B;    /* Amber */
-            --status-err: #EF4444;     /* Red */
-            --status-active: #3B82F6;  /* Blue */
+            --status-ok: #10B981;
+            --status-warn: #F59E0B;
+            --status-err: #EF4444;
 
-            /* Typography */
+            /* Typography & Effects */
             --font-ui: 'Inter', system-ui, sans-serif;
             --font-code: 'JetBrains Mono', monospace;
-
-            /* Effects */
             --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --glass-bg: rgba(255, 255, 255, 0.95);
+            --shadow-drawer: -10px 0 30px rgba(0, 0, 0, 0.1);
         }
 
-        /* ACCESSIBILITY VARS (Dynamic) */
-        body.contrast-high { --lab-gray: #000; --lab-white: #000; --lab-slate: #fff; --text-main: #fff; border: 1px solid white; }
-        body.font-large { font-size: 120%; }
-        body.dyslexic { font-family: 'Comic Sans MS', 'Verdana', sans-serif !important; }
-        body.saturation-low { filter: grayscale(100%); }
-        body.cursor-large { cursor: help !important; }
+        /* 1. Midnight Dark */
+        body.theme-midnight {
+            --bg-body: #0B1120; --bg-nav: rgba(15, 23, 42, 0.85); --bg-card: #1E293B; --bg-widget: #1E293B;
+            --bg-input: #0F172A; --text-main: #F8FAFC; --text-muted: #94A3B8; --border-color: #334155;
+            --border-hover: #475569; --drawer-bg: rgba(30, 41, 59, 0.98); --shadow-drawer: -10px 0 30px rgba(0, 0, 0, 0.5);
+        }
+        /* 2. OLED Pure Black */
+        body.theme-oled {
+            --bg-body: #000000; --bg-nav: rgba(0, 0, 0, 0.85); --bg-card: #0A0A0A; --bg-widget: #0A0A0A;
+            --bg-input: #111111; --text-main: #FFFFFF; --text-muted: #A3A3A3; --border-color: #262626;
+            --border-hover: #404040; --accent-blue: #3B82F6; --drawer-bg: rgba(10, 10, 10, 0.98);
+        }
+        /* 3. Cyber Matrix */
+        body.theme-matrix {
+            --bg-body: #0D1117; --bg-nav: rgba(13, 17, 23, 0.85); --bg-card: #161B22; --bg-widget: #161B22;
+            --bg-input: #010409; --text-main: #C9D1D9; --text-muted: #8B949E; --border-color: #30363D;
+            --accent-blue: #2EA043; --accent-hover: #3FB950; --drawer-bg: rgba(22, 27, 34, 0.98);
+        }
+        /* 4. Deep Ocean */
+        body.theme-ocean {
+            --bg-body: #0F172A; --bg-nav: rgba(15, 23, 42, 0.85); --bg-card: #172554; --bg-widget: #172554;
+            --bg-input: #1E3A8A; --text-main: #DBEAFE; --text-muted: #93C5FD; --border-color: #1E3A8A;
+            --accent-blue: #60A5FA; --drawer-bg: rgba(23, 37, 84, 0.98);
+        }
+        /* 5. Solarized Dark */
+        body.theme-solarized {
+            --bg-body: #002B36; --bg-nav: rgba(0, 43, 54, 0.85); --bg-card: #073642; --bg-widget: #073642;
+            --bg-input: #002B36; --text-main: #839496; --text-muted: #586E75; --border-color: #002B36;
+            --border-hover: #586E75; --accent-blue: #2AA198; --drawer-bg: rgba(7, 54, 66, 0.98);
+        }
 
         * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
 
         body {
-            font-family: var(--font-ui);
-            background-color: var(--lab-gray);
-            color: #1E293B;
-            line-height: 1.5;
-            overflow-x: hidden;
+            font-family: var(--font-ui); background-color: var(--bg-body); color: var(--text-main);
+            line-height: 1.5; overflow-x: hidden; transition: background-color 0.4s ease, color 0.4s ease;
         }
-
         a { text-decoration: none; color: inherit; transition: 0.2s; }
 
-        /* --- 1. ACCESSIBILITY UTILITY BAR --- */
+        /* ACCESSIBILITY BAR */
         .access-bar {
-            background: #fff;
-            border-bottom: 1px solid var(--lab-border);
-            padding: 8px 40px;
-            font-size: 11px;
-            display: flex;
-            justify-content: flex-end;
-            gap: 15px;
-            font-weight: 600;
-            color: #64748B;
+            background: var(--bg-card); border-bottom: 1px solid var(--border-color);
+            padding: 8px 40px; font-size: 11px; display: flex; justify-content: flex-end;
+            gap: 15px; font-weight: 600; color: var(--text-muted); transition: all 0.4s ease;
         }
 
-        .access-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: #64748B;
-            font-size: 11px;
-            font-weight: 600;
-        }
-        .access-btn:hover { color: var(--lab-blue); }
-        .access-panel {
-            position: absolute;
-            top: 35px;
-            right: 40px;
-            background: white;
-            border: 1px solid var(--lab-border);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: var(--shadow-md);
-            display: none;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-            z-index: 2000;
-            width: 300px;
-        }
-        .access-panel.active { display: grid; }
-        
-        .a11y-toggle {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            padding: 8px;
-            background: #f8fafc;
-            border-radius: 4px;
-            cursor: pointer;
-            border: 1px solid transparent;
-        }
-        .a11y-toggle:hover { border-color: var(--lab-blue); }
-        .a11y-toggle.active { background: #eff6ff; color: var(--lab-blue); border-color: var(--lab-blue); }
-
-        /* --- 2. LAB NAVIGATION --- */
+        /* LAB NAVIGATION */
         .lab-nav {
-            background: var(--glass-bg);
-            backdrop-filter: blur(10px);
-            height: 65px;
-            border-bottom: 1px solid var(--lab-border);
-            display: flex;
-            align-items: center;
-            padding: 0 40px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+            background: var(--bg-nav); backdrop-filter: blur(10px); height: 65px;
+            border-bottom: 1px solid var(--border-color); display: flex; align-items: center;
+            padding: 0 40px; position: sticky; top: 0; z-index: 1000; transition: all 0.4s ease;
         }
-
-        .brand-block {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-right: 40px;
-        }
-        .brand-logo {
-            width: 36px;
-            height: 36px;
-            background: var(--lab-slate);
-            color: white;
-            display: grid;
-            place-items: center;
-            border-radius: 6px;
-            font-family: var(--font-code);
-            font-weight: 700;
-        }
+        .brand-block { display: flex; align-items: center; gap: 12px; margin-right: 40px; }
+        .brand-logo { width: 36px; height: 36px; background: var(--text-main); color: var(--bg-body); display: grid; place-items: center; border-radius: 6px; font-family: var(--font-code); font-weight: 700; }
         .brand-info h1 { font-size: 16px; font-weight: 700; letter-spacing: -0.5px; }
-        .brand-info span { font-size: 10px; text-transform: uppercase; color: #64748B; font-weight: 600; }
-
+        .brand-info span { font-size: 10px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
+        
         .nav-items { display: flex; gap: 24px; }
-        .nav-link { font-size: 13px; font-weight: 500; color: #475569; position: relative; }
-        .nav-link.active { color: var(--lab-blue); }
-        .nav-link.active::after {
-            content: ''; position: absolute; bottom: -23px; left: 0; width: 100%; height: 2px; background: var(--lab-blue);
-        }
+        .nav-link { font-size: 13px; font-weight: 500; color: var(--text-muted); position: relative; }
+        .nav-link.active, .nav-link:hover { color: var(--accent-blue); }
 
-        .search-lab {
-            margin-left: auto;
-            position: relative;
-        }
-        .lab-input {
-            background: #F1F5F9;
-            border: 1px solid transparent;
-            padding: 8px 12px 8px 35px;
-            border-radius: 6px;
-            font-family: var(--font-code);
-            font-size: 12px;
-            width: 240px;
-            transition: 0.2s;
-        }
-        .lab-input:focus { background: white; border-color: var(--lab-blue); width: 300px; box-shadow: 0 0 0 3px rgba(0,122,255,0.1); }
+        .nav-controls { display: flex; align-items: center; margin-left: auto; gap: 20px; }
+        .search-lab { position: relative; }
+        .lab-input { background: var(--bg-input); border: 1px solid transparent; padding: 8px 12px 8px 35px; border-radius: 6px; font-family: var(--font-code); font-size: 12px; width: 240px; color: var(--text-main); transition: 0.2s; }
+        .lab-input:focus { background: var(--bg-card); border-color: var(--accent-blue); width: 300px; box-shadow: 0 0 0 3px rgba(0,122,255,0.1); }
         .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; opacity: 0.5; }
 
-        /* --- 3. HERO: LATEST RELEASE --- */
-        .release-deck {
-            background: linear-gradient(to right, #1e293b, #0f172a);
-            color: white;
-            padding: 60px 40px;
-            position: relative;
-            overflow: hidden;
+        /* HAMBURGER DRAWER BUTTON */
+        .drawer-btn {
+            background: none; border: none; cursor: pointer; color: var(--text-main);
+            display: flex; flex-direction: column; gap: 4px; padding: 5px;
         }
-        
-        .stream-deco {
-            position: absolute;
-            right: 0; top: 0; bottom: 0; width: 40%;
-            background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 10px);
-            pointer-events: none;
-        }
+        .drawer-btn span { display: block; width: 20px; height: 2px; background-color: currentColor; transition: 0.3s; }
 
-        .release-badge {
-            display: inline-flex;
-            align-items: center;
-            background: rgba(16, 185, 129, 0.2);
-            color: #34D399;
-            border: 1px solid rgba(16, 185, 129, 0.4);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-bottom: 20px;
-            font-family: var(--font-code);
-        }
-        .release-badge .dot { width: 6px; height: 6px; background: currentColor; border-radius: 50%; margin-right: 8px; animation: pulse 2s infinite; }
-
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-
+        /* HERO SECTION */
+        .release-deck { background: linear-gradient(to right, #0F172A, #020617); color: white; padding: 60px 40px; position: relative; overflow: hidden; }
+        .release-badge { display: inline-flex; align-items: center; background: rgba(16, 185, 129, 0.2); color: #34D399; border: 1px solid rgba(16, 185, 129, 0.4); padding: 4px 12px; border-radius: 20px; font-size: 11px; font-weight: 600; margin-bottom: 20px; font-family: var(--font-code); }
         .release-title { font-size: 36px; font-weight: 700; margin-bottom: 15px; letter-spacing: -1px; }
         .release-desc { max-width: 700px; font-size: 16px; color: #94A3B8; margin-bottom: 30px; line-height: 1.6; }
+        .btn { display: inline-flex; align-items: center; height: 40px; padding: 0 20px; border-radius: 6px; font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s; }
+        .btn-primary { background: var(--accent-blue); color: white; border: 1px solid var(--accent-blue); }
+        .btn-primary:hover { background: var(--accent-hover); }
 
-        .action-row { display: flex; gap: 15px; align-items: center; }
-
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            height: 40px;
-            padding: 0 20px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-        }
-        .btn svg { width: 16px; height: 16px; margin-right: 8px; }
-        
-        .btn-primary { background: var(--lab-blue); color: white; border: 1px solid var(--lab-blue); }
-        .btn-primary:hover { background: #2563EB; }
-        
-        .btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
-        .btn-secondary:hover { background: rgba(255,255,255,0.2); }
-
-        .copy-citation { margin-left: 10px; font-size: 12px; color: #64748B; cursor: pointer; text-decoration: underline; }
-
-        /* --- 4. TELEMETRY RAIL --- */
-        .telemetry-rail {
-            background: #fff;
-            border-bottom: 1px solid var(--lab-border);
-            height: 36px;
-            display: flex;
-            align-items: center;
-            font-family: var(--font-code);
-            font-size: 11px;
-            color: #475569;
-            overflow: hidden;
-            position: relative;
-        }
-        .rail-title {
-            padding: 0 20px;
-            background: #F8FAFC;
-            height: 100%;
-            display: flex;
-            align-items: center;
-            font-weight: 700;
-            border-right: 1px solid var(--lab-border);
-            z-index: 10;
-        }
-        .rail-track {
-            display: flex;
-            animation: slide 35s linear infinite;
-        }
-        .rail-item {
-            display: flex;
-            align-items: center;
-            margin-right: 40px;
-            white-space: nowrap;
-        }
-        .rail-key { color: #94A3B8; margin-right: 8px; }
-        .rail-val { font-weight: 600; color: #0F172A; }
+        /* TELEMETRY RAIL */
+        .telemetry-rail { background: var(--bg-card); border-bottom: 1px solid var(--border-color); height: 36px; display: flex; align-items: center; font-family: var(--font-code); font-size: 11px; color: var(--text-main); overflow: hidden; position: relative; transition: all 0.4s ease; }
+        .rail-title { padding: 0 20px; background: var(--bg-input); height: 100%; display: flex; align-items: center; font-weight: 700; border-right: 1px solid var(--border-color); z-index: 10; }
+        .rail-track { display: flex; animation: slide 35s linear infinite; }
+        .rail-item { display: flex; align-items: center; margin-right: 40px; white-space: nowrap; }
+        .rail-key { color: var(--text-muted); margin-right: 8px; }
+        .rail-val { font-weight: 600; }
         .rail-status { width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; }
-        .st-ok { background: var(--status-ok); }
-        .st-warn { background: var(--status-warn); }
-        
+        .st-ok { background: var(--status-ok); } .st-warn { background: var(--status-warn); }
         @keyframes slide { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        /* --- 5. GRID LAYOUT --- */
-        .lab-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 40px;
-            display: grid;
-            grid-template-columns: 3fr 1fr;
-            gap: 40px;
-        }
-
-        .section-header {
-            font-size: 18px;
-            font-weight: 700;
-            color: var(--lab-slate);
-            margin-bottom: 20px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .count-pill { background: #E2E8F0; padding: 2px 8px; border-radius: 12px; font-size: 11px; }
+        /* GRID LAYOUT */
+        .lab-container { max-width: 1400px; margin: 0 auto; padding: 40px; display: grid; grid-template-columns: 3fr 1fr; gap: 40px; }
+        .section-header { font-size: 18px; font-weight: 700; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
+        .count-pill { background: var(--bg-input); padding: 2px 8px; border-radius: 12px; font-size: 11px; color: var(--text-muted); }
 
         /* CARDS */
-        .project-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
-        }
-
-        .lab-card {
-            background: white;
-            border: 1px solid var(--lab-border);
-            border-radius: 8px;
-            padding: 24px;
-            transition: all 0.2s;
-            position: relative;
-            display: flex;
-            flex-direction: column;
-        }
-        .lab-card:hover {
-            box-shadow: var(--shadow-md);
-            border-color: #CBD5E1;
-            transform: translateY(-2px);
-        }
-
+        .project-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        .lab-card { background: var(--bg-card); border: 1px solid var(--border-color); border-radius: 8px; padding: 24px; transition: all 0.3s ease; display: flex; flex-direction: column; }
+        .lab-card:hover { box-shadow: var(--shadow-md); border-color: var(--border-hover); transform: translateY(-2px); }
         .card-top { display: flex; justify-content: space-between; margin-bottom: 16px; }
-        .card-icon { 
-            width: 40px; height: 40px; 
-            border-radius: 6px; 
-            background: #F8FAFC; border: 1px solid var(--lab-border);
-            color: var(--lab-slate);
-            display: grid; place-items: center; font-weight: 700; font-family: var(--font-code);
-        }
-        .status-pill {
-            font-size: 10px; font-weight: 700; text-transform: uppercase;
-            padding: 4px 8px; border-radius: 4px; height: fit-content;
-        }
-        .sp-live { background: #ECFDF5; color: #059669; }
-        .sp-beta { background: #EFF6FF; color: #2563EB; }
-
-        .card-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--lab-slate); }
-        .card-desc { font-size: 13px; color: #64748B; margin-bottom: 20px; line-height: 1.6; flex-grow: 1; }
-
+        .card-icon { width: 40px; height: 40px; border-radius: 6px; background: var(--bg-input); border: 1px solid var(--border-color); color: var(--text-main); display: grid; place-items: center; font-weight: 700; font-family: var(--font-code); }
+        .status-pill { font-size: 10px; font-weight: 700; text-transform: uppercase; padding: 4px 8px; border-radius: 4px; height: fit-content; }
+        .sp-live { background: rgba(16, 185, 129, 0.1); color: var(--status-ok); }
+        .sp-beta { background: rgba(59, 130, 246, 0.1); color: var(--accent-blue); }
+        .card-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; }
+        .card-desc { font-size: 13px; color: var(--text-muted); margin-bottom: 20px; line-height: 1.6; flex-grow: 1; }
         .tech-stack { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
-        .tech-badge { 
-            font-size: 10px; padding: 2px 6px; background: #F1F5F9; 
-            color: #475569; border-radius: 3px; font-family: var(--font-code); 
-        }
+        .tech-badge { font-size: 10px; padding: 2px 6px; background: var(--bg-input); color: var(--text-muted); border-radius: 3px; font-family: var(--font-code); }
+        .card-actions { border-top: 1px solid var(--border-color); padding-top: 16px; display: flex; align-items: center; gap: 12px; }
+        .action-link { font-size: 12px; font-weight: 600; color: var(--text-muted); display: flex; align-items: center; gap: 5px; }
+        .action-link:hover { color: var(--accent-blue); }
+        .zenodo-badge { transition: opacity 0.2s; height: 20px; vertical-align: middle; }
 
-        .card-actions {
-            border-top: 1px solid var(--lab-border);
-            padding-top: 16px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .action-link { 
-            font-size: 12px; font-weight: 600; color: #475569; 
-            display: flex; align-items: center; gap: 5px; 
-        }
-        .action-link:hover { color: var(--lab-blue); }
-
-        /* ZENODO BADGE SPECIFIC */
-        .zenodo-badge {
-            transition: opacity 0.2s;
-            height: 20px;
-            vertical-align: middle;
-        }
-        .zenodo-badge:hover { opacity: 0.8; }
-
-        /* --- SIDEBAR --- */
-        .widget {
-            background: white;
-            border: 1px solid var(--lab-border);
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        .widget-head { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; margin-bottom: 15px; }
-
-        .sys-row {
-            display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;
-        }
-        .sys-key { color: #64748B; }
+        /* SIDEBAR WIDGETS */
+        .widget { background: var(--bg-widget); border: 1px solid var(--border-color); border-radius: 8px; padding: 20px; margin-bottom: 20px; transition: all 0.3s ease; }
+        .widget-head { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-muted); margin-bottom: 15px; }
+        .sys-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px; }
+        .sys-key { color: var(--text-muted); }
         .sys-val { font-family: var(--font-code); font-weight: 600; }
+        .focus-area li { font-size: 13px; color: var(--text-muted); margin-bottom: 8px; padding-left: 10px; border-left: 2px solid var(--border-color); }
+        .paper-link { display: block; margin-bottom: 12px; font-size: 13px; color: var(--text-main); text-decoration: none; padding-bottom: 8px; border-bottom: 1px solid var(--border-color); }
+        .paper-link:hover { color: var(--accent-blue); }
 
-        .focus-area li {
-            font-size: 13px; color: #475569; margin-bottom: 8px; padding-left: 10px; border-left: 2px solid var(--lab-border);
+        /* -------------------------------------------
+           PROFESSIONAL RIGHT DRAWER & OVERLAY
+        ------------------------------------------- */
+        .drawer-overlay {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh;
+            background: rgba(0, 0, 0, 0.4); backdrop-filter: blur(3px);
+            opacity: 0; visibility: hidden; transition: all 0.3s ease; z-index: 2000;
         }
+        .drawer-overlay.active { opacity: 1; visibility: visible; }
+
+        .side-drawer {
+            position: fixed; top: 0; right: -400px; width: 360px; height: 100vh;
+            background: var(--drawer-bg); backdrop-filter: blur(15px);
+            box-shadow: var(--shadow-drawer); z-index: 2001; transition: right 0.4s cubic-bezier(0.25, 1, 0.5, 1);
+            display: flex; flex-direction: column; border-left: 1px solid var(--border-color);
+        }
+        .side-drawer.active { right: 0; }
         
-        .paper-link {
-            display: block;
-            margin-bottom: 12px;
-            font-size: 13px;
-            color: #334155;
-            text-decoration: none;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #f1f5f9;
+        .drawer-header {
+            padding: 24px; border-bottom: 1px solid var(--border-color);
+            display: flex; justify-content: space-between; align-items: center;
         }
-        .paper-link:hover { color: var(--lab-blue); }
-        .paper-meta { display: block; font-size: 10px; color: #94a3b8; margin-top: 4px; }
+        .drawer-header h2 { font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 8px; }
+        .close-btn { background: none; border: none; font-size: 20px; color: var(--text-muted); cursor: pointer; transition: 0.2s; }
+        .close-btn:hover { color: var(--status-err); transform: rotate(90deg); }
+
+        .drawer-content { padding: 24px; overflow-y: auto; flex-grow: 1; display: flex; flex-direction: column; gap: 30px; }
+        
+        /* Drawer Links Section */
+        .drawer-section-title { font-size: 11px; font-family: var(--font-code); color: var(--text-muted); text-transform: uppercase; margin-bottom: 12px; letter-spacing: 1px;}
+        .drawer-link {
+            display: flex; align-items: center; gap: 15px; padding: 12px; border-radius: 8px;
+            background: var(--bg-input); border: 1px solid transparent; transition: 0.2s; text-decoration: none; margin-bottom: 10px;
+        }
+        .drawer-link:hover { background: var(--bg-card); border-color: var(--accent-blue); transform: translateX(5px); }
+        .drawer-icon { width: 36px; height: 36px; border-radius: 6px; background: var(--bg-card); display: grid; place-items: center; border: 1px solid var(--border-color); font-size: 16px; }
+        .drawer-text strong { display: block; font-size: 13px; color: var(--text-main); margin-bottom: 2px; }
+        .drawer-text span { display: block; font-size: 11px; color: var(--text-muted); }
+
+        /* Theme Selector Grid */
+        .theme-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .theme-btn {
+            padding: 10px; border: 1px solid var(--border-color); border-radius: 6px; background: var(--bg-card);
+            color: var(--text-main); font-size: 12px; font-weight: 600; cursor: pointer; transition: 0.2s; text-align: left;
+        }
+        .theme-btn:hover { border-color: var(--accent-blue); }
+        .theme-btn.active-theme { border-color: var(--accent-blue); box-shadow: 0 0 0 2px rgba(0, 122, 255, 0.2); }
+
+        /* FOOTER */
+        .lab-footer {
+            text-align: center; padding: 40px 20px; border-top: 1px solid var(--border-color);
+            font-family: var(--font-code); font-size: 12px; color: var(--text-muted); margin-top: 40px;
+        }
 
         @media(max-width: 900px) {
             .lab-container { grid-template-columns: 1fr; }
-            .access-bar { justify-content: center; }
             .nav-items { display: none; }
+            .search-lab { display: none; }
+            .side-drawer { width: 100%; right: -100%; }
         }
     </style>
 </head>
-<body id="body">
+<body>
 
-    <!-- 1. ACCESSIBILITY UTILITIES -->
-    <div class="access-bar">
-        <button class="access-btn" onclick="toggleAccessPanel()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            ACCESSIBILITY OPTIONS (12)
-        </button>
-        <div id="google_translate_element"></div>
-        
-        <div class="access-panel" id="accessPanel">
-            <div class="a11y-toggle" onclick="toggleBodyClass('contrast-high')">High Contrast</div>
-            <div class="a11y-toggle" onclick="toggleBodyClass('font-large')">Larger Text</div>
-            <div class="a11y-toggle" onclick="toggleBodyClass('dyslexic')">Dyslexia Font</div>
-            <div class="a11y-toggle" onclick="toggleBodyClass('saturation-low')">Desaturate</div>
-            <div class="a11y-toggle" onclick="toggleBodyClass('cursor-large')">Large Cursor</div>
-            <div class="a11y-toggle" onclick="alert('Screen Reader Optimization Active')">Screen Reader Mode</div>
-            <div class="a11y-toggle" onclick="document.body.style.lineHeight='2'">Relaxed Spacing</div>
-            <div class="a11y-toggle" onclick="document.body.style.letterSpacing='1px'">Wide Text</div>
-        </div>
-    </div>
-
-    <!-- 2. LAB NAVIGATION -->
     <nav class="lab-nav">
         <div class="brand-block">
             <a href="https://github.com/PC5518" class="brand-logo">A</a>
@@ -438,67 +246,98 @@
             <a href="https://pc5518.github.io/AnsComfinancialsuite/contact/" class="nav-link">Contact</a>
         </div>
 
-        <div class="search-lab">
-            <span class="search-icon">λ</span>
-            <input type="text" class="lab-input" placeholder="Query modules or symbols...">
+        <div class="nav-controls">
+            <div class="search-lab">
+                <span class="search-icon">λ</span>
+                <input type="text" class="lab-input" placeholder="Query modules or symbols...">
+            </div>
+            <button class="drawer-btn" onclick="toggleDrawer()" aria-label="Open Menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
         </div>
     </nav>
 
-    <!-- 3. HERO: LATEST RELEASE -->
-    <header class="release-deck">
-        <div class="stream-deco"></div>
-        <div style="position:relative; z-index:2;">
-            <div class="release-badge">
-                <span class="dot"></span> LATEST DEPLOYMENT: V0.6.0
+    <div class="drawer-overlay" id="drawerOverlay" onclick="toggleDrawer()"></div>
+    <aside class="side-drawer" id="sideDrawer">
+        <div class="drawer-header">
+            <h2><span style="color:var(--accent-blue);">///</span> AnsCom Network</h2>
+            <button class="close-btn" onclick="toggleDrawer()">×</button>
+        </div>
+        
+        <div class="drawer-content">
+            <div>
+                <div class="drawer-section-title">External Infrastructure</div>
+                
+                <a href="https://pypi.org/user/anscomdeva/" target="_blank" class="drawer-link">
+                    <div class="drawer-icon">📦</div>
+                    <div class="drawer-text">
+                        <strong>Package Releases</strong>
+                        <span>PyPI / anscomdeva</span>
+                    </div>
+                </a>
+
+                <a href="https://www.youtube.com/@PyCraftAICentral" target="_blank" class="drawer-link">
+                    <div class="drawer-icon" style="color:#EF4444;">▶</div>
+                    <div class="drawer-text">
+                        <strong>Video Broadcasts</strong>
+                        <span>PyCraft AI Central</span>
+                    </div>
+                </a>
+
+                <a href="https://github.com/PC5518" target="_blank" class="drawer-link">
+                    <div class="drawer-icon">⌨️</div>
+                    <div class="drawer-text">
+                        <strong>Open Source</strong>
+                        <span>GitHub / PC5518</span>
+                    </div>
+                </a>
+
+                <a href="https://zenodo.org/search?q=metadata.creators.person_or_org.name%3A%22Aditya%20Narayan%20Singh%22&l=list&p=1&s=10&sort=bestmatch" target="_blank" class="drawer-link">
+                    <div class="drawer-icon" style="color:#3B82F6;">📄</div>
+                    <div class="drawer-text">
+                        <strong>Research Papers</strong>
+                        <span>Zenodo Publications</span>
+                    </div>
+                </a>
             </div>
+
+            <div>
+                <div class="drawer-section-title">Environment Theme</div>
+                <div class="theme-grid">
+                    <button class="theme-btn active-theme" onclick="setTheme('theme-light')">Light UI</button>
+                    <button class="theme-btn" onclick="setTheme('theme-midnight')">Midnight Slate</button>
+                    <button class="theme-btn" onclick="setTheme('theme-oled')">OLED Pure Black</button>
+                    <button class="theme-btn" onclick="setTheme('theme-matrix')">Matrix Terminal</button>
+                    <button class="theme-btn" onclick="setTheme('theme-ocean')">Deep Ocean</button>
+                    <button class="theme-btn" onclick="setTheme('theme-solarized')">Solarized Dark</button>
+                </div>
+            </div>
+        </div>
+    </aside>
+
+    <header class="release-deck">
+        <div style="position:relative; z-index:2;">
+            <div class="release-badge"><span class="dot"></span> LATEST DEPLOYMENT: V0.6.0</div>
             <h1 class="release-title">AnsCom C-Accelerated Filesystem Engine</h1>
-            <p class="release-desc">
-                High-performance Python bindings for recursive data partitioning. Designed for massive engineering data lakes, bridging raw C speed with Pythonic usability. Now available on PyPI.
-            </p>
+            <p class="release-desc">High-performance Python bindings for recursive data partitioning. Designed for massive engineering data lakes, bridging raw C speed with Pythonic usability. Now available on PyPI.</p>
             <div class="action-row">
-                <a href="https://pypi.org/project/anscom/" target="_blank" class="btn btn-primary">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm0 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm-1 4v4h-3v2h3v4h2v-4h3v-2h-3v-4h-2z"/></svg>
-                    View on PyPI
-                </a>
-                <a href="https://github.com/PC5518/anscom-nfie-python-extension" target="_blank" class="btn btn-secondary">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                    Source Code
-                </a>
+                <a href="https://pypi.org/project/anscom/" target="_blank" class="btn btn-primary">View on PyPI</a>
             </div>
         </div>
     </header>
 
-    <!-- 4. LOGICAL TELEMETRY RAIL -->
     <div class="telemetry-rail">
         <div class="rail-title">LAB TELEMETRY</div>
         <div class="rail-track">
-            <div class="rail-item">
-                <div class="rail-status st-ok"></div>
-                <span class="rail-key">ANSCOM_BUILD:</span><span class="rail-val">PASSING (v1.0.0)</span>
-            </div>
-            <div class="rail-item">
-                <div class="rail-status st-ok"></div>
-                <span class="rail-key">GOLD_FV_ENGINE:</span><span class="rail-val">ONLINE (Latency 12ms)</span>
-            </div>
-            <div class="rail-item">
-                <div class="rail-status st-ok"></div>
-                <span class="rail-key">NET_DEPTH:</span><span class="rail-val">MONITORING (40 Nodes)</span>
-            </div>
-            <div class="rail-item">
-                <div class="rail-status st-warn"></div>
-                <span class="rail-key">ZENTEC_MODEL:</span><span class="rail-val">RETRAINING (Epoch 4/10)</span>
-            </div>
-            <div class="rail-item">
-                <div class="rail-status st-ok"></div>
-                <span class="rail-key">PAPER_STATUS:</span><span class="rail-val">PUBLISHED (Jan 15)</span>
-            </div>
             <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">ANSCOM_BUILD:</span><span class="rail-val">PASSING</span></div>
+            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">GOLD_FV_ENGINE:</span><span class="rail-val">ONLINE</span></div>
+            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">PAPER_STATUS:</span><span class="rail-val">PUBLISHED</span></div>
         </div>
     </div>
 
-    <!-- 5. MAIN CONTENT -->
     <div class="lab-container">
-        
         <main>
             <div class="section-header">
                 <span>Active Research Modules</span>
@@ -506,8 +345,6 @@
             </div>
 
             <div class="project-grid">
-                
-                <!-- MODULE 1: Gold Engine WITH ZENODO BADGE -->
                 <article class="lab-card">
                     <div class="card-top">
                         <div class="card-icon">Au</div>
@@ -515,24 +352,12 @@
                     </div>
                     <h3 class="card-title">Gold ETF Fair Value Engine</h3>
                     <p class="card-desc">Post-market pricing engine. Approximates GOLDIETF NAV using real-time XAUUSD/USDINR parity feeds.</p>
-                    <div class="tech-stack">
-                        <span class="tech-badge">PYTHON</span>
-                        <span class="tech-badge">ARBITRAGE</span>
-                        <span class="tech-badge">FORENSICS</span>
-                    </div>
                     <div class="card-actions">
-                        <a href="https://github.com/PC5518/gold-etf-postmarket-fair-value-engine" class="action-link">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                            Repository
-                        </a>
-                        <!-- ZENODO BADGE LINK -->
-                        <a href="https://zenodo.org/records/18185485" target="_blank" title="View Research Paper">
-                            <img src="https://zenodo.org/badge/DOI/10.5281/zenodo.18185485.svg" alt="DOI" class="zenodo-badge">
-                        </a>
+                        <a href="https://github.com/PC5518/gold-etf-postmarket-fair-value-engine" class="action-link">Repository</a>
+                        <img src="https://zenodo.org/badge/DOI/10.5281/zenodo.18185485.svg" alt="DOI" class="zenodo-badge">
                     </div>
                 </article>
 
-                <!-- MODULE 2: Telemetry -->
                 <article class="lab-card">
                     <div class="card-top">
                         <div class="card-icon">Tx</div>
@@ -540,176 +365,76 @@
                     </div>
                     <h3 class="card-title">netDepth Monitoring</h3>
                     <p class="card-desc">Telemetry dashboard built with Ookla. Monitors 40+ network/market metrics via AnsCom Terminal.</p>
-                    <div class="tech-stack">
-                        <span class="tech-badge">NETWORKING</span>
-                        <span class="tech-badge">VISUALIZATION</span>
-                    </div>
-                    <div class="card-actions">
-                        <a href="https://github.com/PC5518/anscom-netDepth-ultimate" class="action-link">
-                             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                             Repository
-                        </a>
-                    </div>
+                    <div class="card-actions"><a href="https://github.com/PC5518/anscom-netDepth-ultimate" class="action-link">Repository</a></div>
                 </article>
-
-                <!-- MODULE 3: ZENTEC ML -->
+                
                 <article class="lab-card">
-                    <div class="card-top">
-                        <div class="card-icon">ML</div>
-                        <span class="status-pill sp-beta">Inference</span>
-                    </div>
+                    <div class="card-top"><div class="card-icon">ML</div><span class="status-pill sp-beta">Inference</span></div>
                     <h3 class="card-title">ZENTEC Prediction</h3>
                     <p class="card-desc">Random Forest time-series model. Trained on 10+ years of OHLC data to predict directional bias.</p>
-                    <div class="tech-stack">
-                        <span class="tech-badge">SCIKIT-LEARN</span>
-                        <span class="tech-badge">STATISTICS</span>
-                    </div>
-                    <div class="card-actions">
-                        <a href="https://github.com/PC5518/nse-zentec-stock-prediction-ml" class="action-link">
-                             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                             Repository
-                        </a>
-                    </div>
+                    <div class="card-actions"><a href="#" class="action-link">Repository</a></div>
                 </article>
-
-                <!-- MODULE 4: AI Index -->
-                <article class="lab-card">
-                    <div class="card-top">
-                        <div class="card-icon">Ix</div>
-                        <span class="status-pill sp-live">Live Ticks</span>
-                    </div>
-                    <h3 class="card-title">AnsCom AI10 Index</h3>
-                    <p class="card-desc">Personalized technology index tracking top 10 AI-exposed US equities.</p>
-                    <div class="tech-stack">
-                        <span class="tech-badge">INDEXING</span>
-                        <span class="tech-badge">DATA FEED</span>
-                    </div>
-                    <div class="card-actions">
-                        <a href="https://github.com/PC5518/anscom-ai10-tech-index" class="action-link">
-                             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                             Repository
-                        </a>
-                    </div>
-                </article>
-
-                <!-- MODULE 5: Nifty Scanner -->
-                <article class="lab-card">
-                    <div class="card-top">
-                        <div class="card-icon">N5</div>
-                        <span class="status-pill sp-live">Scanning</span>
-                    </div>
-                    <h3 class="card-title">NIFTY-500 Scanner</h3>
-                    <p class="card-desc">Liquidity void and volatility scanner for Indian equities. Part of MarketOS.</p>
-                    <div class="tech-stack">
-                        <span class="tech-badge">NSEPY</span>
-                        <span class="tech-badge">ALGORITHMIC</span>
-                    </div>
-                    <div class="card-actions">
-                        <a href="https://github.com/PC5518/ansCom-terminal-equity_marketos" class="action-link">
-                             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                             Repository
-                        </a>
-                    </div>
-                </article>
-
             </div>
         </main>
 
         <aside>
-            <!-- CLOCK WIDGET -->
             <div class="widget">
                 <div class="widget-head">Global Time</div>
                 <div style="font-size: 28px; font-weight: 300; margin-bottom: 20px;" id="local-clock">--:--:--</div>
-                <div class="sys-row">
-                    <span class="sys-key">NEW DELHI</span><span class="sys-val" id="time-delhi">--:--</span>
-                </div>
-                <div class="sys-row">
-                    <span class="sys-key">NEW YORK</span><span class="sys-val" id="time-ny">--:--</span>
-                </div>
-                <div class="sys-row">
-                    <span class="sys-key">LONDON</span><span class="sys-val" id="time-london">--:--</span>
-                </div>
-                <div class="sys-row">
-                    <span class="sys-key">TOKYO</span><span class="sys-val" id="time-tokyo">--:--</span>
-                </div>
             </div>
-
-            <!-- NEW PUBLICATIONS WIDGET -->
-            <div class="widget">
-                <div class="widget-head">Lab Publications</div>
-                <div style="margin-bottom:10px;">
-                    <a href="https://zenodo.org/records/18185485" target="_blank" class="paper-link">
-                        Post-Market Fair Value Estimation for Gold ETF Using Statistical Parity
-                    </a>
-                    <span class="paper-meta">DOI: 10.5281/zenodo.18185485</span>
-                </div>
-            </div>
-
-            <!-- RESEARCH FOCUS -->
-            <div class="widget">
-                <div class="widget-head">Research Areas</div>
-                <ul class="focus-area" style="list-style:none;">
-                    <li>Filesystem Intelligence</li>
-                    <li>Fair Value Arbitrage</li>
-                    <li>Network Telemetry</li>
-                    <li>ML Time-Series</li>
-                    <li>Market Structure</li>
-                </ul>
-            </div>
-            
             <div class="widget">
                 <div class="widget-head">Lab Status</div>
-                <div class="sys-row">
-                    <span class="sys-key">Lead</span><span class="sys-val">Aditya Narayan Singh PC5518</span>
-                </div>
-                <div class="sys-row">
-                    <span class="sys-key">Active Projects</span><span class="sys-val">6</span>
-                </div>
-                <div class="sys-row">
-                    <span class="sys-key">System</span><span style="color:var(--status-ok); font-weight:700;">OPERATIONAL</span>
-                </div>
+                <div class="sys-row"><span class="sys-key">Lead</span><span class="sys-val">Aditya Narayan Singh PC5518</span></div>
+                <div class="sys-row"><span class="sys-key">System</span><span style="color:var(--status-ok); font-weight:700;">OPERATIONAL</span></div>
             </div>
         </aside>
-
     </div>
 
-    <!-- GOOGLE TRANSLATE SCRIPT -->
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-          new google.translate.TranslateElement({
-            pageLanguage: 'en',
-            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-            autoDisplay: false
-          }, 'google_translate_element');
-        }
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+    <footer class="lab-footer">
+        &copy; 2026 AnsCom QS. All rights reserved. Computational Research & Infrastructure.
+    </footer>
 
     <script>
-        // Accessibility Logic
-        function toggleAccessPanel() {
-            document.getElementById('accessPanel').classList.toggle('active');
+        // Drawer Logic
+        function toggleDrawer() {
+            document.getElementById('sideDrawer').classList.toggle('active');
+            document.getElementById('drawerOverlay').classList.toggle('active');
         }
 
-        function toggleBodyClass(className) {
-            document.body.classList.toggle(className);
+        // Advanced Theme Engine
+        function setTheme(themeName) {
+            // Remove all themes
+            document.body.classList.remove('theme-light', 'theme-midnight', 'theme-oled', 'theme-matrix', 'theme-ocean', 'theme-solarized');
+            // Add selected theme
+            if (themeName !== 'theme-light') { document.body.classList.add(themeName); }
+            
+            // Save to localStorage
+            localStorage.setItem('anscom_theme', themeName);
+
+            // Update Active Button Style
+            document.querySelectorAll('.theme-btn').forEach(btn => btn.classList.remove('active-theme'));
+            event.currentTarget.classList.add('active-theme');
         }
 
-        // Clock Logic
+        // Load saved theme on boot
+        window.onload = () => {
+            const savedTheme = localStorage.getItem('anscom_theme') || 'theme-light';
+            setTheme(savedTheme);
+            
+            // Auto-highlight correct button
+            document.querySelectorAll('.theme-btn').forEach(btn => {
+                if(btn.getAttribute('onclick').includes(savedTheme)) {
+                    btn.classList.add('active-theme');
+                }
+            });
+        };
+
+        // Clock System
         function updateClocks() {
             const now = new Date();
-            const localOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
-            const cityOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
-            const getCityTime = (timeZone) => new Intl.DateTimeFormat('en-US', { ...cityOptions, timeZone }).format(now);
-
-            document.getElementById('local-clock').innerText = now.toLocaleTimeString([], localOptions);
-            document.getElementById('time-delhi').innerText = getCityTime('Asia/Kolkata');
-            document.getElementById('time-ny').innerText = getCityTime('America/New_York');
-            document.getElementById('time-london').innerText = getCityTime('Europe/London');
-            document.getElementById('time-tokyo').innerText = getCityTime('Asia/Tokyo');
+            document.getElementById('local-clock').innerText = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
         }
-        setInterval(updateClocks, 1000);
-        updateClocks();
+        setInterval(updateClocks, 1000); updateClocks();
     </script>
 
 </body>
