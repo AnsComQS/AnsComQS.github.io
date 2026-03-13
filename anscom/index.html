@@ -1,1 +1,717 @@
 
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  .page {
+    background: #000;
+    color: #fff;
+    font-family: -apple-system, 'SF Pro Display', sans-serif;
+    min-height: 100vh;
+    width: 100%;
+  }
+
+  nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 40px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+    position: sticky;
+    top: 0;
+    background: rgba(0,0,0,0.92);
+    backdrop-filter: blur(12px);
+    z-index: 100;
+  }
+
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+
+  .nav-logo img {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+
+  .nav-logo span {
+    font-size: 15px;
+    font-weight: 500;
+    color: #fff;
+    letter-spacing: -0.01em;
+  }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    list-style: none;
+  }
+
+  .nav-links a {
+    font-size: 14px;
+    color: rgba(255,255,255,0.6);
+    text-decoration: none;
+  }
+
+  .nav-cta {
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 8px 18px;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+  }
+
+  .meta-line {
+    text-align: center;
+    padding: 28px 40px 0;
+    font-size: 13px;
+    color: rgba(255,255,255,0.4);
+  }
+
+  hero {
+    display: block;
+    text-align: center;
+    padding: 48px 40px 56px;
+    max-width: 760px;
+    margin: 0 auto;
+  }
+
+  .hero-title {
+    font-size: clamp(36px, 6vw, 64px);
+    font-weight: 500;
+    line-height: 1.1;
+    letter-spacing: -0.03em;
+    color: #fff;
+    margin-bottom: 20px;
+  }
+
+  .hero-subtitle {
+    font-size: 17px;
+    color: rgba(255,255,255,0.55);
+    line-height: 1.6;
+    max-width: 560px;
+    margin: 0 auto 36px;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin-bottom: 56px;
+  }
+
+  .btn-primary {
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 11px 24px;
+    border-radius: 8px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .btn-secondary {
+    background: transparent;
+    color: #fff;
+    border: 1px solid rgba(255,255,255,0.2);
+    padding: 11px 24px;
+    border-radius: 8px;
+    font-size: 15px;
+    cursor: pointer;
+    font-family: inherit;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .demo-wrapper {
+    max-width: 860px;
+    margin: 0 auto 0;
+    padding: 0 40px;
+  }
+
+  .demo-input-row {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 12px;
+    align-items: center;
+  }
+
+  .demo-path-input {
+    flex: 1;
+    background: #111;
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 8px;
+    padding: 12px 16px;
+    font-family: 'DM Mono', monospace;
+    font-size: 14px;
+    color: #fff;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  .demo-path-input:focus {
+    border-color: rgba(255,255,255,0.3);
+  }
+
+  .demo-path-input::placeholder {
+    color: rgba(255,255,255,0.25);
+  }
+
+  .demo-options {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 12px;
+  }
+
+  .demo-option {
+    background: #111;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    padding: 7px 14px;
+    font-size: 13px;
+    color: rgba(255,255,255,0.5);
+    cursor: pointer;
+    font-family: 'DM Mono', monospace;
+    transition: all 0.15s;
+    user-select: none;
+  }
+
+  .demo-option.active {
+    background: rgba(255,255,255,0.08);
+    border-color: rgba(255,255,255,0.3);
+    color: #fff;
+  }
+
+  .run-btn {
+    background: #fff;
+    color: #000;
+    border: none;
+    padding: 12px 28px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: inherit;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.15s;
+    white-space: nowrap;
+  }
+
+  .run-btn:hover { background: #e5e5e5; }
+  .run-btn:disabled { background: #333; color: #666; cursor: not-allowed; }
+
+  .terminal {
+    background: #0a0a0a;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .terminal-bar {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #111;
+  }
+
+  .dot { width: 12px; height: 12px; border-radius: 50%; }
+  .dot-r { background: #ff5f57; }
+  .dot-y { background: #ffbd2e; }
+  .dot-g { background: #28c840; }
+
+  .terminal-title {
+    font-size: 12px;
+    color: rgba(255,255,255,0.3);
+    margin-left: 8px;
+    font-family: 'DM Mono', monospace;
+  }
+
+  .terminal-body {
+    padding: 20px 24px;
+    font-family: 'DM Mono', monospace;
+    font-size: 13px;
+    line-height: 1.75;
+    color: rgba(255,255,255,0.85);
+    min-height: 320px;
+    position: relative;
+  }
+
+  .cursor {
+    display: inline-block;
+    width: 8px;
+    height: 14px;
+    background: #fff;
+    vertical-align: middle;
+    animation: blink 1s step-end infinite;
+  }
+
+  @keyframes blink {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0; }
+  }
+
+  .t-prompt { color: #4ade80; }
+  .t-dir { color: #60a5fa; }
+  .t-file { color: rgba(255,255,255,0.55); }
+  .t-num { color: #fbbf24; }
+  .t-val { color: #4ade80; }
+  .t-key { color: #c084fc; }
+  .t-muted { color: rgba(255,255,255,0.3); }
+  .t-border { color: rgba(255,255,255,0.15); }
+  .t-time { color: rgba(255,255,255,0.35); }
+
+  .hidden { display: none; }
+
+  .divider { border: none; border-top: 1px solid rgba(255,255,255,0.08); margin: 56px 40px 0; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    overflow: hidden;
+    max-width: 860px;
+    margin: 56px auto;
+    padding: 0 40px;
+    padding: 0;
+  }
+
+  .stats-outer { max-width: 860px; margin: 56px auto; padding: 0 40px; }
+
+  .stat-cell {
+    background: #000;
+    padding: 28px 24px;
+    text-align: center;
+  }
+
+  .stat-num {
+    font-size: 36px;
+    font-weight: 500;
+    letter-spacing: -0.03em;
+    color: #fff;
+    display: block;
+    margin-bottom: 6px;
+  }
+
+  .stat-label { font-size: 13px; color: rgba(255,255,255,0.4); }
+
+  .features-section { max-width: 860px; margin: 0 auto 56px; padding: 0 40px; }
+
+  .section-label {
+    font-size: 12px;
+    color: rgba(255,255,255,0.35);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+
+  .feature-cell { background: #000; padding: 28px 24px; }
+
+  .feature-icon {
+    width: 32px; height: 32px; border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    display: flex; align-items: center; justify-content: center;
+    margin-bottom: 14px; font-size: 15px;
+  }
+
+  .feature-title { font-size: 15px; font-weight: 500; color: #fff; margin-bottom: 8px; }
+  .feature-desc { font-size: 13px; color: rgba(255,255,255,0.45); line-height: 1.6; }
+
+  .install-section { max-width: 860px; margin: 0 auto 56px; padding: 0 40px; text-align: center; }
+
+  .install-box {
+    background: #0d0d0d;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+  }
+
+  .install-cmd { font-family: 'DM Mono', monospace; font-size: 20px; color: #fff; }
+  .install-sub { font-size: 13px; color: rgba(255,255,255,0.35); }
+
+  .install-links { display: flex; gap: 20px; }
+  .install-links a { font-size: 13px; color: rgba(255,255,255,0.5); text-decoration: none; }
+  .install-links a:hover { color: #fff; }
+
+  .footer {
+    border-top: 1px solid rgba(255,255,255,0.08);
+    padding: 24px 40px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+
+  .footer-left { display: flex; align-items: center; gap: 10px; }
+  .footer-left img { width: 22px; height: 22px; border-radius: 50%; }
+  .footer-left span { font-size: 13px; color: rgba(255,255,255,0.4); }
+  .footer-right { font-size: 13px; color: rgba(255,255,255,0.3); }
+</style>
+
+<div class="page">
+
+  <nav>
+    <a class="nav-logo" href="#">
+      <img src="https://yt3.googleusercontent.com/KGXIEWyhEC_EAGdddu0wFFvX2TYlnL2J_p5ZAxP64rZPVahHOiXWTTwR10rzDDzEcqxuAIrvFQ=s160-c-k-c0x00ffffff-no-rj" alt="Anscom">
+      <span>Anscom</span>
+    </a>
+    <ul class="nav-links">
+      <li><a href="#">Research</a></li>
+      <li><a href="#">Documentation</a></li>
+      <li><a href="#">For Developers</a></li>
+      <li><a href="#">GitHub</a></li>
+    </ul>
+    <button class="nav-cta">pip install anscom</button>
+  </nav>
+
+  <div class="meta-line">March 2026 &nbsp;·&nbsp; Release &nbsp;·&nbsp; v1.0.0</div>
+
+  <hero>
+    <h1 class="hero-title">Native Filesystem<br>Intelligence Engine</h1>
+    <p class="hero-subtitle">A native C extension for Python that recursively scans directories, categorizes every file by type, and returns a complete structured breakdown — in a single function call.</p>
+    <div class="hero-actions">
+      <a class="btn-primary" href="https://pypi.org/project/anscom/" target="_blank">View on PyPI ↗</a>
+      <a class="btn-secondary" href="https://github.com/PC5518/anscom-nfie-python-extension" target="_blank">GitHub Repository</a>
+    </div>
+  </hero>
+
+  <div class="demo-wrapper">
+    <p class="section-label">Try it</p>
+
+    <div class="demo-input-row">
+      <input class="demo-path-input" id="pathInput" type="text" placeholder="Enter a directory path  e.g.  /projects/research  or  C:/Users/data" value="">
+      <button class="run-btn" id="runBtn" onclick="runDemo()">
+        <span id="runLabel">Run scan</span>
+      </button>
+    </div>
+
+    <div class="demo-options">
+      <span class="demo-option" id="opt-tree" onclick="toggleOpt('tree')">show_tree=True</span>
+      <span class="demo-option active" id="opt-junk" onclick="toggleOpt('junk')">ignore_junk=True</span>
+      <span class="demo-option" id="opt-silent" onclick="toggleOpt('silent')">silent=True</span>
+      <span style="font-size:12px; color:rgba(255,255,255,0.2); align-self:center; margin-left:4px;">max_depth=<span id="depthLabel">6</span></span>
+      <input type="range" min="1" max="20" value="6" step="1" id="depthSlider" oninput="document.getElementById('depthLabel').textContent=this.value" style="width:80px; margin-left:4px;">
+    </div>
+
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span class="dot dot-r"></span>
+        <span class="dot dot-y"></span>
+        <span class="dot dot-g"></span>
+        <span class="terminal-title" id="termTitle">anscom — waiting</span>
+      </div>
+      <div class="terminal-body" id="termBody">
+        <span class="t-muted">Enter a path above and click Run scan to begin.</span><span class="cursor"></span>
+      </div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="stats-outer">
+    <div class="stats-grid">
+      <div class="stat-cell">
+        <span class="stat-num">170+</span>
+        <span class="stat-label">file extensions recognized</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-num">3</span>
+        <span class="stat-label">OS-native backends</span>
+      </div>
+      <div class="stat-cell">
+        <span class="stat-num">O(1)</span>
+        <span class="stat-label">extension lookup via FNV-1a</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="features-section">
+    <p class="section-label">Architecture</p>
+    <div class="features-grid">
+      <div class="feature-cell">
+        <div class="feature-icon">⚙</div>
+        <div class="feature-title">Direct OS syscalls</div>
+        <div class="feature-desc">getdents64 on Linux, FindFirstFileW on Windows, readdir on macOS. No libc wrappers, no Python os module overhead.</div>
+      </div>
+      <div class="feature-cell">
+        <div class="feature-icon">⟳</div>
+        <div class="feature-title">Multi-threaded worker pool</div>
+        <div class="feature-desc">N threads auto-detected from CPU core count. All threads running before the first directory is opened.</div>
+      </div>
+      <div class="feature-cell">
+        <div class="feature-icon">▣</div>
+        <div class="feature-title">Slab path allocator</div>
+        <div class="feature-desc">Each thread allocates one contiguous block before scanning begins. Zero heap allocation during traversal regardless of filesystem size.</div>
+      </div>
+      <div class="feature-cell">
+        <div class="feature-icon">≡</div>
+        <div class="feature-title">Per-thread statistics</div>
+        <div class="feature-desc">No shared counters during file counting. Each thread writes only to its own ScanStats struct. Results merged after all threads join.</div>
+      </div>
+      <div class="feature-cell">
+        <div class="feature-icon">◈</div>
+        <div class="feature-title">Bounded memory at any scale</div>
+        <div class="feature-desc">Memory usage capped by the queue and path slabs. Scanning 50M files uses no more memory than scanning 50K.</div>
+      </div>
+      <div class="feature-cell">
+        <div class="feature-icon">↺</div>
+        <div class="feature-title">GIL released for full scan</div>
+        <div class="feature-desc">Worker threads operate under Py_BEGIN_ALLOW_THREADS for their entire lifetime. Re-acquired only for progress callback and final dict construction.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="install-section">
+    <p class="section-label">Get started</p>
+    <div class="install-box">
+      <span class="install-cmd">pip install anscom</span>
+      <span class="install-sub">Python 3.6+ &nbsp;·&nbsp; Windows / Linux / macOS &nbsp;·&nbsp; MIT License</span>
+      <div class="install-links">
+        <a href="https://pypi.org/project/anscom/" target="_blank">PyPI ↗</a>
+        <a href="https://github.com/PC5518/anscom-nfie-python-extension" target="_blank">GitHub ↗</a>
+        <a href="https://github.com/PC5518/anscom-nfie-python-extension#readme" target="_blank">Documentation ↗</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-left">
+      <img src="https://yt3.googleusercontent.com/KGXIEWyhEC_EAGdddu0wFFvX2TYlnL2J_p5ZAxP64rZPVahHOiXWTTwR10rzDDzEcqxuAIrvFQ=s160-c-k-c0x00ffffff-no-rj" alt="Anscom">
+      <span>Anscom NFIE &nbsp;·&nbsp; Open Source &nbsp;·&nbsp; MIT License</span>
+    </div>
+    <div class="footer-right">v1.0.0 &nbsp;·&nbsp; March 2026</div>
+  </div>
+
+</div>
+
+<script>
+var opts = { tree: false, junk: true, silent: false };
+var running = false;
+
+function toggleOpt(key) {
+  opts[key] = !opts[key];
+  var el = document.getElementById('opt-' + key);
+  if (opts[key]) el.classList.add('active');
+  else el.classList.remove('active');
+}
+
+function sleep(ms) { return new Promise(function(r){ setTimeout(r, ms); }); }
+
+function h(tag, cls, html) {
+  return '<span class="' + cls + '">' + html + '</span>';
+}
+
+function getSimulatedData(path) {
+  var seed = path.length;
+  var total = 3000 + (seed * 47) % 5000;
+  var code = Math.floor(total * 0.38);
+  var docs = Math.floor(total * 0.14);
+  var img = Math.floor(total * 0.09);
+  var audio = Math.floor(total * 0.18);
+  var video = Math.floor(total * 0.04);
+  var arch = Math.floor(total * 0.02);
+  var exe = Math.floor(total * 0.01);
+  var sys = Math.floor(total * 0.03);
+  var other = total - code - docs - img - audio - video - arch - exe - sys;
+  var time = (0.8 + (seed % 30) / 100).toFixed(4);
+  return { total: total, code: code, docs: docs, img: img, audio: audio, video: video, arch: arch, exe: exe, sys: sys, other: other, time: time };
+}
+
+function pad(str, len) {
+  str = String(str);
+  while (str.length < len) str = ' ' + str;
+  return str;
+}
+
+function rpad(str, len) {
+  str = String(str);
+  while (str.length < len) str += ' ';
+  return str;
+}
+
+async function runDemo() {
+  if (running) return;
+  var path = document.getElementById('pathInput').value.trim();
+  if (!path) { path = '/projects/research'; document.getElementById('pathInput').value = path; }
+
+  running = true;
+  var btn = document.getElementById('runBtn');
+  btn.disabled = true;
+  document.getElementById('runLabel').textContent = 'Scanning...';
+  document.getElementById('termTitle').textContent = 'anscom — running';
+
+  var body = document.getElementById('termBody');
+  var depth = document.getElementById('depthSlider').value;
+  var showTree = opts.tree;
+  var ignoreJunk = opts.junk;
+
+  var optStr = 'max_depth=' + depth;
+  if (showTree) optStr += ', show_tree=True';
+  if (ignoreJunk) optStr += ', ignore_junk=True';
+  if (opts.silent) optStr += ', silent=True';
+
+  body.innerHTML = '';
+
+  var line1 = h('span','t-prompt','>>> ') + h('span','','import anscom');
+  await typeLine(body, line1, 40);
+  await sleep(300);
+
+  var line2 = h('span','t-prompt','>>> ') + h('span','','anscom.scan("' + path + '", ' + optStr + ')');
+  await typeLine(body, line2, 25);
+  await sleep(400);
+
+  body.innerHTML += '<br>';
+  var data = getSimulatedData(path);
+
+  await printLine(body, h('span','t-muted','Anscom Enterprise v1.0.0  (Threads: 16)'));
+  await printLine(body, h('span','t-muted','Target: ' + path));
+  body.innerHTML += '<br>';
+  await sleep(200);
+
+  if (showTree) {
+    var dirName = path.split('/').pop().split('\\').pop() || 'root';
+    var treeLines = [
+      '  ' + h('span','t-border','|--') + ' ' + h('span','t-dir','[factor_models]'),
+      '  ' + h('span','t-border','|') + '   ' + h('span','t-border','|--') + ' ' + h('span','t-file','fama_french_5factor_regression.py'),
+      '  ' + h('span','t-border','|') + '   ' + h('span','t-border','|--') + ' ' + h('span','t-file','momentum_alpha_backtest.ipynb'),
+      '  ' + h('span','t-border','|') + '   ' + h('span','t-border','|--') + ' ' + h('span','t-file','covariance_matrix_shrinkage.py'),
+      '  ' + h('span','t-border','|--') + ' ' + h('span','t-dir','[research_papers]'),
+      '  ' + h('span','t-border','|') + '   ' + h('span','t-border','|--') + ' ' + h('span','t-file','gold_etf_fair_value_engine_v3.pdf'),
+      '  ' + h('span','t-border','|') + '   ' + h('span','t-border','|--') + ' ' + h('span','t-file','yield_curve_arbitrage_strategy.pdf'),
+      '  ' + h('span','t-border','|') + '   ' + h('span','t-border','|--') + ' ' + h('span','t-dir','[figures]'),
+      '  ' + h('span','t-border','|') + '       ' + h('span','t-border','|--') + ' ' + h('span','t-file','cumulative_returns_plot.png'),
+      '  ' + h('span','t-border','|') + '       ' + h('span','t-border','|--') + ' ' + h('span','t-file','drawdown_analysis_chart.png'),
+      '  ' + h('span','t-border','|--') + ' ' + h('span','t-dir','[market_microstructure]'),
+      '  ' + h('span','t-border','|') + '   ' + h('span','t-border','|--') + ' ' + h('span','t-file','order_flow_imbalance_model.py'),
+      '  ' + h('span','t-border','|') + '   ' + h('span','t-border','|--') + ' ' + h('span','t-file','bid_ask_spread_decomposition.pdf'),
+    ];
+    for (var i = 0; i < treeLines.length; i++) {
+      await printLine(body, treeLines[i], 30);
+    }
+    body.innerHTML += '<br>';
+  }
+
+  if (!opts.silent) {
+    var scanCount = 0;
+    var scanEl = document.createElement('span');
+    scanEl.className = 't-muted';
+    scanEl.innerHTML = 'Scanned files: 0 ...';
+    body.appendChild(scanEl);
+    body.appendChild(document.createTextNode('\r'));
+
+    for (var s = 0; s < 6; s++) {
+      await sleep(180);
+      scanCount += Math.floor(data.total / 6);
+      scanEl.innerHTML = 'Scanned files: ' + scanCount + ' ...';
+    }
+    scanEl.innerHTML = '';
+    body.innerHTML += '<br>';
+
+    var rows = [
+      ['Code/Source',   data.code,  (data.code/data.total*100).toFixed(2)+'%'],
+      ['Documents',     data.docs,  (data.docs/data.total*100).toFixed(2)+'%'],
+      ['Images',        data.img,   (data.img/data.total*100).toFixed(2)+'%'],
+      ['Audio',         data.audio, (data.audio/data.total*100).toFixed(2)+'%'],
+      ['Videos',        data.video, (data.video/data.total*100).toFixed(2)+'%'],
+      ['Archives',      data.arch,  (data.arch/data.total*100).toFixed(2)+'%'],
+      ['Executables',   data.exe,   (data.exe/data.total*100).toFixed(2)+'%'],
+      ['System/Config', data.sys,   (data.sys/data.total*100).toFixed(2)+'%'],
+      ['Other/Unknown', data.other, (data.other/data.total*100).toFixed(2)+'%'],
+    ];
+
+    var border = h('span','t-border','+-----------------+--------------+----------+');
+    var header = h('span','t-border','|') + ' ' + h('span','t-key',rpad('Category',15)) + ' ' + h('span','t-border','|') + ' ' + h('span','t-key',rpad('Count',12)) + ' ' + h('span','t-border','|') + ' ' + h('span','t-key',rpad('Percent',8)) + ' ' + h('span','t-border','|');
+
+    await printLine(body, h('span','t-muted','=== SUMMARY REPORT ================================'));
+    await printLine(body, border);
+    await printLine(body, header);
+    await printLine(body, border);
+
+    for (var r = 0; r < rows.length; r++) {
+      if (rows[r][1] === 0) continue;
+      var row = h('span','t-border','|') + ' ' + rpad(rows[r][0],15) + ' ' + h('span','t-border','|') + ' ' + h('span','t-num',pad(rows[r][1],12)) + ' ' + h('span','t-border','|') + ' ' + h('span','t-val',pad(rows[r][2],8)) + ' ' + h('span','t-border','|');
+      await printLine(body, row, 20);
+    }
+
+    await printLine(body, border);
+    var total_row = h('span','t-border','|') + ' ' + h('span','t-key',rpad('TOTAL FILES',15)) + ' ' + h('span','t-border','|') + ' ' + h('span','t-num',pad(data.total,12)) + ' ' + h('span','t-border','|') + ' ' + h('span','t-val',pad('100.00%',8)) + ' ' + h('span','t-border','|');
+    await printLine(body, total_row);
+    await printLine(body, border);
+    body.innerHTML += '<br>';
+    await printLine(body, h('span','t-time','Time     : ' + data.time + ' seconds'));
+    await printLine(body, h('span','t-time','Errors   : 0 (permission denied / inaccessible)'));
+    await printLine(body, h('span','t-border','==================================================='));
+  }
+
+  body.innerHTML += '<br>';
+  await printLine(body, h('span','t-muted','{') + h('span','t-key',"'total_files'") + h('span','t-muted',': ') + h('span','t-num', data.total) + h('span','t-muted',', ') + h('span','t-key',"'scan_errors'") + h('span','t-muted',': ') + h('span','t-num','0') + h('span','t-muted',', ') + h('span','t-key',"'duration_seconds'") + h('span','t-muted',': ') + h('span','t-val', data.time) + h('span','t-muted',',...}'));
+
+  document.getElementById('termTitle').textContent = 'anscom — completed';
+  btn.disabled = false;
+  document.getElementById('runLabel').textContent = 'Run again';
+  running = false;
+}
+
+async function typeLine(container, html, delay) {
+  delay = delay || 35;
+  var div = document.createElement('div');
+  div.innerHTML = html;
+  var text = div.textContent;
+  var el = document.createElement('span');
+  container.appendChild(el);
+  for (var i = 0; i <= text.length; i++) {
+    el.textContent = text.substring(0, i);
+    await sleep(delay);
+  }
+  el.innerHTML = html;
+  container.appendChild(document.createElement('br'));
+}
+
+async function printLine(container, html, delay) {
+  delay = delay || 15;
+  await sleep(delay);
+  var el = document.createElement('span');
+  el.innerHTML = html;
+  container.appendChild(el);
+  container.appendChild(document.createElement('br'));
+}
+</script>
