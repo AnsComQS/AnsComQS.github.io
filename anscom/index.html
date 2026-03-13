@@ -7,8 +7,7 @@
 <style>
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap');
 
-/* ── THEME TOKENS ── */
-[data-theme="dark"] {
+/* ── THEME TOKENS ── */[data-theme="dark"] {
   --bg:        #000000;
   --bg2:       #0d0d0d;
   --bg3:       #111111;
@@ -160,6 +159,38 @@ nav.topnav {
   transition:opacity 0.15s;
 }
 .nav-cta:hover { opacity:0.85; }
+
+/* ── TOAST NOTIFICATION ── */
+.desktop-toast {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+  color: var(--text);
+  padding: 14px 18px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 9999;
+  font-size: 13.5px;
+  font-weight: 500;
+  max-width: 340px;
+  line-height: 1.4;
+  transform: translateX(120%);
+  opacity: 0;
+  transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275), opacity 0.5s ease;
+}
+.desktop-toast.show {
+  transform: translateX(0);
+  opacity: 1;
+}
+.desktop-toast svg {
+  color: var(--text3);
+  flex-shrink: 0;
+}
 
 /* ── BODY LAYOUT ── */
 .body-layout { display:flex; flex:1; min-height:0; }
@@ -440,6 +471,16 @@ hr.divider { border:none; border-top:1px solid var(--border); margin:0; }
 </style>
 </head>
 <body>
+
+<!-- MOBILE TOAST NOTIFICATION -->
+<div id="mobile-notice" class="desktop-toast">
+  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+    <rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect>
+    <line x1="12" y1="18" x2="12.01" y2="18"></line>
+  </svg>
+  <span>For optimal viewing, please enable "Desktop site" if browsing on a mobile device.</span>
+</div>
+
 <div class="page">
 
 <!-- NAV -->
@@ -593,7 +634,7 @@ hr.divider { border:none; border-top:1px solid var(--border); margin:0; }
       <thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
       <tbody>
         <tr><td>path</td><td>str</td><td>required</td><td>Target directory. Relative (.) or absolute (/data).</td></tr>
-        <tr><td>max_depth</td><td>int</td><td>6</td><td>Recursion depth limit. Clamped to [0, 64].</td></tr>
+        <tr><td>max_depth</td><td>int</td><td>6</td><td>Recursion depth limit. Clamped to[0, 64].</td></tr>
         <tr><td>show_tree</td><td>bool</td><td>False</td><td>Print DFS-ordered directory tree to stdout. Forces workers=1.</td></tr>
         <tr><td>workers</td><td>int</td><td>0</td><td>Thread count. 0 = OS core count. Overridden to 1 when show_tree=True.</td></tr>
         <tr><td>min_size</td><td>int</td><td>0</td><td>Skip files smaller than this byte count. 0 = no filter.</td></tr>
@@ -888,16 +929,7 @@ async function animReturns(){
   await typeLine(tid,"result = anscom.scan('/data', silent=True)"); await sleep(300);
   await typeLine(tid,'result'); await sleep(250);
   addLine(tid,sp('t-bdr','{'));
-  const pairs=[
-    [`  ${sp('t-key',"'total_files'")}:         `,sp('t-num','21008')],
-    [`  ${sp('t-key',"'scan_errors'")}:         `,sp('t-num','0')],
-    [`  ${sp('t-key',"'duration_seconds'")}:    `,sp('t-val','1.5186')],
-    [`  ${sp('t-key',"'categories'")}: {`,''],
-    [`    ${sp('t-key',"'Code/Source'")}:        `,sp('t-num','5955')],
-    [`    ${sp('t-key',"'Documents'")}:          `,sp('t-num','203')],
-    [`    ${sp('t-key',"'Images'")}:             `,sp('t-num','151')],
-    [`    ${sp('t-key',"'System/Config'")}:      `,sp('t-num','5707')],
-    [`    ${sp('t-key',"'Other/Unknown'")}:      `,sp('t-num','8992')],
+  const pairs=[[`  ${sp('t-key',"'total_files'")}:         `,sp('t-num','21008')],[`  ${sp('t-key',"'scan_errors'")}:         `,sp('t-num','0')],[`  ${sp('t-key',"'duration_seconds'")}:    `,sp('t-val','1.5186')],[`  ${sp('t-key',"'categories'")}: {`,''],[`    ${sp('t-key',"'Code/Source'")}:        `,sp('t-num','5955')],[`    ${sp('t-key',"'Documents'")}:          `,sp('t-num','203')],[`    ${sp('t-key',"'Images'")}:             `,sp('t-num','151')],[`    ${sp('t-key',"'System/Config'")}:      `,sp('t-num','5707')],[`    ${sp('t-key',"'Other/Unknown'")}:      `,sp('t-num','8992')],
   ];
   for(const [k,v] of pairs){addLine(tid,k+v+(v?sp('t-bdr',','):''));await sleep(55);}
   addLine(tid,sp('t-bdr','  },'));
@@ -923,7 +955,7 @@ const EXDEFS=[
     await sleep(300); await typeLine(tid,"print(result['extensions'])"); await sleep(350);
     addLine(tid,sp('t-bdr','{')); 
     const e=[["'.py'","3201"],["'.ts'","1044"],["'.js'","876"],["'.go'","412"],["'.rs'","189"]];
-    for(const [k,v] of e){addLine(tid,`  ${sp('t-key',k)}: ${sp('t-num',v)},`);await sleep(60);}
+    for(const[k,v] of e){addLine(tid,`  ${sp('t-key',k)}: ${sp('t-num',v)},`);await sleep(60);}
     addLine(tid,sp('t-bdr','}'));
   }},
   {title:'examples/large_files.py',run:async tid=>{
@@ -1238,7 +1270,7 @@ async function runTry(){
     addLine(tid,bdr);
 
     const cats=[['Code/Source    ',code],['Documents      ',docs],['Images         ',img],['Audio          ',audio],['System/Config  ',sys],['Other/Unknown  ',other]];
-    for(const [name,cnt] of cats){
+    for(const[name,cnt] of cats){
       if(cnt<=0)continue;
       const pct=(cnt/total*100).toFixed(2)+'%';
       const cntStr=cnt.toLocaleString().padStart(12);
@@ -1283,6 +1315,17 @@ document.addEventListener('DOMContentLoaded',()=>{
   onVisible('report',    animReport,     0.1);
   onVisible('categories',startLive,      0.1);
   onVisible('howworks',  animHW,         0.08);
+
+  // Show the mobile toast notice
+  const mobileNotice = document.getElementById('mobile-notice');
+  if (mobileNotice) {
+    setTimeout(() => {
+      mobileNotice.classList.add('show');
+      setTimeout(() => {
+        mobileNotice.classList.remove('show');
+      }, 5000);
+    }, 600); // slight delay on initial load
+  }
 });
 </script>
 </body>
