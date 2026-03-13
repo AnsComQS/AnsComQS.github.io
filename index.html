@@ -1,1096 +1,716 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Anscom — Native Filesystem Intelligence Engine</title>
-<style>
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&display=swap');
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AnsCom Quantitative Labs | Research Infrastructure</title>
+    
+    <!-- Fonts: Inter (UI) and JetBrains Mono (Data/Code) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* 
+           THEME ENGINE: COMPUTATIONAL LABORATORY
+        */
+        :root {
+            /* Lab Palette */
+            --lab-slate: #0F172A;
+            --lab-blue: #007AFF;
+            --lab-white: #FFFFFF;
+            --lab-gray: #F1F5F9;
+            --lab-border: #E2E8F0;
+            
+            /* Data Visualization Colors */
+            --status-ok: #10B981;      /* Green */
+            --status-warn: #F59E0B;    /* Amber */
+            --status-err: #EF4444;     /* Red */
+            --status-active: #3B82F6;  /* Blue */
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+            /* Typography */
+            --font-ui: 'Inter', system-ui, sans-serif;
+            --font-code: 'JetBrains Mono', monospace;
 
-.page {
-  background: #000;
-  color: #fff;
-  font-family: -apple-system, 'SF Pro Display', sans-serif;
-  min-height: 100vh;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
+            /* Effects */
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --glass-bg: rgba(255, 255, 255, 0.95);
+        }
 
-/* ── NAV ── */
-nav.topnav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 40px;
-  border-bottom: 1px solid rgba(255,255,255,0.08);
-  position: sticky;
-  top: 0;
-  background: rgba(0,0,0,0.92);
-  backdrop-filter: blur(12px);
-  z-index: 200;
-  flex-shrink: 0;
-}
-.nav-logo { display:flex; align-items:center; gap:12px; text-decoration:none; }
-.nav-logo img { width:32px; height:32px; border-radius:50%; object-fit:cover; }
-.nav-logo span { font-size:15px; font-weight:500; color:#fff; letter-spacing:-0.01em; }
-.nav-links { display:flex; align-items:center; gap:32px; list-style:none; }
-.nav-links a { font-size:14px; color:rgba(255,255,255,0.6); text-decoration:none; }
-.nav-cta {
-  background:#fff; color:#000; border:none; padding:8px 18px;
-  border-radius:6px; font-size:14px; font-weight:500; cursor:pointer; font-family:inherit;
-}
+        /* ACCESSIBILITY VARS (Dynamic) */
+        body.contrast-high { --lab-gray: #000; --lab-white: #000; --lab-slate: #fff; --text-main: #fff; border: 1px solid white; }
+        body.font-large { font-size: 120%; }
+        body.dyslexic { font-family: 'Comic Sans MS', 'Verdana', sans-serif !important; }
+        body.saturation-low { filter: grayscale(100%); }
+        body.cursor-large { cursor: help !important; }
 
-/* ── BODY LAYOUT ── */
-.body-layout { display:flex; flex:1; min-height:0; }
+        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
 
-/* ── SIDEBAR ── */
-.sidebar {
-  width:234px; flex-shrink:0; background:#000;
-  border-right:1px solid rgba(255,255,255,0.08);
-  position:sticky; top:53px; height:calc(100vh - 53px);
-  overflow-y:auto; padding:20px 0;
-}
-.sidebar::-webkit-scrollbar { width:0; }
-.sg-label {
-  font-size:11px; letter-spacing:0.08em; text-transform:uppercase;
-  color:rgba(255,255,255,0.22); padding:14px 20px 5px;
-  font-family:'DM Mono',monospace;
-}
-.slink {
-  display:block; padding:7px 20px; font-size:13px;
-  color:rgba(255,255,255,0.48); text-decoration:none;
-  border-left:2px solid transparent; transition:all 0.15s; cursor:pointer;
-}
-.slink:hover { color:rgba(255,255,255,0.8); background:rgba(255,255,255,0.02); }
-.slink.active { color:#fff; border-left-color:#fff; background:rgba(255,255,255,0.04); }
+        body {
+            font-family: var(--font-ui);
+            background-color: var(--lab-gray);
+            color: #1E293B;
+            line-height: 1.5;
+            overflow-x: hidden;
+        }
 
-/* ── MAIN ── */
-.main { flex:1; overflow-y:auto; min-width:0; }
-.main::-webkit-scrollbar { width:0; }
+        a { text-decoration: none; color: inherit; transition: 0.2s; }
 
-/* ── SECTION ── */
-.sec {
-  max-width:820px; margin:0 auto;
-  padding:56px 40px;
-  border-bottom:1px solid rgba(255,255,255,0.06);
-}
-.sec:last-child { border-bottom:none; }
+        /* --- 1. ACCESSIBILITY UTILITY BAR --- */
+        .access-bar {
+            background: #fff;
+            border-bottom: 1px solid var(--lab-border);
+            padding: 8px 40px;
+            font-size: 11px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            font-weight: 600;
+            color: #64748B;
+        }
 
-/* ── META ── */
-.meta-line { text-align:center; padding:28px 40px 0; font-size:13px; color:rgba(255,255,255,0.4); }
+        .access-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            color: #64748B;
+            font-size: 11px;
+            font-weight: 600;
+        }
+        .access-btn:hover { color: var(--lab-blue); }
+        .access-panel {
+            position: absolute;
+            top: 35px;
+            right: 40px;
+            background: white;
+            border: 1px solid var(--lab-border);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: var(--shadow-md);
+            display: none;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            z-index: 2000;
+            width: 300px;
+        }
+        .access-panel.active { display: grid; }
+        
+        .a11y-toggle {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 8px;
+            background: #f8fafc;
+            border-radius: 4px;
+            cursor: pointer;
+            border: 1px solid transparent;
+        }
+        .a11y-toggle:hover { border-color: var(--lab-blue); }
+        .a11y-toggle.active { background: #eff6ff; color: var(--lab-blue); border-color: var(--lab-blue); }
 
-/* ── HERO ── */
-.hero-block { text-align:center; padding:48px 40px 52px; max-width:760px; margin:0 auto; }
-.hero-title { font-size:clamp(36px,5vw,58px); font-weight:500; line-height:1.1; letter-spacing:-0.03em; color:#fff; margin-bottom:20px; }
-.hero-subtitle { font-size:17px; color:rgba(255,255,255,0.55); line-height:1.6; max-width:560px; margin:0 auto 36px; }
-.hero-actions { display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-bottom:48px; }
-.btn-primary { background:#fff; color:#000; border:none; padding:11px 24px; border-radius:8px; font-size:15px; font-weight:500; cursor:pointer; font-family:inherit; text-decoration:none; display:inline-flex; align-items:center; gap:8px; }
-.btn-secondary { background:transparent; color:#fff; border:1px solid rgba(255,255,255,0.2); padding:11px 24px; border-radius:8px; font-size:15px; cursor:pointer; font-family:inherit; text-decoration:none; display:inline-flex; align-items:center; gap:8px; }
+        /* --- 2. LAB NAVIGATION --- */
+        .lab-nav {
+            background: var(--glass-bg);
+            backdrop-filter: blur(10px);
+            height: 65px;
+            border-bottom: 1px solid var(--lab-border);
+            display: flex;
+            align-items: center;
+            padding: 0 40px;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
 
-/* ── SECTION LABELS ── */
-.section-label { font-size:12px; color:rgba(255,255,255,0.35); letter-spacing:0.08em; text-transform:uppercase; margin-bottom:18px; }
-.section-title { font-size:22px; font-weight:500; letter-spacing:-0.02em; color:#fff; margin-bottom:13px; line-height:1.2; }
-.section-body { font-size:14px; color:rgba(255,255,255,0.48); line-height:1.72; max-width:620px; }
-.section-body + .section-body { margin-top:10px; }
+        .brand-block {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-right: 40px;
+        }
+        .brand-logo {
+            width: 36px;
+            height: 36px;
+            background: var(--lab-slate);
+            color: white;
+            display: grid;
+            place-items: center;
+            border-radius: 6px;
+            font-family: var(--font-code);
+            font-weight: 700;
+        }
+        .brand-info h1 { font-size: 16px; font-weight: 700; letter-spacing: -0.5px; }
+        .brand-info span { font-size: 10px; text-transform: uppercase; color: #64748B; font-weight: 600; }
 
-/* ── TERMINAL ── */
-.terminal {
-  background:#0d0d0d; border:1px solid rgba(255,255,255,0.1);
-  border-radius:12px; overflow:hidden; margin-top:24px;
-}
-.terminal-bar {
-  padding:12px 16px; border-bottom:1px solid rgba(255,255,255,0.06);
-  display:flex; align-items:center; gap:8px; background:#111;
-}
-.dot { width:12px; height:12px; border-radius:50%; }
-.dot-r { background:#ff5f57; } .dot-y { background:#ffbd2e; } .dot-g { background:#28c840; }
-.terminal-title { font-size:12px; color:rgba(255,255,255,0.3); margin-left:8px; font-family:'DM Mono',monospace; flex:1; }
-.t-badge {
-  font-family:'DM Mono',monospace; font-size:10px; padding:2px 8px;
-  border-radius:3px; background:rgba(40,200,64,0.1);
-  border:1px solid rgba(40,200,64,0.18); color:#28c840;
-}
-.terminal-body {
-  padding:20px 24px; font-family:'DM Mono',monospace; font-size:13px;
-  line-height:1.75; color:rgba(255,255,255,0.85); min-height:80px;
-}
+        .nav-items { display: flex; gap: 24px; }
+        .nav-link { font-size: 13px; font-weight: 500; color: #475569; position: relative; }
+        .nav-link.active { color: var(--lab-blue); }
+        .nav-link.active::after {
+            content: ''; position: absolute; bottom: -23px; left: 0; width: 100%; height: 2px; background: var(--lab-blue);
+        }
 
-/* terminal colors */
-.t-prompt { color:#4ade80; }
-.t-dir { color:#60a5fa; }
-.t-file { color:rgba(255,255,255,0.55); }
-.t-header { color:rgba(255,255,255,0.35); }
-.t-num { color:#fbbf24; }
-.t-border { color:rgba(255,255,255,0.15); }
-.t-key { color:#c084fc; }
-.t-val { color:#4ade80; }
-.t-time { color:rgba(255,255,255,0.35); }
-.t-muted { color:rgba(255,255,255,0.28); }
-.t-comment { color:rgba(255,255,255,0.24); }
-.t-kw { color:#fbbf24; }
-.t-str { color:#4ade80; }
-.t-cyan { color:#22d3ee; }
+        .search-lab {
+            margin-left: auto;
+            position: relative;
+        }
+        .lab-input {
+            background: #F1F5F9;
+            border: 1px solid transparent;
+            padding: 8px 12px 8px 35px;
+            border-radius: 6px;
+            font-family: var(--font-code);
+            font-size: 12px;
+            width: 240px;
+            transition: 0.2s;
+        }
+        .lab-input:focus { background: white; border-color: var(--lab-blue); width: 300px; box-shadow: 0 0 0 3px rgba(0,122,255,0.1); }
+        .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; opacity: 0.5; }
 
-/* ── STATS GRID ── */
-.stats-grid {
-  display:grid; grid-template-columns:repeat(3,1fr); gap:1px;
-  background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.08);
-  border-radius:12px; overflow:hidden; margin-top:28px;
-}
-.stat-cell { background:#000; padding:28px 24px; text-align:center; }
-.stat-num { font-size:36px; font-weight:500; letter-spacing:-0.03em; color:#fff; display:block; margin-bottom:6px; }
-.stat-label { font-size:13px; color:rgba(255,255,255,0.4); }
+        /* --- 3. HERO: LATEST RELEASE --- */
+        .release-deck {
+            background: linear-gradient(to right, #1e293b, #0f172a);
+            color: white;
+            padding: 60px 40px;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .stream-deco {
+            position: absolute;
+            right: 0; top: 0; bottom: 0; width: 40%;
+            background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 10px);
+            pointer-events: none;
+        }
 
-/* ── FEATURES GRID ── */
-.features-grid {
-  display:grid; grid-template-columns:repeat(2,1fr); gap:1px;
-  background:rgba(255,255,255,0.08); border:1px solid rgba(255,255,255,0.08);
-  border-radius:12px; overflow:hidden; margin-top:24px;
-}
-.feature-cell { background:#000; padding:28px 24px; }
-.feature-icon { width:32px; height:32px; border-radius:8px; background:rgba(255,255,255,0.06); display:flex; align-items:center; justify-content:center; margin-bottom:14px; font-size:15px; }
-.feature-title { font-size:15px; font-weight:500; color:#fff; margin-bottom:8px; }
-.feature-desc { font-size:13px; color:rgba(255,255,255,0.45); line-height:1.6; }
+        .release-badge {
+            display: inline-flex;
+            align-items: center;
+            background: rgba(16, 185, 129, 0.2);
+            color: #34D399;
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            font-family: var(--font-code);
+        }
+        .release-badge .dot { width: 6px; height: 6px; background: currentColor; border-radius: 50%; margin-right: 8px; animation: pulse 2s infinite; }
 
-/* ── API TABLE ── */
-.api-table { width:100%; border-collapse:collapse; margin-top:24px; font-size:13px; }
-.api-table th { font-family:'DM Mono',monospace; font-size:11px; letter-spacing:0.06em; text-transform:uppercase; color:rgba(255,255,255,0.28); padding:10px 14px; text-align:left; border-bottom:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.02); }
-.api-table td { padding:11px 14px; border-bottom:1px solid rgba(255,255,255,0.05); vertical-align:top; line-height:1.55; color:rgba(255,255,255,0.48); }
-.api-table tr:last-child td { border-bottom:none; }
-.api-table td:first-child { font-family:'DM Mono',monospace; font-size:12px; color:#22d3ee; }
-.api-table td:nth-child(2) { font-family:'DM Mono',monospace; font-size:12px; color:#c084fc; }
-.api-table td:nth-child(3) { font-family:'DM Mono',monospace; font-size:12px; color:rgba(255,255,255,0.3); }
+        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
 
-/* ── TABS ── */
-.tab-row { display:flex; gap:8px; flex-wrap:wrap; margin:20px 0 16px; }
-.tab-btn {
-  font-family:'DM Mono',monospace; font-size:12px; padding:6px 14px;
-  border-radius:6px; border:1px solid rgba(255,255,255,0.1);
-  background:transparent; color:rgba(255,255,255,0.4); cursor:pointer; transition:all 0.15s;
-}
-.tab-btn:hover { color:rgba(255,255,255,0.75); border-color:rgba(255,255,255,0.2); }
-.tab-btn.active { background:rgba(255,255,255,0.07); border-color:rgba(255,255,255,0.22); color:#fff; }
+        .release-title { font-size: 36px; font-weight: 700; margin-bottom: 15px; letter-spacing: -1px; }
+        .release-desc { max-width: 700px; font-size: 16px; color: #94A3B8; margin-bottom: 30px; line-height: 1.6; }
 
-/* ── STEPS ── */
-.steps { display:flex; flex-direction:column; margin-top:24px; }
-.step-row {
-  display:flex; gap:18px; padding:18px 0;
-  border-bottom:1px solid rgba(255,255,255,0.05);
-  opacity:0; animation:fadeUp 0.4s ease forwards;
-}
-.step-row:last-child { border-bottom:none; }
-.step-n {
-  font-family:'DM Mono',monospace; font-size:11px; color:rgba(255,255,255,0.3);
-  background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08);
-  border-radius:5px; width:26px; height:26px;
-  display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px;
-}
-.step-title { font-size:13.5px; font-weight:500; color:#fff; margin-bottom:4px; }
-.step-desc { font-size:12.5px; color:rgba(255,255,255,0.44); line-height:1.65; }
-.step-desc code { font-family:'DM Mono',monospace; font-size:11px; color:#22d3ee; background:rgba(34,211,238,0.08); padding:1px 4px; border-radius:2px; }
-@keyframes fadeUp { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:translateY(0)} }
+        .action-row { display: flex; gap: 15px; align-items: center; }
 
-/* ── EXCLUSION CHIPS ── */
-.excl-sublabel { font-size:11px; color:rgba(255,255,255,0.24); letter-spacing:0.06em; text-transform:uppercase; margin:16px 0 7px; font-family:'DM Mono',monospace; }
-.excl-chips { display:flex; flex-wrap:wrap; gap:6px; }
-.excl-chip {
-  font-family:'DM Mono',monospace; font-size:12px; padding:5px 11px;
-  border-radius:5px; background:rgba(255,255,255,0.03);
-  border:1px solid rgba(255,255,255,0.08); color:rgba(255,255,255,0.44);
-  cursor:default; transition:all 0.15s;
-}
-.excl-chip:hover { color:#f87171; border-color:rgba(248,113,113,0.3); background:rgba(248,113,113,0.06); }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            height: 40px;
+            padding: 0 20px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            text-decoration: none;
+        }
+        .btn svg { width: 16px; height: 16px; margin-right: 8px; }
+        
+        .btn-primary { background: var(--lab-blue); color: white; border: 1px solid var(--lab-blue); }
+        .btn-primary:hover { background: #2563EB; }
+        
+        .btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.2); }
 
-/* ── EXT CHIPS ── */
-.ext-section { margin-top:18px; }
-.ext-cat-header { display:flex; align-items:center; gap:10px; margin-bottom:7px; }
-.ext-cat-name { font-size:13px; font-weight:500; color:#fff; }
-.ext-cat-badge { font-family:'DM Mono',monospace; font-size:10px; color:rgba(255,255,255,0.35); background:rgba(255,255,255,0.04); border:1px solid rgba(255,255,255,0.08); padding:2px 7px; border-radius:3px; }
-.ext-chips { display:flex; flex-wrap:wrap; gap:5px; }
-.ext-chip { font-family:'DM Mono',monospace; font-size:11px; padding:4px 9px; border-radius:4px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.07); color:rgba(255,255,255,0.38); transition:all 0.15s; cursor:default; }
-.ext-chip:hover { color:rgba(255,255,255,0.75); border-color:rgba(255,255,255,0.14); }
+        .copy-citation { margin-left: 10px; font-size: 12px; color: #64748B; cursor: pointer; text-decoration: underline; }
 
-/* ── LIVE COUNTER ── */
-.live-bar {
-  display:flex; justify-content:space-between; align-items:center;
-  background:rgba(255,255,255,0.02); border:1px solid rgba(255,255,255,0.08);
-  border-radius:8px; padding:14px 20px; margin-top:24px;
-}
-.live-lbl { font-size:11px; color:rgba(255,255,255,0.28); letter-spacing:0.06em; text-transform:uppercase; font-family:'DM Mono',monospace; margin-bottom:3px; }
-.live-val { font-family:'DM Mono',monospace; font-size:20px; font-weight:500; color:#fff; }
-.cat-bar-list { margin-top:16px; display:flex; flex-direction:column; gap:8px; }
-.cat-bar-row { display:flex; align-items:center; gap:12px; }
-.cat-bar-name { font-family:'DM Mono',monospace; font-size:11.5px; color:rgba(255,255,255,0.38); min-width:118px; }
-.cat-bar-wrap { flex:1; height:4px; background:rgba(255,255,255,0.07); border-radius:2px; overflow:hidden; }
-.cat-bar-fill { height:100%; border-radius:2px; width:0; transition:width 1.4s cubic-bezier(0.4,0,0.2,1); background:rgba(255,255,255,0.32); }
-.cat-bar-pct { font-family:'DM Mono',monospace; font-size:11px; color:rgba(255,255,255,0.28); min-width:48px; text-align:right; }
+        /* --- 4. TELEMETRY RAIL --- */
+        .telemetry-rail {
+            background: #fff;
+            border-bottom: 1px solid var(--lab-border);
+            height: 36px;
+            display: flex;
+            align-items: center;
+            font-family: var(--font-code);
+            font-size: 11px;
+            color: #475569;
+            overflow: hidden;
+            position: relative;
+        }
+        .rail-title {
+            padding: 0 20px;
+            background: #F8FAFC;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            font-weight: 700;
+            border-right: 1px solid var(--lab-border);
+            z-index: 10;
+        }
+        .rail-track {
+            display: flex;
+            animation: slide 35s linear infinite;
+        }
+        .rail-item {
+            display: flex;
+            align-items: center;
+            margin-right: 40px;
+            white-space: nowrap;
+        }
+        .rail-key { color: #94A3B8; margin-right: 8px; }
+        .rail-val { font-weight: 600; color: #0F172A; }
+        .rail-status { width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; }
+        .st-ok { background: var(--status-ok); }
+        .st-warn { background: var(--status-warn); }
+        
+        @keyframes slide { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-/* ── INSTALL BOX ── */
-.install-box {
-  background:#0d0d0d; border:1px solid rgba(255,255,255,0.1); border-radius:12px;
-  padding:32px; display:flex; flex-direction:column; align-items:center; gap:16px;
-  text-align:center; margin-top:24px;
-}
-.install-cmd { font-family:'DM Mono',monospace; font-size:20px; color:#fff; }
-.install-sub { font-size:13px; color:rgba(255,255,255,0.35); }
-.install-links { display:flex; gap:20px; }
-.install-links a { font-size:13px; color:rgba(255,255,255,0.5); text-decoration:none; transition:color 0.2s; }
-.install-links a:hover { color:#fff; }
+        /* --- 5. GRID LAYOUT --- */
+        .lab-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px;
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 40px;
+        }
 
-/* ── ENT CARD ── */
-.ent-card { border:1px solid rgba(255,255,255,0.08); border-radius:12px; overflow:hidden; margin-top:20px; background:#000; }
-.ent-card-head { padding:16px 20px; border-bottom:1px solid rgba(255,255,255,0.06); background:rgba(255,255,255,0.02); display:flex; align-items:center; gap:10px; }
-.ent-card-title { font-size:14px; font-weight:500; color:#fff; }
+        .section-header {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--lab-slate);
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+        .count-pill { background: #E2E8F0; padding: 2px 8px; border-radius: 12px; font-size: 11px; }
 
-/* ── FOOTER ── */
-.footer { border-top:1px solid rgba(255,255,255,0.08); padding:24px 40px; display:flex; align-items:center; justify-content:space-between; }
-.footer-left { display:flex; align-items:center; gap:10px; }
-.footer-left img { width:22px; height:22px; border-radius:50%; }
-.footer-left span { font-size:13px; color:rgba(255,255,255,0.4); }
-.footer-right { font-size:13px; color:rgba(255,255,255,0.3); }
+        /* CARDS */
+        .project-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
 
-hr.divider { border:none; border-top:1px solid rgba(255,255,255,0.08); margin:0; }
+        .lab-card {
+            background: white;
+            border: 1px solid var(--lab-border);
+            border-radius: 8px;
+            padding: 24px;
+            transition: all 0.2s;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+        }
+        .lab-card:hover {
+            box-shadow: var(--shadow-md);
+            border-color: #CBD5E1;
+            transform: translateY(-2px);
+        }
 
-/* inline code */
-code.ic { font-family:'DM Mono',monospace; font-size:12px; color:#22d3ee; background:rgba(34,211,238,0.08); padding:2px 5px; border-radius:3px; }
-</style>
+        .card-top { display: flex; justify-content: space-between; margin-bottom: 16px; }
+        .card-icon { 
+            width: 40px; height: 40px; 
+            border-radius: 6px; 
+            background: #F8FAFC; border: 1px solid var(--lab-border);
+            color: var(--lab-slate);
+            display: grid; place-items: center; font-weight: 700; font-family: var(--font-code);
+        }
+        .status-pill {
+            font-size: 10px; font-weight: 700; text-transform: uppercase;
+            padding: 4px 8px; border-radius: 4px; height: fit-content;
+        }
+        .sp-live { background: #ECFDF5; color: #059669; }
+        .sp-beta { background: #EFF6FF; color: #2563EB; }
+
+        .card-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--lab-slate); }
+        .card-desc { font-size: 13px; color: #64748B; margin-bottom: 20px; line-height: 1.6; flex-grow: 1; }
+
+        .tech-stack { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+        .tech-badge { 
+            font-size: 10px; padding: 2px 6px; background: #F1F5F9; 
+            color: #475569; border-radius: 3px; font-family: var(--font-code); 
+        }
+
+        .card-actions {
+            border-top: 1px solid var(--lab-border);
+            padding-top: 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .action-link { 
+            font-size: 12px; font-weight: 600; color: #475569; 
+            display: flex; align-items: center; gap: 5px; 
+        }
+        .action-link:hover { color: var(--lab-blue); }
+
+        /* ZENODO BADGE SPECIFIC */
+        .zenodo-badge {
+            transition: opacity 0.2s;
+            height: 20px;
+            vertical-align: middle;
+        }
+        .zenodo-badge:hover { opacity: 0.8; }
+
+        /* --- SIDEBAR --- */
+        .widget {
+            background: white;
+            border: 1px solid var(--lab-border);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .widget-head { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; margin-bottom: 15px; }
+
+        .sys-row {
+            display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;
+        }
+        .sys-key { color: #64748B; }
+        .sys-val { font-family: var(--font-code); font-weight: 600; }
+
+        .focus-area li {
+            font-size: 13px; color: #475569; margin-bottom: 8px; padding-left: 10px; border-left: 2px solid var(--lab-border);
+        }
+        
+        .paper-link {
+            display: block;
+            margin-bottom: 12px;
+            font-size: 13px;
+            color: #334155;
+            text-decoration: none;
+            padding-bottom: 8px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        .paper-link:hover { color: var(--lab-blue); }
+        .paper-meta { display: block; font-size: 10px; color: #94a3b8; margin-top: 4px; }
+
+        @media(max-width: 900px) {
+            .lab-container { grid-template-columns: 1fr; }
+            .access-bar { justify-content: center; }
+            .nav-items { display: none; }
+        }
+    </style>
 </head>
-<body>
-<div class="page">
+<body id="body">
 
-<!-- NAV -->
-<nav class="topnav">
-  <a class="nav-logo" href="#">
-    <img src="https://yt3.googleusercontent.com/KGXIEWyhEC_EAGdddu0wFFvX2TYlnL2J_p5ZAxP64rZPVahHOiXWTTwR10rzDDzEcqxuAIrvFQ=s160-c-k-c0x00ffffff-no-rj" alt="Anscom">
-    <span>Anscom</span>
-  </a>
-  <ul class="nav-links">
-    <li><a href="#">Research</a></li>
-    <li><a href="#">Documentation</a></li>
-    <li><a href="#">For Developers</a></li>
-    <li><a href="#">GitHub</a></li>
-  </ul>
-  <button class="nav-cta">pip install anscom</button>
-</nav>
-
-<div class="body-layout">
-
-<!-- SIDEBAR -->
-<div class="sidebar" id="sidebar">
-  <div class="sg-label">Getting Started</div>
-  <a class="slink active" data-s="hero">Introduction</a>
-  <a class="slink" data-s="overview">Overview</a>
-  <a class="slink" data-s="install">Installation</a>
-  <div class="sg-label">Reference</div>
-  <a class="slink" data-s="api">API Reference</a>
-  <a class="slink" data-s="returns">Return Value</a>
-  <a class="slink" data-s="examples">Usage Examples</a>
-  <div class="sg-label">Output</div>
-  <a class="slink" data-s="tree">Tree Output</a>
-  <a class="slink" data-s="exclusion">Exclusion Filter</a>
-  <a class="slink" data-s="report">Report Format</a>
-  <div class="sg-label">Internals</div>
-  <a class="slink" data-s="categories">File Categories</a>
-  <a class="slink" data-s="architecture">Architecture</a>
-  <a class="slink" data-s="howworks">How It Works</a>
-  <a class="slink" data-s="security">Security Notes</a>
-  <div class="sg-label">Enterprise</div>
-  <a class="slink" data-s="enterprise">Enterprise Use</a>
-</div>
-
-<!-- MAIN -->
-<div class="main" id="main">
-
-  <!-- HERO -->
-  <div id="hero">
-    <div class="meta-line">March 2026 &nbsp;·&nbsp; Release &nbsp;·&nbsp; v1.0.0</div>
-    <div class="hero-block">
-      <h1 class="hero-title">Native Filesystem<br>Intelligence Engine</h1>
-      <p class="hero-subtitle">A native C extension for Python that recursively scans directories, categorizes every file by type, and returns a complete structured breakdown — in a single function call.</p>
-      <div class="hero-actions">
-        <a class="btn-primary" href="https://pypi.org/project/anscom/" target="_blank">View on PyPI ↗</a>
-        <a class="btn-secondary" href="https://github.com/PC5518/anscom-nfie-python-extension" target="_blank">GitHub Repository</a>
-      </div>
-      <div class="terminal">
-        <div class="terminal-bar">
-          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
-          <span class="terminal-title">anscom — python3</span>
-          <span class="t-badge" id="b-hero">● running</span>
+    <!-- 1. ACCESSIBILITY UTILITIES -->
+    <div class="access-bar">
+        <button class="access-btn" onclick="toggleAccessPanel()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+            ACCESSIBILITY OPTIONS (12)
+        </button>
+        <div id="google_translate_element"></div>
+        
+        <div class="access-panel" id="accessPanel">
+            <div class="a11y-toggle" onclick="toggleBodyClass('contrast-high')">High Contrast</div>
+            <div class="a11y-toggle" onclick="toggleBodyClass('font-large')">Larger Text</div>
+            <div class="a11y-toggle" onclick="toggleBodyClass('dyslexic')">Dyslexia Font</div>
+            <div class="a11y-toggle" onclick="toggleBodyClass('saturation-low')">Desaturate</div>
+            <div class="a11y-toggle" onclick="toggleBodyClass('cursor-large')">Large Cursor</div>
+            <div class="a11y-toggle" onclick="alert('Screen Reader Optimization Active')">Screen Reader Mode</div>
+            <div class="a11y-toggle" onclick="document.body.style.lineHeight='2'">Relaxed Spacing</div>
+            <div class="a11y-toggle" onclick="document.body.style.letterSpacing='1px'">Wide Text</div>
         </div>
-        <div class="terminal-body" id="t-hero"></div>
-      </div>
-      <div class="stats-grid">
-        <div class="stat-cell"><span class="stat-num" id="sn1">0</span><span class="stat-label">file extensions recognized</span></div>
-        <div class="stat-cell"><span class="stat-num" id="sn2">0</span><span class="stat-label">OS-native backends</span></div>
-        <div class="stat-cell"><span class="stat-num" id="sn3">—</span><span class="stat-label">extension lookup via FNV-1a</span></div>
-      </div>
     </div>
-  </div>
 
-  <hr class="divider">
-
-  <!-- OVERVIEW -->
-  <div class="sec" id="overview">
-    <p class="section-label">Overview</p>
-    <h2 class="section-title">Three lines of Python. Any filesystem.</h2>
-    <p class="section-body">Anscom is designed for zero-configuration usage. Point it at any path — relative or absolute — and it handles everything: spawning worker threads, issuing OS syscalls, categorizing results, and returning a clean Python dict.</p>
-    <p class="section-body">Unlike <code class="ic">os.walk</code> or <code class="ic">pathlib.rglob</code>, Anscom runs entirely in C with direct kernel-level syscalls. Memory usage is bounded regardless of filesystem size — scanning 50 million files uses no more memory than scanning 50,000.</p>
-    <div class="terminal">
-      <div class="terminal-bar">
-        <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
-        <span class="terminal-title">quickstart.py</span>
-        <span class="t-badge" id="b-overview">● idle</span>
-      </div>
-      <div class="terminal-body" id="t-overview"></div>
-    </div>
-  </div>
-
-  <!-- INSTALL -->
-  <div class="sec" id="install">
-    <p class="section-label">Installation</p>
-    <h2 class="section-title">Available on PyPI</h2>
-    <p class="section-body">Pre-compiled wheels for Windows, Linux, and macOS. No build tools required on any supported platform.</p>
-    <div class="install-box">
-      <span class="install-cmd">pip install anscom</span>
-      <span class="install-sub">Python 3.6+ &nbsp;·&nbsp; Windows / Linux / macOS &nbsp;·&nbsp; MIT License</span>
-      <div class="install-links">
-        <a href="https://pypi.org/project/anscom/" target="_blank">PyPI ↗</a>
-        <a href="https://github.com/PC5518/anscom-nfie-python-extension" target="_blank">GitHub ↗</a>
-        <a href="https://github.com/PC5518/anscom-nfie-python-extension#readme" target="_blank">Documentation ↗</a>
-      </div>
-    </div>
-    <div class="terminal">
-      <div class="terminal-bar">
-        <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
-        <span class="terminal-title">shell — verify installation</span>
-        <span class="t-badge" id="b-install">● idle</span>
-      </div>
-      <div class="terminal-body" id="t-install"></div>
-    </div>
-  </div>
-
-  <!-- API -->
-  <div class="sec" id="api">
-    <p class="section-label">API Reference</p>
-    <h2 class="section-title">anscom.scan()</h2>
-    <p class="section-body">The entire public API is a single function. All parameters have sensible defaults — only <code class="ic">path</code> is required.</p>
-    <table class="api-table">
-      <thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
-      <tbody>
-        <tr><td>path</td><td>str</td><td>required</td><td>Target directory. Relative (.) or absolute (/data). Empty string treated as .</td></tr>
-        <tr><td>max_depth</td><td>int</td><td>6</td><td>Recursion depth limit. Clamped to [0, 64].</td></tr>
-        <tr><td>show_tree</td><td>bool</td><td>False</td><td>Print DFS-ordered directory tree to stdout. Forces workers=1.</td></tr>
-        <tr><td>workers</td><td>int</td><td>0</td><td>Thread count. 0 = OS core count. Overridden to 1 when show_tree=True.</td></tr>
-        <tr><td>min_size</td><td>int</td><td>0</td><td>Skip files smaller than this byte count. 0 = no filter.</td></tr>
-        <tr><td>extensions</td><td>list[str]</td><td>None</td><td>Whitelist. Only matching extensions counted; all others excluded.</td></tr>
-        <tr><td>callback</td><td>callable</td><td>None</td><td>Called ~every 1s with current file count. GIL acquired before each call.</td></tr>
-        <tr><td>silent</td><td>bool</td><td>False</td><td>Suppress summary report and progress counter.</td></tr>
-        <tr><td>ignore_junk</td><td>bool</td><td>False</td><td>Skip directories in the hardcoded exclusion list entirely.</td></tr>
-      </tbody>
-    </table>
-  </div>
-
-  <!-- RETURNS -->
-  <div class="sec" id="returns">
-    <p class="section-label">Return Value</p>
-    <h2 class="section-title">A consistent dict, every time</h2>
-    <p class="section-body">All 9 categories are always present even when count is zero. Extension keys appear only when count > 0. Timing uses CLOCK_MONOTONIC on POSIX and QueryPerformanceCounter on Windows.</p>
-    <div class="terminal">
-      <div class="terminal-bar">
-        <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
-        <span class="terminal-title">return-value.py</span>
-        <span class="t-badge" id="b-returns">● idle</span>
-      </div>
-      <div class="terminal-body" id="t-returns"></div>
-    </div>
-  </div>
-
-  <!-- EXAMPLES -->
-  <div class="sec" id="examples">
-    <p class="section-label">Usage Examples</p>
-    <h2 class="section-title">Common patterns</h2>
-    <p class="section-body">Five production-ready patterns — each runs as a live terminal animation.</p>
-    <div class="tab-row">
-      <button class="tab-btn active" onclick="switchEx(0)">Silent scan</button>
-      <button class="tab-btn" onclick="switchEx(1)">Extension audit</button>
-      <button class="tab-btn" onclick="switchEx(2)">Large files</button>
-      <button class="tab-btn" onclick="switchEx(3)">Dependency bloat</button>
-      <button class="tab-btn" onclick="switchEx(4)">Live callback</button>
-    </div>
-    <div class="terminal">
-      <div class="terminal-bar">
-        <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
-        <span class="terminal-title" id="ex-ttl">examples/silent_scan.py</span>
-        <span class="t-badge" id="b-examples">● idle</span>
-      </div>
-      <div class="terminal-body" id="t-examples" style="min-height:130px;"></div>
-    </div>
-  </div>
-
-  <!-- TREE -->
-  <div class="sec" id="tree">
-    <p class="section-label">Tree Output</p>
-    <h2 class="section-title">DFS-ordered filesystem topology</h2>
-    <p class="section-body">When <code class="ic">show_tree=True</code>, workers is forced to 1 for strict depth-first traversal. Each line is written immediately via PySys_WriteStdout — no buffer accumulates. A filesystem with 4 million files produces 4 million lines without memory pressure.</p>
-    <p class="section-body">The DFS guarantee means output is always topologically valid: every file appears after its parent directory and before the next sibling. This holds at any scale.</p>
-    <div class="terminal">
-      <div class="terminal-bar">
-        <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
-        <span class="terminal-title">show_tree=True — DFS traversal</span>
-        <span class="t-badge" id="b-tree">● idle</span>
-      </div>
-      <div class="terminal-body" id="t-tree" style="min-height:200px;"></div>
-    </div>
-  </div>
-
-  <!-- EXCLUSION -->
-  <div class="sec" id="exclusion">
-    <p class="section-label">Exclusion Filter</p>
-    <h2 class="section-title">ignore_junk=True</h2>
-    <p class="section-body">When enabled, the directories below are skipped entirely — no opendir, no syscall, no recursion. The check is case-insensitive against the basename only, at any depth under any parent.</p>
-    <div class="excl-sublabel">Development Tooling</div>
-    <div class="excl-chips" id="ec-dev"></div>
-    <div class="excl-sublabel">Dependency Trees</div>
-    <div class="excl-chips" id="ec-deps"></div>
-    <div class="excl-sublabel">Build Artifacts</div>
-    <div class="excl-chips" id="ec-build"></div>
-    <div class="excl-sublabel">Ephemeral / Cache</div>
-    <div class="excl-chips" id="ec-cache"></div>
-    <div class="terminal">
-      <div class="terminal-bar">
-        <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
-        <span class="terminal-title">dependency_bloat.py</span>
-        <span class="t-badge" id="b-exclusion">● idle</span>
-      </div>
-      <div class="terminal-body" id="t-exclusion"></div>
-    </div>
-  </div>
-
-  <!-- REPORT -->
-  <div class="sec" id="report">
-    <p class="section-label">Report Format</p>
-    <h2 class="section-title">Two tables, zero configuration</h2>
-    <p class="section-body">When <code class="ic">silent=False</code> (default), Anscom prints a Summary Report and a Detailed Extension Breakdown on completion. Both tables route through PySys_WriteStdout — redirect sys.stdout before calling scan() to capture them.</p>
-    <div class="terminal">
-      <div class="terminal-bar">
-        <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
-        <span class="terminal-title">anscom.scan(".") — full report output</span>
-        <span class="t-badge" id="b-report">● idle</span>
-      </div>
-      <div class="terminal-body" id="t-report" style="min-height:300px;"></div>
-    </div>
-  </div>
-
-  <!-- CATEGORIES -->
-  <div class="sec" id="categories">
-    <p class="section-label">File Categories & Extensions</p>
-    <h2 class="section-title">170+ extensions across 9 categories</h2>
-    <p class="section-body">The built-in table is sorted lexicographically and validated at module init. If ordering is violated, PyInit_anscom raises RuntimeError before the module loads.</p>
-    <div id="ext-list"></div>
-    <div style="margin-top:36px;">
-      <p class="section-label">Live scan simulation</p>
-      <div class="live-bar">
-        <div><div class="live-lbl">Files scanned</div><div class="live-val" id="lv-total">0</div></div>
-        <div><div class="live-lbl">Speed</div><div class="live-val" id="lv-speed">0 /s</div></div>
-        <div><div class="live-lbl">Elapsed</div><div class="live-val" id="lv-time">0.000s</div></div>
-      </div>
-      <div class="cat-bar-list" id="cat-bars"></div>
-    </div>
-  </div>
-
-  <!-- ARCHITECTURE -->
-  <div class="sec" id="architecture">
-    <p class="section-label">Architecture</p>
-    <h2 class="section-title">Engineering decisions that matter</h2>
-    <p class="section-body">Six choices determine correctness and throughput. Each eliminates a specific bottleneck in naive Python filesystem traversal.</p>
-    <div class="features-grid">
-      <div class="feature-cell"><div class="feature-icon">⚙</div><div class="feature-title">Direct OS syscalls</div><div class="feature-desc">getdents64 on Linux, FindFirstFileW on Windows, readdir on macOS. No libc wrappers, no Python os module overhead.</div></div>
-      <div class="feature-cell"><div class="feature-icon">⟳</div><div class="feature-title">Multi-threaded worker pool</div><div class="feature-desc">N threads auto-detected from CPU core count. All threads running before the first directory is opened. Shared 131,072-slot circular queue.</div></div>
-      <div class="feature-cell"><div class="feature-icon">▣</div><div class="feature-title">Slab path allocator</div><div class="feature-desc">Each thread allocates one contiguous block before scanning begins. Zero heap allocation during traversal regardless of filesystem size.</div></div>
-      <div class="feature-cell"><div class="feature-icon">≡</div><div class="feature-title">Per-thread statistics</div><div class="feature-desc">No shared counters during file counting. Each thread writes only to its own ScanStats struct. Results merged in one serial pass after all threads join.</div></div>
-      <div class="feature-cell"><div class="feature-icon">◈</div><div class="feature-title">Bounded memory at any scale</div><div class="feature-desc">Memory capped by queue and path slabs — neither grows with filesystem size. Scanning 50M files uses no more memory than scanning 50K.</div></div>
-      <div class="feature-cell"><div class="feature-icon">↺</div><div class="feature-title">GIL released for full scan</div><div class="feature-desc">Worker threads operate under Py_BEGIN_ALLOW_THREADS for their entire lifetime. GIL re-acquired only for progress callback and final dict construction.</div></div>
-    </div>
-  </div>
-
-  <!-- HOW IT WORKS -->
-  <div class="sec" id="howworks">
-    <p class="section-label">How It Works</p>
-    <h2 class="section-title">8-stage pipeline</h2>
-    <p class="section-body">When you call <code class="ic">anscom.scan("/some/path")</code>, the following pipeline executes in strict sequence.</p>
-    <div class="steps" id="hw-steps"></div>
-    <div class="terminal" style="margin-top:28px;">
-      <div class="terminal-bar">
-        <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
-        <span class="terminal-title">pipeline walkthrough</span>
-        <span class="t-badge" id="b-howworks">● idle</span>
-      </div>
-      <div class="terminal-body" id="t-howworks" style="min-height:150px;"></div>
-    </div>
-  </div>
-
-  <!-- SECURITY -->
-  <div class="sec" id="security">
-    <p class="section-label">Security & Compliance</p>
-    <h2 class="section-title">Safe by construction</h2>
-    <p class="section-body">Every security property is structural — enforced by the implementation, not by runtime checks that can be bypassed.</p>
-    <div class="steps" id="sec-steps"></div>
-  </div>
-
-  <!-- ENTERPRISE -->
-  <div class="sec" id="enterprise">
-    <p class="section-label">Enterprise Use Cases</p>
-    <h2 class="section-title">Production-ready patterns</h2>
-    <p class="section-body">The returned dict is a plain Python object — directly serializable to JSON, integrable into any pipeline, dashboard, or audit system.</p>
-    <div id="ent-cards"></div>
-  </div>
-
-  <!-- FOOTER -->
-  <div class="footer">
-    <div class="footer-left">
-      <img src="https://yt3.googleusercontent.com/KGXIEWyhEC_EAGdddu0wFFvX2TYlnL2J_p5ZAxP64rZPVahHOiXWTTwR10rzDDzEcqxuAIrvFQ=s160-c-k-c0x00ffffff-no-rj" alt="Anscom">
-      <span>Anscom NFIE &nbsp;·&nbsp; Open Source &nbsp;·&nbsp; MIT License</span>
-    </div>
-    <div class="footer-right">v1.0.0 &nbsp;·&nbsp; March 2026</div>
-  </div>
-
-</div><!-- main -->
-</div><!-- body-layout -->
-</div><!-- page -->
-
-<script>
-const $=id=>document.getElementById(id);
-const sleep=ms=>new Promise(r=>setTimeout(r,ms));
-const sp=(cls,txt)=>`<span class="${cls}">${txt}</span>`;
-
-function addLine(tid,html){
-  const t=$(tid),s=document.createElement('span');
-  s.style.display='block'; s.innerHTML=html;
-  t.appendChild(s); t.scrollTop=t.scrollHeight;
-}
-function addBr(tid){ $(tid).appendChild(document.createElement('br')); }
-
-async function typeLine(tid,code,delay=22){
-  const t=$(tid);
-  const row=document.createElement('span'); row.style.display='block';
-  row.innerHTML=sp('t-prompt','>>> ');
-  t.appendChild(row);
-  const s=document.createElement('span'); row.appendChild(s);
-  for(let i=0;i<=code.length;i++){ s.textContent=code.substring(0,i); await sleep(delay); }
-}
-
-function setBadge(id,txt,ok){
-  const el=$(id); if(!el) return;
-  el.textContent=txt;
-  if(ok){ el.style.color='#28c840'; el.style.background='rgba(40,200,64,0.1)'; el.style.borderColor='rgba(40,200,64,0.18)'; }
-  else { el.style.color=''; el.style.background=''; el.style.borderColor=''; }
-}
-
-function countUp(id,target,sfx,dur=1400){
-  const el=$(id); const start=Date.now();
-  const tick=()=>{ const p=Math.min(1,(Date.now()-start)/dur); const e=1-Math.pow(1-p,3); el.textContent=Math.round(e*target)+(sfx||''); if(p<1) requestAnimationFrame(tick); else el.textContent=target+(sfx||''); };
-  requestAnimationFrame(tick);
-}
-
-// Sidebar scroll sync
-const secIds=['hero','overview','install','api','returns','examples','tree','exclusion','report','categories','architecture','howworks','security','enterprise'];
-const slinks={};
-document.querySelectorAll('.slink[data-s]').forEach(l=>{ slinks[l.dataset.s]=l; });
-
-const io=new IntersectionObserver(entries=>{
-  entries.forEach(e=>{
-    if(e.isIntersecting){
-      document.querySelectorAll('.slink').forEach(l=>l.classList.remove('active'));
-      if(slinks[e.target.id]) slinks[e.target.id].classList.add('active');
-    }
-  });
-},{ root:$('main'), rootMargin:'-20% 0px -70% 0px', threshold:0 });
-secIds.forEach(id=>{ const s=$(id); if(s) io.observe(s); });
-
-document.querySelectorAll('.slink[data-s]').forEach(link=>{
-  link.addEventListener('click',e=>{ e.preventDefault(); const s=$(link.dataset.s); if(s) s.scrollIntoView({behavior:'smooth',block:'start'}); });
-});
-
-// Animation registry
-const fired=new Set();
-function onVisible(id,fn,thr=0.1){
-  const el=$(id); if(!el) return;
-  const obs=new IntersectionObserver(entries=>{
-    entries.forEach(e=>{ if(e.isIntersecting&&!fired.has(id)){ fired.add(id); obs.disconnect(); fn(); } });
-  },{ root:$('main'), threshold:thr });
-  obs.observe(el);
-}
-
-// ── HERO ──
-async function animHero(){
-  const tid='t-hero';
-  await typeLine(tid,'import anscom');
-  await sleep(350);
-  await typeLine(tid,'anscom.scan(".", show_tree=True)');
-  await sleep(250);
-  addBr(tid);
-  addLine(tid,sp('t-header','Anscom Enterprise v1.0.0  (Threads: 16)'));
-  addLine(tid,sp('t-header','Target: .'));
-  addBr(tid);
-  await sleep(180);
-  const tree=[
-    `  ${sp('t-border','|--')} ${sp('t-dir','[factor_models]')}`,
-    `  ${sp('t-border','|')}   ${sp('t-border','|--')} ${sp('t-file','fama_french_5factor_regression.py')}`,
-    `  ${sp('t-border','|')}   ${sp('t-border','|--')} ${sp('t-file','momentum_alpha_backtest.ipynb')}`,
-    `  ${sp('t-border','|')}   ${sp('t-border','|--')} ${sp('t-file','covariance_matrix_shrinkage.py')}`,
-    `  ${sp('t-border','|--')} ${sp('t-dir','[research_papers]')}`,
-    `  ${sp('t-border','|')}   ${sp('t-border','|--')} ${sp('t-file','gold_etf_fair_value_engine_v3.pdf')}`,
-    `  ${sp('t-border','|')}   ${sp('t-border','|--')} ${sp('t-file','yield_curve_arbitrage_strategy.pdf')}`,
-    `  ${sp('t-border','|')}   ${sp('t-border','|--')} ${sp('t-dir','[figures]')}`,
-    `  ${sp('t-border','|')}       ${sp('t-border','|--')} ${sp('t-file','cumulative_returns_plot.png')}`,
-  ];
-  for(const l of tree){ addLine(tid,l); await sleep(82); }
-  addBr(tid);
-  const t=$(tid);
-  const p=document.createElement('span'); p.style.display='block'; p.className='t-header'; t.appendChild(p);
-  for(let i=0;i<=4262;i+=Math.floor(Math.random()*480+180)){ p.textContent=`Scanned files: ${Math.min(i,4262).toLocaleString()} ...`; await sleep(85); }
-  p.textContent='Scanned files: 4,262 ...';
-  addBr(tid);
-  const bdr=sp('t-border','+-----------------+--------------+----------+');
-  const hdr=`${sp('t-border','|')} ${sp('t-key','Category       ')} ${sp('t-border','|')} ${sp('t-key','Count       ')} ${sp('t-border','|')} ${sp('t-key','Percent ')} ${sp('t-border','|')}`;
-  addLine(tid,sp('t-border','=== SUMMARY REPORT ================================'));
-  addLine(tid,bdr); addLine(tid,hdr); addLine(tid,bdr);
-  const rows=[['Code/Source    ','       1,941','  45.54%'],['Documents      ','         585','  13.73%'],['Images         ','         369','   8.66%'],['Audio          ','         748','  17.55%'],['Other/Unknown  ','         619','  14.53%']];
-  for(const r of rows){ addLine(tid,`${sp('t-border','|')} ${r[0]} ${sp('t-border','|')} ${sp('t-num',r[1])} ${sp('t-border','|')} ${sp('t-val',r[2])} ${sp('t-border','|')}`); await sleep(70); }
-  addLine(tid,bdr);
-  addLine(tid,`${sp('t-border','|')} ${sp('t-key','TOTAL FILES    ')} ${sp('t-border','|')} ${sp('t-num','       4,262')} ${sp('t-border','|')} ${sp('t-val',' 100.00%')} ${sp('t-border','|')}`);
-  addLine(tid,bdr); addBr(tid);
-  addLine(tid,sp('t-time','Time     : 1.0315 seconds'));
-  addLine(tid,sp('t-time','Errors   : 0 (permission denied / inaccessible)'));
-  setBadge('b-hero','● done',true);
-  countUp('sn1',170,'+',1600);
-  setTimeout(()=>countUp('sn2',3,'',900),500);
-  setTimeout(()=>{ $('sn3').textContent='O(1)'; },1200);
-}
-
-// ── OVERVIEW ──
-async function animOverview(){
-  const tid='t-overview'; setBadge('b-overview','● running');
-  await typeLine(tid,'import anscom');
-  await sleep(250);
-  await typeLine(tid,"result = anscom.scan('.')");
-  await sleep(180);
-  addLine(tid,sp('t-header','Anscom Enterprise v1.0.0  (Threads: 16)'));
-  addLine(tid,sp('t-header','Target: .'));
-  const t=$(tid);
-  const p=document.createElement('span'); p.style.display='block'; p.className='t-header'; t.appendChild(p);
-  for(let i=0;i<=8442;i+=Math.floor(Math.random()*700+300)){ p.textContent=`Scanned files: ${i.toLocaleString()} ...`; await sleep(75); }
-  p.textContent='Scanned files: 8,442 ...';
-  addLine(tid,sp('t-time','Time     : 0.9312 seconds'));
-  addLine(tid,sp('t-time','Errors   : 0'));
-  addBr(tid);
-  await typeLine(tid,"print(result['total_files'], 'files found')");
-  await sleep(200);
-  addLine(tid,sp('t-val','8442 files found'));
-  setBadge('b-overview','● done',true);
-}
-
-// ── INSTALL ──
-async function animInstall(){
-  const tid='t-install'; setBadge('b-install','● running');
-  addLine(tid,`${sp('t-prompt','$ ')}pip install anscom`);
-  await sleep(500);
-  addLine(tid,sp('t-header','Collecting anscom'));
-  await sleep(250);
-  addLine(tid,sp('t-header','  Downloading anscom-1.0.0-cp311-cp311-linux_x86_64.whl (28.4 kB)'));
-  await sleep(400);
-  addLine(tid,sp('t-val','Successfully installed anscom-1.0.0'));
-  addBr(tid);
-  await typeLine(tid,'import anscom');
-  await sleep(200);
-  await typeLine(tid,"result = anscom.scan('.', silent=True)");
-  await sleep(250);
-  await typeLine(tid,"print(f\"Anscom is working. Files found: {result['total_files']}\")");
-  await sleep(350);
-  addLine(tid,sp('t-val','Anscom is working. Files found: 8442'));
-  setBadge('b-install','● done',true);
-}
-
-// ── RETURN VALUE ──
-async function animReturns(){
-  const tid='t-returns'; setBadge('b-returns','● running');
-  await typeLine(tid,"result = anscom.scan('/data', silent=True)");
-  await sleep(300);
-  await typeLine(tid,'result');
-  await sleep(250);
-  addLine(tid,sp('t-border','{'));
-  const pairs=[
-    [`  ${sp('t-key',"'total_files'")}:         `,sp('t-num','21008')],
-    [`  ${sp('t-key',"'scan_errors'")}:         `,sp('t-num','0')],
-    [`  ${sp('t-key',"'duration_seconds'")}:    `,sp('t-val','1.5186')],
-    [`  ${sp('t-key',"'categories'")}: {`,''],
-    [`    ${sp('t-key',"'Code/Source'")}:        `,sp('t-num','5955')],
-    [`    ${sp('t-key',"'Documents'")}:          `,sp('t-num','203')],
-    [`    ${sp('t-key',"'Images'")}:             `,sp('t-num','151')],
-    [`    ${sp('t-key',"'Videos'")}:             `,sp('t-num','0')],
-    [`    ${sp('t-key',"'Audio'")}:              `,sp('t-num','0')],
-    [`    ${sp('t-key',"'Archives'")}:           `,sp('t-num','0')],
-    [`    ${sp('t-key',"'Executables'")}:        `,sp('t-num','0')],
-    [`    ${sp('t-key',"'System/Config'")}:      `,sp('t-num','5707')],
-    [`    ${sp('t-key',"'Other/Unknown'")}:      `,sp('t-num','8992')],
-  ];
-  for(const [k,v] of pairs){ addLine(tid,k+v+(v?sp('t-border',','):'')); await sleep(55); }
-  addLine(tid,sp('t-border','  },'));
-  addLine(tid,`  ${sp('t-key',"'extensions'")}: ${sp('t-border','{')}`);
-  const exts=[["'.py'","5955"],["'.pyc'","5707"],["'.ts'","576"],["'.mp3'","730"],["'.txt'","160"],["'.png'","151"]];
-  for(const [k,v] of exts){ addLine(tid,`    ${sp('t-key',k)}: ${sp('t-num',v)}${sp('t-border',',')}`); await sleep(50); }
-  addLine(tid,`  ${sp('t-border','}')} `);
-  addLine(tid,sp('t-border','}'));
-  setBadge('b-returns','● done',true);
-}
-
-// ── EXAMPLES ──
-let curEx=0;
-const EXDEFS=[
-  { title:'examples/silent_scan.py', run:async tid=>{
-    await typeLine(tid,"result = anscom.scan('/data', silent=True)");
-    await sleep(300);
-    await typeLine(tid,"print(result['total_files'], 'files in', round(result['duration_seconds'],3), 'seconds')");
-    await sleep(350);
-    addLine(tid,sp('t-val','21008 files in 1.519 seconds'));
-  }},
-  { title:'examples/extension_audit.py', run:async tid=>{
-    await typeLine(tid,"result = anscom.scan('/codebase',",22);
-    addLine(tid,`    ${sp('t-key','extensions')}=${sp('t-str','["py","js","ts","go","rs"]')},`);
-    addLine(tid,`    ${sp('t-key','silent')}=${sp('t-kw','True')})`);
-    await sleep(300);
-    await typeLine(tid,"print(result['extensions'])");
-    await sleep(350);
-    addLine(tid,sp('t-border','{'));
-    const e=[["'.py'","3201"],["'.ts'","1044"],["'.js'","876"],["'.go'","412"],["'.rs'","189"]];
-    for(const [k,v] of e){ addLine(tid,`  ${sp('t-key',k)}: ${sp('t-num',v)},`); await sleep(60); }
-    addLine(tid,sp('t-border','}'));
-  }},
-  { title:'examples/large_files.py', run:async tid=>{
-    addLine(tid,sp('t-comment','# Only files larger than 100 MB'));
-    await typeLine(tid,"result = anscom.scan('/storage',",22);
-    addLine(tid,`    ${sp('t-key','min_size')}=${sp('t-num','100')} * ${sp('t-num','1024')} * ${sp('t-num','1024')},`);
-    addLine(tid,`    ${sp('t-key','silent')}=${sp('t-kw','True')})`);
-    await sleep(300);
-    await typeLine(tid,"print(f\"Files over 100MB: {result['total_files']}\")");
-    await sleep(400);
-    addLine(tid,sp('t-val','Files over 100MB: 342'));
-  }},
-  { title:'examples/dependency_bloat.py', run:async tid=>{
-    addLine(tid,sp('t-comment','# Measure dependency footprint'));
-    addLine(tid,`${sp('t-prompt','>>> ')}r1 = anscom.scan('/projects', ignore_junk=False, silent=True)`);
-    addLine(tid,`${sp('t-prompt','>>> ')}r2 = anscom.scan('/projects', ignore_junk=True,  silent=True)`);
-    await sleep(700);
-    addLine(tid,sp('t-header','Scanning complete.'));
-    await sleep(300);
-    await typeLine(tid,"print(f\"Bloat: {r1['total_files']-r2['total_files']:,} files\")");
-    await sleep(350);
-    addLine(tid,sp('t-num','Dependency bloat: 284,301 files'));
-  }},
-  { title:'examples/live_callback.py', run:async tid=>{
-    addLine(tid,`${sp('t-kw','def')} ${sp('t-val','push_to_dashboard')}(n):`);
-    addLine(tid,`    ${sp('t-comment','# push to Prometheus, Datadog, websocket...')}`);
-    addLine(tid,`    ${sp('t-kw','pass')}`);
-    addBr(tid);
-    await sleep(300);
-    addLine(tid,`${sp('t-prompt','>>> ')}result = anscom.scan('/data-lake',`);
-    addLine(tid,`    callback=push_to_dashboard, silent=True, workers=32)`);
-    await sleep(400);
-    for(let i=1;i<=5;i++){ await sleep(380); addLine(tid,sp('t-header',`[callback] n=${(i*1900+Math.floor(Math.random()*300)).toLocaleString()}`)); }
-    await sleep(300);
-    addLine(tid,sp('t-val','Scan complete. 9,241 files.'));
-  }}
-];
-
-async function switchEx(idx){
-  curEx=idx;
-  document.querySelectorAll('.tab-btn').forEach((b,i)=>b.classList.toggle('active',i===idx));
-  $('ex-ttl').textContent=EXDEFS[idx].title;
-  $('t-examples').innerHTML='';
-  setBadge('b-examples','● running');
-  await EXDEFS[idx].run('t-examples');
-  setBadge('b-examples','● done',true);
-}
-
-// ── TREE ──
-async function animTree(){
-  const tid='t-tree'; setBadge('b-tree','● running');
-  await typeLine(tid,"anscom.scan('/codebase', show_tree=True, max_depth=3, silent=True)",18);
-  await sleep(200);
-  addLine(tid,sp('t-header','Anscom Enterprise v1.0.0  (Threads: 1  ← forced by show_tree)'));
-  addBr(tid);
-  const lines=[
-    `  ${sp('t-border','|--')} ${sp('t-dir','[src]')}`,
-    `  ${sp('t-border','|')}   ${sp('t-border','|--')} ${sp('t-file','main.c')}`,
-    `  ${sp('t-border','|')}   ${sp('t-border','|--')} ${sp('t-file','utils.c')}`,
-    `  ${sp('t-border','|')}   ${sp('t-border','|--')} ${sp('t-file','parser.py')}`,
-    `  ${sp('t-border','|')}   ${sp('t-border','|--')} ${sp('t-file','scanner.py')}`,
-    `  ${sp('t-border','|--')} ${sp('t-dir','[assets]')}`,
-    `  ${sp('t-border','|')}   ${sp('t-border','|--')} ${sp('t-dir','[images]')}`,
-    `  ${sp('t-border','|')}   ${sp('t-border','|')}   ${sp('t-border','|--')} ${sp('t-file','logo.png')}`,
-    `  ${sp('t-border','|')}   ${sp('t-border','|')}   ${sp('t-border','|--')} ${sp('t-file','banner.webp')}`,
-    `  ${sp('t-border','|')}   ${sp('t-border','|--')} ${sp('t-dir','[fonts]')}`,
-    `  ${sp('t-border','|')}       ${sp('t-border','|--')} ${sp('t-file','Inter-Regular.ttf')}`,
-    `  ${sp('t-border','|--')} ${sp('t-dir','[docs]')}`,
-    `  ${sp('t-border','|')}   ${sp('t-border','|--')} ${sp('t-file','readme.md')}`,
-    `  ${sp('t-border','|')}   ${sp('t-border','|--')} ${sp('t-file','api_reference.pdf')}`,
-    `  ${sp('t-border','|--')} ${sp('t-dir','[tests]')}`,
-    `  ${sp('t-border','|')}   ${sp('t-border','|--')} ${sp('t-file','test_scanner.py')}`,
-    `  ${sp('t-border','|--')} ${sp('t-file','setup.py')}`,
-    `  ${sp('t-border','|--')} ${sp('t-file','pyproject.toml')}`,
-  ];
-  for(const l of lines){ addLine(tid,l); await sleep(82); }
-  addBr(tid);
-  addLine(tid,sp('t-time','Time     : 0.2193 seconds'));
-  addLine(tid,sp('t-time','— DFS order guaranteed at any scale —'));
-  setBadge('b-tree','● done',true);
-}
-
-// ── EXCLUSION ──
-function buildExclChips(){
-  const data={'ec-dev':['.git','.svn','.hg','.idea','.vscode'],'ec-deps':['node_modules','bower_components','site-packages','.venv','venv','env'],'ec-build':['build','dist','target','__pycache__'],'ec-cache':['temp','tmp','.cache','.pytest_cache','.mypy_cache']};
-  for(const [id,tags] of Object.entries(data)){
-    const c=$(id); if(!c) continue;
-    tags.forEach(t=>{ const d=document.createElement('div'); d.className='excl-chip'; d.textContent=t; c.appendChild(d); });
-  }
-}
-async function animExcl(){
-  const tid='t-exclusion'; setBadge('b-exclusion','● running');
-  addLine(tid,sp('t-comment','# Measure dependency footprint'));
-  addBr(tid);
-  addLine(tid,`${sp('t-prompt','>>> ')}r1 = anscom.scan('/projects', ignore_junk=False, silent=True)`);
-  await sleep(500);
-  addLine(tid,sp('t-header','Scanned: 284,512 files'));
-  await sleep(300);
-  addLine(tid,`${sp('t-prompt','>>> ')}r2 = anscom.scan('/projects', ignore_junk=True, silent=True)`);
-  await sleep(500);
-  addLine(tid,sp('t-header','Scanned: 211 files'));
-  await sleep(300);
-  await typeLine(tid,"print(f\"Bloat: {r1['total_files']-r2['total_files']:,} files\")");
-  await sleep(350);
-  addLine(tid,sp('t-num','Bloat: 284,301 files'));
-  addLine(tid,sp('t-muted','— 99.9% of project directory is node_modules'));
-  setBadge('b-exclusion','● done',true);
-}
-
-// ── REPORT ──
-async function animReport(){
-  const tid='t-report'; setBadge('b-report','● running');
-  await typeLine(tid,"anscom.scan('.')  # silent=False by default",20);
-  await sleep(200);
-  addLine(tid,sp('t-header','Anscom Enterprise v1.0.0  (Threads: 16)'));
-  addLine(tid,sp('t-header','Target: .'));
-  const t=$(tid);
-  const p=document.createElement('span'); p.style.display='block'; p.className='t-header'; t.appendChild(p);
-  for(let i=0;i<=21008;i+=Math.floor(Math.random()*2200+800)){ p.textContent=`Scanned files: ${Math.min(i,21008).toLocaleString()} ...`; await sleep(75); }
-  p.textContent='Scanned files: 21,008 ...';
-  addBr(tid);
-  const bdr=sp('t-border','+-----------------+--------------+----------+');
-  const bdr2=sp('t-border','+-----------------+--------------+');
-  addLine(tid,sp('t-border','=== SUMMARY REPORT ================================'));
-  addLine(tid,bdr);
-  addLine(tid,`${sp('t-border','|')} ${sp('t-key','Category       ')} ${sp('t-border','|')} ${sp('t-key','Count       ')} ${sp('t-border','|')} ${sp('t-key','Percent ')} ${sp('t-border','|')}`);
-  addLine(tid,bdr);
-  const rows=[['Code/Source    ','        5,955','   28.34%'],['System/Config  ','        5,707','   27.16%'],['Other/Unknown  ','        8,992','   42.81%'],['Documents      ','          203','    0.97%'],['Images         ','          151','    0.72%']];
-  for(const r of rows){ addLine(tid,`${sp('t-border','|')} ${r[0]} ${sp('t-border','|')} ${sp('t-num',r[1])} ${sp('t-border','|')} ${sp('t-val',r[2])} ${sp('t-border','|')}`); await sleep(68); }
-  addLine(tid,bdr);
-  addLine(tid,`${sp('t-border','|')} ${sp('t-key','TOTAL FILES    ')} ${sp('t-border','|')} ${sp('t-num','       21,008')} ${sp('t-border','|')} ${sp('t-val','  100.00%')} ${sp('t-border','|')}`);
-  addLine(tid,bdr); addBr(tid);
-  addLine(tid,sp('t-border','=== DETAILED EXTENSION BREAKDOWN =================='));
-  addLine(tid,bdr2);
-  addLine(tid,`${sp('t-border','|')} ${sp('t-key','Extension      ')} ${sp('t-border','|')} ${sp('t-key','Count       ')} ${sp('t-border','|')}`);
-  addLine(tid,bdr2);
-  const exts=[['  .py          ','        5,955'],['  .pyc         ','        5,707'],['  .ts          ','          576'],['  .mp3         ','          730'],['  .txt         ','          160'],['  .png         ','          151']];
-  for(const r of exts){ addLine(tid,`${sp('t-border','|')} ${sp('t-cyan',r[0])} ${sp('t-border','|')} ${sp('t-num',r[1])} ${sp('t-border','|')}`); await sleep(64); }
-  addLine(tid,bdr2); addBr(tid);
-  addLine(tid,sp('t-time','Time     : 1.5186 seconds'));
-  addLine(tid,sp('t-time','Errors   : 0 (permission denied / inaccessible)'));
-  setBadge('b-report','● done',true);
-}
-
-// ── CATEGORIES ──
-function buildExtList(){
-  const cats=[
-    {name:'Code/Source',exts:'asm asp aspx awk bas bat c cc cmd cpp cs css fth go gradle groovy h hpp htm html java js json jsx kt less lua mak mm pas php pl pm ps1 py pyw r rb rs sass scala scss sh sln sql swift ts vb vue wsf xml yaml yml'.split(' ')},
-    {name:'Documents',exts:'accdb csv dbf doc docx dot epub hwp ics key md mdb mobi numbers odp ods odt pages pdf ppt pptx pub rst rtf tsv txt vcf wpd wps xls xlsm xlsx'.split(' ')},
-    {name:'Images',exts:'ai avif bmp cr2 cur drw dxf eps gif heic heif ico iff jpeg jpg nef orf png ps psd raw svg tga tif tiff webp'.split(' ')},
-    {name:'Videos',exts:'3g2 3gp asf avi flv m4v mkv mov mp4 mpeg mpg ogv rm srt swf vob webm wmv'.split(' ')},
-    {name:'Audio',exts:'aac aif cue flac m3u m4a mid midi mp3 ogg wav wma'.split(' ')},
-    {name:'Archives',exts:'7z apk bz2 cab cbr deb dmg gz img iso jar pak pkg rar rpm tar tgz vcd zip'.split(' ')},
-    {name:'Executables',exts:'app bin class com dll elf exe msi pyd so'.split(' ')},
-    {name:'System/Config',exts:'bak cfg cnf conf crt dat db env fnt fon git gitignore gpg ini log obj otf pem pyc reg sys tmp ttf vbox woff woff2'.split(' ')},
-  ];
-  const c=$('ext-list');
-  cats.forEach(cat=>{
-    const d=document.createElement('div'); d.className='ext-section';
-    d.innerHTML=`<div class="ext-cat-header"><span class="ext-cat-name">${cat.name}</span><span class="ext-cat-badge">${cat.exts.length}</span></div><div class="ext-chips">${cat.exts.map(e=>`<span class="ext-chip">.${e}</span>`).join('')}</div>`;
-    c.appendChild(d);
-  });
-}
-
-function buildCatBars(){
-  const bars=[{name:'Code/Source',pct:28.34},{name:'System/Config',pct:27.16},{name:'Other/Unknown',pct:42.81},{name:'Documents',pct:0.97},{name:'Images',pct:0.72}];
-  const c=$('cat-bars');
-  bars.forEach(b=>{ const d=document.createElement('div'); d.className='cat-bar-row'; d.innerHTML=`<span class="cat-bar-name">${b.name}</span><div class="cat-bar-wrap"><div class="cat-bar-fill" data-pct="${b.pct}"></div></div><span class="cat-bar-pct">${b.pct}%</span>`; c.appendChild(d); });
-}
-
-let liveRunning=false;
-async function startLive(){
-  if(liveRunning) return; liveRunning=true;
-  const target=21008, speed=13500, start=Date.now(); let count=0;
-  const iv=setInterval(()=>{
-    const el=(Date.now()-start)/1000; count=Math.min(target,Math.floor(el*speed));
-    $('lv-total').textContent=count.toLocaleString();
-    $('lv-speed').textContent=Math.floor(speed*(0.88+Math.random()*0.24)).toLocaleString()+' /s';
-    $('lv-time').textContent=el.toFixed(3)+'s';
-    if(count>=target){
-      clearInterval(iv);
-      document.querySelectorAll('.cat-bar-fill').forEach(b=>{ b.style.width=b.dataset.pct+'%'; });
-      setTimeout(()=>{
-        liveRunning=false;
-        document.querySelectorAll('.cat-bar-fill').forEach(b=>{ b.style.transition='none'; b.style.width='0'; setTimeout(()=>{ b.style.transition=''; },60); });
-        setTimeout(startLive,2800);
-      },3000);
-    }
-  },50);
-}
-
-// ── HOW IT WORKS ──
-function buildHWSteps(){
-  const steps=[
-    {n:'1',t:'Worker threads spawned before any directory is opened',d:'Thread count defaults to sysconf(_SC_NPROCESSORS_ONLN) on Linux or GetSystemInfo() on Windows. Each thread is a POSIX pthread_t with a 2 MB stack. Every thread blocks on a condition variable before the first opendir call.'},
-    {n:'2',t:'Shared circular work queue of 131,072 slots initialized',d:'Fixed-size ring buffer. Each slot holds a char* path and int depth. Protected by a single pthread_mutex_t / pthread_cond_t. Root path pushed as the sole seed item.'},
-    {n:'3',t:'Workers dequeue paths and call process_dir_recursive()',d:'Three OS-specific backends: getdents64 direct syscall on Linux with a 128KB read buffer, FindFirstFileW on Windows, and opendir/readdir POSIX fallback on macOS. The d_type field identifies file type without a stat() call.'},
-    {n:'4',t:'Per-entry dispatch: directories queued, files categorized',d:'Depth < 3: child pushed to shared queue. Depth ≥ 3: recursed inline. File extension lowercased into a 32-byte stack buffer, FNV-1a hash computed, O(1) table lookup, per-thread counters incremented. No lock during categorization.'},
-    {n:'5',t:'Progress thread fires every 250 ms',d:'Reads g_atomic_scanned atomically and writes to sys.stdout. Python callback fires every 1000 ms via PyGILState_Ensure() / PyGILState_Release(). Scan worker threads run entirely outside the GIL.'},
-    {n:'6',t:'Termination detected without a sentinel',d:'Main thread waits checking queue->count == 0 && queue->active_workers == 0. When both reach zero simultaneously, sets shutdown = 1 and broadcasts on the condvar. All workers exit cleanly.'},
-    {n:'7',t:'Stats merged in one serial pass after all threads join',d:'Each of N worker threads has its own ScanStats struct. After pthread_join returns for all threads, the main thread accumulates all counters into final_stats. No synchronization required.'},
-    {n:'8',t:'Result dict constructed and returned to Python',d:'Five keys: total_files, scan_errors, duration_seconds, categories (all 9 always present), extensions (non-zero only). Timing uses CLOCK_MONOTONIC on POSIX and QueryPerformanceCounter on Windows.'},
-  ];
-  const c=$('hw-steps');
-  steps.forEach((s,i)=>{ const d=document.createElement('div'); d.className='step-row'; d.style.animationDelay=`${i*55}ms`; d.innerHTML=`<div class="step-n">${s.n}</div><div><div class="step-title">${s.t}</div><div class="step-desc">${s.d}</div></div>`; c.appendChild(d); });
-}
-
-async function animHW(){
-  const tid='t-howworks'; setBadge('b-howworks','● running');
-  const lines=[
-    ['[stage 1]','Worker threads spawned  →  16 threads blocking on condvar'],
-    ['[stage 2]','Work queue initialized  →  131,072 slots, root "/" pushed'],
-    ['[stage 3]','Workers dequeuing       →  getdents64, 128KB buffer, DT_UNKNOWN skipped'],
-    ['[stage 4]','Files categorized       →  FNV-1a hash → O(1) lookup, no malloc'],
-    ['[stage 5]','Progress: 5,201         →  atomic read, stdout flush'],
-    ['[stage 5]','Progress: 12,840        →  atomic read, stdout flush'],
-    ['[stage 5]','Progress: 21,008        →  atomic read, stdout flush'],
-    ['[stage 6]','Shutdown detected       →  count==0 && active_workers==0'],
-    ['[stage 7]','Stats merged            →  16× pthread_join, one serial pass'],
-    ['[stage 8]','Dict returned           →  total:21008, errors:0, time:1.5186s'],
-  ];
-  for(const [a,b] of lines){ addLine(tid,`${sp('t-muted',a)}  ${sp('t-val',b)}`); await sleep(200); }
-  setBadge('b-howworks','● done',true);
-}
-
-// ── SECURITY ──
-function buildSecSteps(){
-  const steps=[
-    {n:'01',t:'No file contents read',d:'Anscom reads only directory entries (d_name, d_type) and file metadata. No file is ever opened for reading at any point.'},
-    {n:'02',t:'Symlinks never followed',d:'Linux: fstatat(..., AT_SYMLINK_NOFOLLOW). POSIX: lstat. Windows: FILE_ATTRIBUTE_REPARSE_POINT check unconditionally skips all reparse points.'},
-    {n:'03',t:'Depth hard-capped at 64',d:'Enforced by if (depth > ts->config->max_depth) return; at the top of process_dir_recursive. Stack depth cannot grow beyond this regardless of filesystem contents.'},
-    {n:'04',t:'All path assembly bounded',d:'snprintf(slab_slot, PATH_MAX, ...) — always null-terminated and bounded to PATH_MAX bytes. No unbounded string construction at any depth.'},
-    {n:'05',t:'Scan errors counted, not silently discarded',d:'Failed opendir or FindFirstFileW calls increment scan_errors and continue. The final value in the returned dict reflects exactly how many paths were inaccessible.'},
-    {n:'06',t:'Work queue bounded',d:'Fixed capacity of 131,072 entries. If full, directories are processed inline. There is no unbounded allocation under any filesystem topology.'},
-    {n:'07',t:'Extension hash table immutable after init',d:'512-slot static array initialized at module load time. No dynamic resizing, no heap allocation during lookup, and no runtime input can modify the table after initialization.'},
-  ];
-  const c=$('sec-steps');
-  steps.forEach((s,i)=>{ const d=document.createElement('div'); d.className='step-row'; d.style.animationDelay=`${i*55}ms`; d.innerHTML=`<div class="step-n">${s.n}</div><div><div class="step-title">${s.t}</div><div class="step-desc">${s.d}</div></div>`; c.appendChild(d); });
-}
-
-// ── ENTERPRISE ──
-async function buildEnterprise(){
-  const cases=[
-    { icon:'📊', title:'Storage Intelligence & Cost Allocation',
-      run:async tid=>{
-        addLine(tid,sp('t-comment','# Classify NAS storage by type'));
-        addLine(tid,`${sp('t-prompt','>>> ')}result = anscom.scan('/mnt/nas', max_depth=20, silent=True, ignore_junk=True, workers=16)`);
-        await sleep(600);
-        addLine(tid,sp('t-header','Scanned: 142,801 files in 0.291s'));
-        addBr(tid);
-        await typeLine(tid,"total = result['total_files']");
-        await typeLine(tid,"media = result['categories']['Videos'] + result['categories']['Images'] + result['categories']['Audio']");
-        await sleep(300);
-        await typeLine(tid,"print(f\"Media: {media:,} ({media/total*100:.1f}%)\")");
-        await sleep(350);
-        addLine(tid,sp('t-val','Media: 55,692 (39.0%)'));
-      }
-    },
-    { icon:'🔒', title:'CI/CD Policy Enforcement',
-      run:async tid=>{
-        addLine(tid,sp('t-comment','# Block executables and videos in source repo'));
-        await typeLine(tid,"result = anscom.scan('./repo', silent=True, ignore_junk=True)");
-        await sleep(350);
-        addLine(tid,`${sp('t-kw','if')} result['categories']['Executables'] > 0:`);
-        addLine(tid,`    print("POLICY VIOLATION")`);
-        addLine(tid,`    sys.exit(1)`);
-        await sleep(500);
-        addLine(tid,sp('t-val','File composition check passed.'));
-      }
-    },
-    { icon:'📦', title:'Pre-Migration Filesystem Audit',
-      run:async tid=>{
-        await typeLine(tid,"import anscom, json, datetime");
-        await typeLine(tid,"result = anscom.scan('/legacy-server/data', max_depth=30, silent=True)",18);
-        await sleep(350);
-        addLine(tid,`result['audit_timestamp'] = str(datetime.datetime.utcnow())`);
-        addLine(tid,`result['hostname'] = 'legacy-srv-04'`);
-        await typeLine(tid,"with open('pre_migration_audit.json','w') as f:",18);
-        addLine(tid,`    json.dump(result, f, indent=2)`);
-        await sleep(400);
-        addLine(tid,sp('t-val','pre_migration_audit.json written (3.1 KB)'));
-      }
-    },
-  ];
-  const c=$('ent-cards');
-  cases.forEach((ec,i)=>{
-    const tid=`ent-t-${i}`, bid=`ent-b-${i}`;
-    const card=document.createElement('div'); card.className='ent-card';
-    card.innerHTML=`
-      <div class="ent-card-head"><span style="font-size:14px">${ec.icon}</span><span class="ent-card-title">${ec.title}</span></div>
-      <div class="terminal" style="border:none;border-radius:0;margin:0;">
-        <div class="terminal-bar" style="background:#0a0a0a;">
-          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
-          <span class="terminal-title">${ec.title.toLowerCase().replace(/[^a-z0-9]+/g,'_')}.py</span>
-          <span class="t-badge" id="${bid}">● idle</span>
+    <!-- 2. LAB NAVIGATION -->
+    <nav class="lab-nav">
+        <div class="brand-block">
+            <a href="https://github.com/PC5518" class="brand-logo">A</a>
+            <div class="brand-info">
+                <h1>Independent Labs (Aditya Narayan Singh)</h1>
+                <span>Quant Research & Infra</span>
+            </div>
         </div>
-        <div class="terminal-body" id="${tid}" style="min-height:90px;"></div>
-      </div>`;
-    c.appendChild(card);
-    setTimeout(async()=>{ setBadge(bid,'● running'); await ec.run(tid); setBadge(bid,'● done',true); }, 400+i*650);
-  });
-}
 
-// ── INIT ──
-document.addEventListener('DOMContentLoaded',()=>{
-  buildExclChips();
-  buildExtList();
-  buildCatBars();
-  buildHWSteps();
-  buildSecSteps();
-  buildEnterprise();
+        <div class="nav-items">
+            <a href="#" class="nav-link active">Modules</a>
+            <a href="#" class="nav-link">Publications</a>
+            <a href="#" class="nav-link">System Status</a>
+            <a href="https://pc5518.github.io/AnsComfinancialsuite/contact/" class="nav-link">Contact</a>
+        </div>
 
-  animHero();
+        <div class="search-lab">
+            <span class="search-icon">λ</span>
+            <input type="text" class="lab-input" placeholder="Query modules or symbols...">
+        </div>
+    </nav>
 
-  onVisible('overview',  animOverview,   0.1);
-  onVisible('install',   animInstall,    0.1);
-  onVisible('returns',   animReturns,    0.1);
-  onVisible('examples',  ()=>switchEx(0),0.1);
-  onVisible('tree',      animTree,       0.1);
-  onVisible('exclusion', animExcl,       0.1);
-  onVisible('report',    animReport,     0.1);
-  onVisible('categories',startLive,      0.1);
-  onVisible('howworks',  animHW,         0.08);
-});
-</script>
+    <!-- 3. HERO: LATEST RELEASE -->
+    <header class="release-deck">
+        <div class="stream-deco"></div>
+        <div style="position:relative; z-index:2;">
+            <div class="release-badge">
+                <span class="dot"></span> LATEST DEPLOYMENT: V0.6.0
+            </div>
+            <h1 class="release-title">AnsCom C-Accelerated Filesystem Engine</h1>
+            <p class="release-desc">
+                High-performance Python bindings for recursive data partitioning. Designed for massive engineering data lakes, bridging raw C speed with Pythonic usability. Now available on PyPI.
+            </p>
+            <div class="action-row">
+                <a href="https://pypi.org/project/anscom/" target="_blank" class="btn btn-primary">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm0 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm-1 4v4h-3v2h3v4h2v-4h3v-2h-3v-4h-2z"/></svg>
+                    View on PyPI
+                </a>
+                <a href="https://github.com/PC5518/anscom-nfie-python-extension" target="_blank" class="btn btn-secondary">
+                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                    Source Code
+                </a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 4. LOGICAL TELEMETRY RAIL -->
+    <div class="telemetry-rail">
+        <div class="rail-title">LAB TELEMETRY</div>
+        <div class="rail-track">
+            <div class="rail-item">
+                <div class="rail-status st-ok"></div>
+                <span class="rail-key">ANSCOM_BUILD:</span><span class="rail-val">PASSING (v1.0.0)</span>
+            </div>
+            <div class="rail-item">
+                <div class="rail-status st-ok"></div>
+                <span class="rail-key">GOLD_FV_ENGINE:</span><span class="rail-val">ONLINE (Latency 12ms)</span>
+            </div>
+            <div class="rail-item">
+                <div class="rail-status st-ok"></div>
+                <span class="rail-key">NET_DEPTH:</span><span class="rail-val">MONITORING (40 Nodes)</span>
+            </div>
+            <div class="rail-item">
+                <div class="rail-status st-warn"></div>
+                <span class="rail-key">ZENTEC_MODEL:</span><span class="rail-val">RETRAINING (Epoch 4/10)</span>
+            </div>
+            <div class="rail-item">
+                <div class="rail-status st-ok"></div>
+                <span class="rail-key">PAPER_STATUS:</span><span class="rail-val">PUBLISHED (Jan 15)</span>
+            </div>
+            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">ANSCOM_BUILD:</span><span class="rail-val">PASSING</span></div>
+        </div>
+    </div>
+
+    <!-- 5. MAIN CONTENT -->
+    <div class="lab-container">
+        
+        <main>
+            <div class="section-header">
+                <span>Active Research Modules</span>
+                <span class="count-pill">6 Total</span>
+            </div>
+
+            <div class="project-grid">
+                
+                <!-- MODULE 1: Gold Engine WITH ZENODO BADGE -->
+                <article class="lab-card">
+                    <div class="card-top">
+                        <div class="card-icon">Au</div>
+                        <span class="status-pill sp-live">Live Pricing</span>
+                    </div>
+                    <h3 class="card-title">Gold ETF Fair Value Engine</h3>
+                    <p class="card-desc">Post-market pricing engine. Approximates GOLDIETF NAV using real-time XAUUSD/USDINR parity feeds.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">PYTHON</span>
+                        <span class="tech-badge">ARBITRAGE</span>
+                        <span class="tech-badge">FORENSICS</span>
+                    </div>
+                    <div class="card-actions">
+                        <a href="https://github.com/PC5518/gold-etf-postmarket-fair-value-engine" class="action-link">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            Repository
+                        </a>
+                        <!-- ZENODO BADGE LINK -->
+                        <a href="https://zenodo.org/records/18185485" target="_blank" title="View Research Paper">
+                            <img src="https://zenodo.org/badge/DOI/10.5281/zenodo.18185485.svg" alt="DOI" class="zenodo-badge">
+                        </a>
+                    </div>
+                </article>
+
+                <!-- MODULE 2: Telemetry -->
+                <article class="lab-card">
+                    <div class="card-top">
+                        <div class="card-icon">Tx</div>
+                        <span class="status-pill sp-live">Active</span>
+                    </div>
+                    <h3 class="card-title">netDepth Monitoring</h3>
+                    <p class="card-desc">Telemetry dashboard built with Ookla. Monitors 40+ network/market metrics via AnsCom Terminal.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">NETWORKING</span>
+                        <span class="tech-badge">VISUALIZATION</span>
+                    </div>
+                    <div class="card-actions">
+                        <a href="https://github.com/PC5518/anscom-netDepth-ultimate" class="action-link">
+                             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                             Repository
+                        </a>
+                    </div>
+                </article>
+
+                <!-- MODULE 3: ZENTEC ML -->
+                <article class="lab-card">
+                    <div class="card-top">
+                        <div class="card-icon">ML</div>
+                        <span class="status-pill sp-beta">Inference</span>
+                    </div>
+                    <h3 class="card-title">ZENTEC Prediction</h3>
+                    <p class="card-desc">Random Forest time-series model. Trained on 10+ years of OHLC data to predict directional bias.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">SCIKIT-LEARN</span>
+                        <span class="tech-badge">STATISTICS</span>
+                    </div>
+                    <div class="card-actions">
+                        <a href="https://github.com/PC5518/nse-zentec-stock-prediction-ml" class="action-link">
+                             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                             Repository
+                        </a>
+                    </div>
+                </article>
+
+                <!-- MODULE 4: AI Index -->
+                <article class="lab-card">
+                    <div class="card-top">
+                        <div class="card-icon">Ix</div>
+                        <span class="status-pill sp-live">Live Ticks</span>
+                    </div>
+                    <h3 class="card-title">AnsCom AI10 Index</h3>
+                    <p class="card-desc">Personalized technology index tracking top 10 AI-exposed US equities.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">INDEXING</span>
+                        <span class="tech-badge">DATA FEED</span>
+                    </div>
+                    <div class="card-actions">
+                        <a href="https://github.com/PC5518/anscom-ai10-tech-index" class="action-link">
+                             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                             Repository
+                        </a>
+                    </div>
+                </article>
+
+                <!-- MODULE 5: Nifty Scanner -->
+                <article class="lab-card">
+                    <div class="card-top">
+                        <div class="card-icon">N5</div>
+                        <span class="status-pill sp-live">Scanning</span>
+                    </div>
+                    <h3 class="card-title">NIFTY-500 Scanner</h3>
+                    <p class="card-desc">Liquidity void and volatility scanner for Indian equities. Part of MarketOS.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">NSEPY</span>
+                        <span class="tech-badge">ALGORITHMIC</span>
+                    </div>
+                    <div class="card-actions">
+                        <a href="https://github.com/PC5518/ansCom-terminal-equity_marketos" class="action-link">
+                             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                             Repository
+                        </a>
+                    </div>
+                </article>
+
+            </div>
+        </main>
+
+        <aside>
+            <!-- CLOCK WIDGET -->
+            <div class="widget">
+                <div class="widget-head">Global Time</div>
+                <div style="font-size: 28px; font-weight: 300; margin-bottom: 20px;" id="local-clock">--:--:--</div>
+                <div class="sys-row">
+                    <span class="sys-key">NEW DELHI</span><span class="sys-val" id="time-delhi">--:--</span>
+                </div>
+                <div class="sys-row">
+                    <span class="sys-key">NEW YORK</span><span class="sys-val" id="time-ny">--:--</span>
+                </div>
+                <div class="sys-row">
+                    <span class="sys-key">LONDON</span><span class="sys-val" id="time-london">--:--</span>
+                </div>
+                <div class="sys-row">
+                    <span class="sys-key">TOKYO</span><span class="sys-val" id="time-tokyo">--:--</span>
+                </div>
+            </div>
+
+            <!-- NEW PUBLICATIONS WIDGET -->
+            <div class="widget">
+                <div class="widget-head">Lab Publications</div>
+                <div style="margin-bottom:10px;">
+                    <a href="https://zenodo.org/records/18185485" target="_blank" class="paper-link">
+                        Post-Market Fair Value Estimation for Gold ETF Using Statistical Parity
+                    </a>
+                    <span class="paper-meta">DOI: 10.5281/zenodo.18185485</span>
+                </div>
+            </div>
+
+            <!-- RESEARCH FOCUS -->
+            <div class="widget">
+                <div class="widget-head">Research Areas</div>
+                <ul class="focus-area" style="list-style:none;">
+                    <li>Filesystem Intelligence</li>
+                    <li>Fair Value Arbitrage</li>
+                    <li>Network Telemetry</li>
+                    <li>ML Time-Series</li>
+                    <li>Market Structure</li>
+                </ul>
+            </div>
+            
+            <div class="widget">
+                <div class="widget-head">Lab Status</div>
+                <div class="sys-row">
+                    <span class="sys-key">Lead</span><span class="sys-val">Aditya Narayan Singh PC5518</span>
+                </div>
+                <div class="sys-row">
+                    <span class="sys-key">Active Projects</span><span class="sys-val">6</span>
+                </div>
+                <div class="sys-row">
+                    <span class="sys-key">System</span><span style="color:var(--status-ok); font-weight:700;">OPERATIONAL</span>
+                </div>
+            </div>
+        </aside>
+
+    </div>
+
+    <!-- GOOGLE TRANSLATE SCRIPT -->
+    <script type="text/javascript">
+        function googleTranslateElementInit() {
+          new google.translate.TranslateElement({
+            pageLanguage: 'en',
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+            autoDisplay: false
+          }, 'google_translate_element');
+        }
+    </script>
+    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+    <script>
+        // Accessibility Logic
+        function toggleAccessPanel() {
+            document.getElementById('accessPanel').classList.toggle('active');
+        }
+
+        function toggleBodyClass(className) {
+            document.body.classList.toggle(className);
+        }
+
+        // Clock Logic
+        function updateClocks() {
+            const now = new Date();
+            const localOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            const cityOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
+            const getCityTime = (timeZone) => new Intl.DateTimeFormat('en-US', { ...cityOptions, timeZone }).format(now);
+
+            document.getElementById('local-clock').innerText = now.toLocaleTimeString([], localOptions);
+            document.getElementById('time-delhi').innerText = getCityTime('Asia/Kolkata');
+            document.getElementById('time-ny').innerText = getCityTime('America/New_York');
+            document.getElementById('time-london').innerText = getCityTime('Europe/London');
+            document.getElementById('time-tokyo').innerText = getCityTime('Asia/Tokyo');
+        }
+        setInterval(updateClocks, 1000);
+        updateClocks();
+    </script>
+
 </body>
 </html>
