@@ -642,7 +642,7 @@ hr.divider { border:none; border-top:1px solid var(--border); margin:0; }
       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
       Export
     </button>
-    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme">☀️</button>
+    <button class="theme-toggle" id="themeToggle" onclick="toggleTheme()" title="Toggle theme">Light Mode</button>
     <button class="nav-cta" onclick="document.getElementById('try-section').scrollIntoView({behavior:'smooth'})">Try it ↓</button>
   </div>
 </nav>
@@ -1091,7 +1091,7 @@ function countUp(id,target,sfx,dur=1400){ const el=$(id); const start=Date.now()
 
 // ── THEME ──────────────────────────────────────────────
 let isDark=true;
-function toggleTheme(){ isDark=!isDark; document.documentElement.setAttribute('data-theme',isDark?'dark':'light'); $('themeToggle').textContent=isDark?'☀️':'🌙'; }
+function toggleTheme(){ isDark=!isDark; document.documentElement.setAttribute('data-theme',isDark?'dark':'light'); $('themeToggle').textContent=isDark?'☀️':'Night Mode'; }
 
 // ── EXPORT POPUP ───────────────────────────────────────
 function openExport(){ $('exportOverlay').classList.add('open'); document.body.style.overflow='hidden'; }
