@@ -679,7 +679,7 @@ hr.divider { border:none; border-top:1px solid var(--border); margin:0; }
 <div class="main" id="main">
   <!-- HERO -->
   <div id="hero">
-    <div class="meta-line">March 2026 &nbsp;·&nbsp; Release &nbsp;·&nbsp; v1.0.0</div>
+    <div class="meta-line">March 2026 &nbsp;·&nbsp; Release &nbsp;·&nbsp; v1.3.0</div>
     <div class="hero-block">
       <h1 class="hero-title">Native Filesystem<br>Intelligence Engine</h1>
       <p class="hero-subtitle">A native C extension for Python that recursively scans directories, categorizes every file by type, and returns a complete structured breakdown — in a single function call.</p>
@@ -883,7 +883,7 @@ hr.divider { border:none; border-top:1px solid var(--border); margin:0; }
     <!-- Update banner -->
     <div class="update-banner">
       <span class="update-dot"></span>
-      <span class="update-text"><strong>v1.0.0 — new feature:</strong> Export helpers now available. Use <code style="color:#22d3ee;font-family:'DM Mono',monospace;font-size:11px;">anscom.export_csv()</code>, <code style="color:#22d3ee;font-family:'DM Mono',monospace;font-size:11px;">anscom.export_excel()</code>, and <code style="color:#22d3ee;font-family:'DM Mono',monospace;font-size:11px;">anscom.export_json()</code>.</span>
+      <span class="update-text"><strong>v1.3.0 — new feature:</strong> Export helpers now available. Use <code style="color:#22d3ee;font-family:'DM Mono',monospace;font-size:11px;">anscom.export_csv()</code>, <code style="color:#22d3ee;font-family:'DM Mono',monospace;font-size:11px;">anscom.export_excel()</code>, and <code style="color:#22d3ee;font-family:'DM Mono',monospace;font-size:11px;">anscom.export_json()</code>.</span>
     </div>
 
     <!-- 3-column export cards -->
@@ -1002,7 +1002,7 @@ hr.divider { border:none; border-top:1px solid var(--border); margin:0; }
         <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.561 0C8.89 0 8.73.14 8.73 1.56v2.93h5.66V5H5.85C4.3 5 2.74 6.77 2.28 9.23a16.77 16.77 0 000 5.54c.39 2.15 1.66 3.7 3.08 3.7h1.99v-3.52c0-1.74 1.5-3.27 3.25-3.27h5.66c1.45 0 2.6-1.18 2.6-2.64V1.56C18.86.14 17.68 0 16.06 0h-4.5z"/></svg>
         PyPI
       </a>
-      <span class="footer-version">v1.0.0 &nbsp;·&nbsp; March 2026</span>
+      <span class="footer-version">v1.3.0 &nbsp;·&nbsp; March 2026</span>
     </div>
   </div>
 </div><!-- main -->
@@ -1062,7 +1062,7 @@ hr.divider { border:none; border-top:1px solid var(--border); margin:0; }
     </div>
     <div class="export-modal-footer">
       <span class="export-update-dot"></span>
-      <span class="export-footer-text">New in v1.0.0 — export helpers available via <code style="color:#22d3ee">anscom.export_*()</code></span>
+      <span class="export-footer-text">New in v1.3.0 — export helpers available via <code style="color:#22d3ee">anscom.export_*()</code></span>
     </div>
   </div>
 </div>
@@ -1200,7 +1200,7 @@ async function animHero(){
   await sleep(350);
   await typeLine(tid,'anscom.scan(".", show_tree=True)');
   await sleep(250); addBr(tid);
-  addLine(tid,sp('t-hdr','Anscom Enterprise v1.0.0  (Threads: 16)'));
+  addLine(tid,sp('t-hdr','Anscom Enterprise v1.3.0  (Threads: 16)'));
   addLine(tid,sp('t-hdr','Target: .')); addBr(tid); await sleep(180);
   const tree=[
     `  ${sp('t-bdr','|--')} ${sp('t-dir','[factor_models]')}`,
@@ -1241,7 +1241,7 @@ async function animOverview(){
   const tid='t-overview'; setBadge('b-overview','● running');
   await typeLine(tid,'import anscom'); await sleep(250);
   await typeLine(tid,"result = anscom.scan('.')"); await sleep(180);
-  addLine(tid,sp('t-hdr','Anscom Enterprise v1.0.0  (Threads: 16)'));
+  addLine(tid,sp('t-hdr','Anscom Enterprise v1.3.0  (Threads: 16)'));
   addLine(tid,sp('t-hdr','Target: .'));
   const t=$(tid); const p=document.createElement('span'); p.style.display='block'; p.className='t-hdr'; t.appendChild(p);
   for(let i=0;i<=8442;i+=Math.floor(Math.random()*700+300)){p.textContent=`Scanned files: ${i.toLocaleString()} ...`;await sleep(72);}
@@ -1257,8 +1257,8 @@ async function animInstall(){
   const tid='t-install'; setBadge('b-install','● running');
   addLine(tid,`${sp('t-p','$ ')}pip install anscom`); await sleep(500);
   addLine(tid,sp('t-hdr','Collecting anscom')); await sleep(250);
-  addLine(tid,sp('t-hdr','  Downloading anscom-1.0.0-cp311-cp311-linux_x86_64.whl (28.4 kB)')); await sleep(400);
-  addLine(tid,sp('t-val','Successfully installed anscom-1.0.0')); addBr(tid);
+  addLine(tid,sp('t-hdr','  Downloading anscom-1.3.0-cp311-cp311-linux_x86_64.whl (28.4 kB)')); await sleep(400);
+  addLine(tid,sp('t-val','Successfully installed anscom-1.3.0')); addBr(tid);
   await typeLine(tid,'import anscom'); await sleep(200);
   await typeLine(tid,"result = anscom.scan('.', silent=True)"); await sleep(250);
   await typeLine(tid,"print(f\"Anscom is working. Files found: {result['total_files']}\")"); await sleep(350);
@@ -1339,7 +1339,7 @@ async function switchEx(idx){
 async function animTree(){
   const tid='t-tree'; setBadge('b-tree','● running');
   await typeLine(tid,"anscom.scan('/codebase', show_tree=True, max_depth=3, silent=True)",18); await sleep(200);
-  addLine(tid,sp('t-hdr','Anscom Enterprise v1.0.0  (Threads: 1  ← forced by show_tree)')); addBr(tid);
+  addLine(tid,sp('t-hdr','Anscom Enterprise v1.3.0  (Threads: 1  ← forced by show_tree)')); addBr(tid);
   const lines=[
     `  ${sp('t-bdr','|--')} ${sp('t-dir','[src]')}`,
     `  ${sp('t-bdr','|')}   ${sp('t-bdr','|--')} ${sp('t-file','main.c')}`,
@@ -1387,7 +1387,7 @@ async function animExcl(){
 async function animReport(){
   const tid='t-report'; setBadge('b-report','● running');
   await typeLine(tid,"anscom.scan('.')  # silent=False by default",20); await sleep(200);
-  addLine(tid,sp('t-hdr','Anscom Enterprise v1.0.0  (Threads: 16)')); addLine(tid,sp('t-hdr','Target: .'));
+  addLine(tid,sp('t-hdr','Anscom Enterprise v1.3.0  (Threads: 16)')); addLine(tid,sp('t-hdr','Target: .'));
   const t=$(tid); const p=document.createElement('span'); p.style.display='block'; p.className='t-hdr'; t.appendChild(p);
   for(let i=0;i<=21008;i+=Math.floor(Math.random()*2200+800)){p.textContent=`Scanned files: ${Math.min(i,21008).toLocaleString()} ...`;await sleep(72);}
   p.textContent='Scanned files: 21,008 ...'; addBr(tid);
@@ -1653,7 +1653,7 @@ async function runTry(){
   await sleep(300);
   await typeLine(tid,`anscom.scan("${path}", ${optStr})`);
   await sleep(250); addBr(tid);
-  addLine(tid,sp('t-hdr','Anscom Enterprise v1.0.0  (Threads: 16)'));
+  addLine(tid,sp('t-hdr','Anscom Enterprise v1.3.0  (Threads: 16)'));
   addLine(tid,sp('t-hdr',`Target: ${path}`)); addBr(tid);
   await sleep(200);
   if(tryOpts.tree){
