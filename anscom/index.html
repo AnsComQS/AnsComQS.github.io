@@ -1737,212 +1737,267 @@ async function typeInto(el, text, speed=28){
 }
 
 async function playLaunchNotif(){
-  const W=ms=>new Promise(r=>setTimeout(r,ms));
-  const wrap=document.getElementById('launchNotif');
-  const card=document.getElementById('launchCard');
-  const icons=document.querySelectorAll('.ln-icon');
+  const W = ms => new Promise(r=>setTimeout(r,ms));
+  const wrap = document.getElementById('launchNotif');
+  const card = document.getElementById('launchCard');
+  const stage= document.getElementById('ln-stage');   // free-floating icon layer
+  const i0   = document.getElementById('lni-0');
+  const i1   = document.getElementById('lni-1');
+  const i2   = document.getElementById('lni-2');
+  const floaters = [i0,i1,i2];
 
-  // reveal wrap + slide card up
+  // make scene visible
   wrap.style.opacity='1'; wrap.style.pointerEvents='all';
-  await W(60);
-  card.style.transform='translateY(0) scale(1)';
-  card.style.opacity='1';
-  await W(500);
+  await W(80);
 
-  // float icons up staggered
-  for(let i=0;i<icons.length;i++){
-    const ic=icons[i];
-    ic.style.opacity='1';
-    ic.style.transform='translateY(-52px) scale(1.22)';
-    ic.style.filter='drop-shadow(0 10px 22px rgba(0,0,0,0.55))';
-    await W(170);
+  // ── PHASE 1: icons rise from below, staggered ──
+  // positions: left-centre, centre, right-centre  (relative to viewport)
+  const positions = [
+    { left:'calc(50% - 90px)', bottom:'160px' },
+    { left:'calc(50% - 21px)', bottom:'190px' },
+    { left:'calc(50% + 48px)', bottom:'160px' },
+  ];
+  floaters.forEach((ic,idx)=>{
+    ic.style.left   = positions[idx].left;
+    ic.style.bottom = '-70px';          // start off-screen below
+    ic.style.opacity= '0';
+  });
+  stage.style.display='block';
+
+  // staggered rise
+  for(let idx=0;idx<floaters.length;idx++){
+    await W(120);
+    const ic=floaters[idx];
+    ic.style.transition='bottom 0.72s cubic-bezier(0.22,1,0.36,1), opacity 0.45s ease';
+    ic.style.bottom  = positions[idx].bottom;
+    ic.style.opacity = '1';
   }
-  await W(650);
+  await W(900);
 
-  // gentle drift down + fade out
-  icons.forEach(ic=>{
-    ic.style.transition='all 0.75s cubic-bezier(0.4,0,0.2,1)';
-    ic.style.transform='translateY(14px) scale(0.78)';
+  // ── PHASE 2: gentle natural float (bob up/down via CSS anim) ──
+  floaters.forEach((ic,idx)=>{
+    ic.style.transition='none';
+    ic.classList.add('ln-bob');
+    // slight phase offset per icon for organic feel
+    ic.style.animationDelay = `${idx * 0.18}s`;
+  });
+  await W(1800);
+
+  // ── PHASE 3: icons converge toward centre-bottom of card target ──
+  const cardRect = card.getBoundingClientRect();
+  // card is not yet visible, so target the screen centre
+  const cx = window.innerWidth/2;
+  const cy = window.innerHeight/2 + 30;
+  floaters.forEach((ic,idx)=>{
+    ic.classList.remove('ln-bob');
+    ic.style.transition='left 0.55s cubic-bezier(0.4,0,0.2,1), bottom 0.55s cubic-bezier(0.4,0,0.2,1), transform 0.55s ease, opacity 0.45s ease, filter 0.45s ease';
+    ic.style.left   = `calc(50% - 21px)`;
+    ic.style.bottom = `calc(50vh - 30px)`;
+    ic.style.transform='scale(0.6)';
+    ic.style.filter ='blur(3px)';
     ic.style.opacity='0';
   });
-  await W(600);
+  await W(500);
 
-  // ── version chip types in ──
-  const chip=document.getElementById('ln-chip');
+  // hide free floaters, they've vanished into the card zone
+  stage.style.display='none';
+
+  // ── PHASE 4: card materialises ──
+  card.style.transform='translateX(-50%) translateY(0) scale(1)';
+  card.style.opacity='1';
+  await W(480);
+
+  // ── PHASE 5: typewriter content ──
+  const chip = document.getElementById('ln-chip');
   chip.style.opacity='1'; chip.style.transform='translateY(0)';
-  const chipTxt=document.getElementById('ln-chip-txt');
-  await typeInto(chipTxt,'v1.3.0  ·  New Release',22);
-  await W(180);
+  await typeInto(document.getElementById('ln-chip-txt'),'v1.3.0  ·  Now on PyPI',20);
+  await W(160);
 
-  // ── divider line draws across ──
-  const div=document.getElementById('ln-divider');
-  div.style.opacity='1';
-  div.style.width='100%';
-  await W(420);
+  const divEl = document.getElementById('ln-divider');
+  divEl.style.opacity='1'; divEl.style.width='100%';
+  await W(400);
 
-  // ── headline types in char by char ──
-  const h=document.getElementById('ln-headline');
-  h.style.opacity='1';
-  const hSpan=document.getElementById('ln-headline-txt');
-  await typeInto(hSpan,'Export is now available.',34);
-  await W(220);
-
-  // ── sub line types in ──
-  const s=document.getElementById('ln-sub');
-  s.style.opacity='1';
-  const sSpan=document.getElementById('ln-sub-txt');
-  await typeInto(sSpan,'CSV  ·  Excel  ·  JSON  —  one call, zero config.',26);
-  await W(260);
-
-  // ── feature pills pop in ──
-  document.querySelectorAll('.ln-pill').forEach((p,i)=>{
-    setTimeout(()=>{ p.style.opacity='1'; p.style.transform='translateY(0) scale(1)'; },i*90);
-  });
-  await W(550);
-
-  // ── CTA springs in ──
-  const cta=document.getElementById('ln-cta');
-  cta.style.opacity='1';
-  cta.style.transform='translateY(0) scale(1)';
+  const hEl = document.getElementById('ln-headline');
+  hEl.style.opacity='1';
+  await typeInto(document.getElementById('ln-headline-txt'),'Export is now available.',32);
   await W(200);
 
-  // ── dismiss hint fades in ──
+  const sEl = document.getElementById('ln-sub');
+  sEl.style.opacity='1';
+  await typeInto(document.getElementById('ln-sub-txt'),'CSV · Excel · JSON — single call, zero config.',24);
+  await W(240);
+
+  // tiny icon row inside card appears
+  const irow = document.getElementById('ln-icon-row');
+  irow.style.opacity='1'; irow.style.transform='translateY(0)';
+  await W(320);
+
+  document.querySelectorAll('.ln-pill').forEach((p,i)=>{
+    setTimeout(()=>{ p.style.opacity='1'; p.style.transform='translateY(0) scale(1)'; }, i*80);
+  });
+  await W(480);
+
+  const cta=document.getElementById('ln-cta');
+  cta.style.opacity='1'; cta.style.transform='translateY(0) scale(1)';
+  await W(180);
   document.getElementById('ln-dismiss').style.opacity='1';
 
-  // auto-dismiss after 5s
-  await W(5000);
+  // auto-dismiss
+  await W(5200);
   dismissLaunch();
 }
 
 function dismissLaunch(){
   const wrap=document.getElementById('launchNotif');
   const card=document.getElementById('launchCard');
-  card.style.transform='translateY(32px) scale(0.95)';
+  card.style.transform='translateX(-50%) translateY(30px) scale(0.95)';
   card.style.opacity='0';
   setTimeout(()=>{ wrap.style.opacity='0'; wrap.style.pointerEvents='none'; },380);
 }
 </script>
 
-<!-- ── LAUNCH NOTIFICATION ── -->
+<!-- ── LAUNCH NOTIFICATION STYLES ── -->
 <style>
+/* overlay */
 #launchNotif {
   position:fixed; inset:0; z-index:8000;
-  display:flex; align-items:flex-end; justify-content:center;
-  padding-bottom:44px;
   pointer-events:none; opacity:0;
-  transition:opacity 0.35s;
+  transition:opacity 0.3s;
 }
+
+/* free-floating icon stage — fills full screen */
+#ln-stage {
+  display:none;
+  position:absolute; inset:0;
+  pointer-events:none;
+}
+.ln-floater {
+  position:absolute;
+  width:52px; height:52px;
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 8px 32px rgba(0,0,0,0.5);
+}
+.ln-floater img {
+  width:100%; height:100%; object-fit:contain; border-radius:12px;
+  background:rgba(255,255,255,0.03);
+}
+/* natural bobbing */
+@keyframes ln-bob {
+  0%,100% { margin-bottom:0px; }
+  50%      { margin-bottom:14px; }
+}
+.ln-bob { animation: ln-bob 1.6s ease-in-out infinite; }
+
+/* card — centred bottom */
 #launchCard {
-  background:rgba(8,8,8,0.94);
+  position:absolute;
+  left:50%; bottom:44px;
+  transform:translateX(-50%) translateY(44px) scale(0.93);
+  width:min(400px,92vw);
+  background:rgba(8,8,8,0.93);
   border:1px solid rgba(255,255,255,0.11);
   border-radius:20px;
-  padding:28px 30px 22px;
-  width:min(400px,92vw);
+  padding:26px 28px 20px;
   text-align:center;
   display:flex; flex-direction:column; align-items:center; gap:0;
   box-shadow:
-    0 0 0 1px rgba(255,255,255,0.035),
-    0 40px 90px rgba(0,0,0,0.75),
-    0 8px 28px rgba(0,0,0,0.5),
-    inset 0 1px 0 rgba(255,255,255,0.055);
-  backdrop-filter:blur(28px) saturate(180%);
-  -webkit-backdrop-filter:blur(28px) saturate(180%);
-  transform:translateY(44px) scale(0.93);
+    0 0 0 1px rgba(255,255,255,0.04),
+    0 40px 90px rgba(0,0,0,0.8),
+    0 8px 32px rgba(0,0,0,0.5),
+    inset 0 1px 0 rgba(255,255,255,0.06);
+  backdrop-filter:blur(32px) saturate(180%);
+  -webkit-backdrop-filter:blur(32px) saturate(180%);
   opacity:0;
-  transition:transform 0.52s cubic-bezier(0.34,1.56,0.64,1), opacity 0.4s ease;
+  transition:transform 0.52s cubic-bezier(0.34,1.56,0.64,1), opacity 0.42s ease;
 }
-/* icons row */
-.ln-icons-row {
-  display:flex; align-items:flex-end; justify-content:center;
-  gap:20px; height:68px; margin-bottom:20px;
+/* fix transform-origin so translateX(-50%) + scale works */
+#launchCard.show {
+  transform: translateX(-50%) translateY(0) scale(1);
+  opacity:1;
 }
-.ln-icon {
-  opacity:0;
-  transform:translateY(0) scale(0.85);
-  transition:transform 0.58s cubic-bezier(0.34,1.56,0.64,1),
-             opacity 0.42s ease, filter 0.42s ease;
-  display:flex; align-items:center; justify-content:center;
-}
+
 /* version chip */
 #ln-chip {
   display:inline-flex; align-items:center; gap:7px;
-  background:rgba(74,222,128,0.08);
-  border:1px solid rgba(74,222,128,0.22);
-  border-radius:20px; padding:5px 12px;
-  margin-bottom:14px;
-  opacity:0; transform:translateY(6px);
+  background:rgba(74,222,128,0.08); border:1px solid rgba(74,222,128,0.22);
+  border-radius:20px; padding:5px 13px; margin-bottom:13px;
+  opacity:0; transform:translateY(5px);
   transition:opacity 0.3s, transform 0.3s;
 }
 .ln-pulse {
   width:6px; height:6px; border-radius:50%;
-  background:#4ade80;
-  box-shadow:0 0 7px rgba(74,222,128,0.9);
+  background:#4ade80; box-shadow:0 0 7px rgba(74,222,128,0.9);
   animation:ln-blink 1.8s infinite; flex-shrink:0;
 }
-@keyframes ln-blink{0%,100%{opacity:1}50%{opacity:0.25}}
+@keyframes ln-blink{0%,100%{opacity:1}50%{opacity:0.2}}
 #ln-chip-txt {
   font-family:'DM Mono',monospace; font-size:10px;
-  letter-spacing:0.09em; text-transform:uppercase; color:#4ade80;
-  min-width:1px;
+  letter-spacing:0.09em; text-transform:uppercase; color:#4ade80; min-width:1px;
 }
-/* cursor blink on typed elements */
+/* blinking cursor */
 .ln-typing::after {
-  content:'|'; animation:cur-blink 0.7s step-end infinite;
-  color:rgba(255,255,255,0.5); margin-left:1px;
+  content:'|'; animation:cur-blink 0.65s step-end infinite;
+  color:rgba(255,255,255,0.45); margin-left:1px;
 }
 @keyframes cur-blink{0%,100%{opacity:1}50%{opacity:0}}
 
 /* divider */
 #ln-divider {
-  width:0; height:1px;
-  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.12),transparent);
-  margin:0 auto 16px; opacity:0;
+  width:0; height:1px; opacity:0;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,0.13),transparent);
+  margin:0 auto 14px;
   transition:width 0.55s cubic-bezier(0.4,0,0.2,1), opacity 0.3s;
 }
 /* headline */
 #ln-headline {
-  opacity:0; transition:opacity 0.2s;
-  margin-bottom:9px; min-height:28px;
+  opacity:0; transition:opacity 0.2s; margin-bottom:8px; min-height:26px;
 }
 #ln-headline-txt {
-  font-size:19px; font-weight:600; color:#ffffff;
+  font-size:19px; font-weight:600; color:#fff;
   letter-spacing:-0.03em; line-height:1.2;
 }
 /* sub */
 #ln-sub {
-  opacity:0; transition:opacity 0.2s;
-  margin-bottom:16px; min-height:18px;
+  opacity:0; transition:opacity 0.2s; margin-bottom:14px; min-height:18px;
 }
 #ln-sub-txt {
   font-family:'DM Mono',monospace; font-size:11.5px;
-  color:rgba(255,255,255,0.38); letter-spacing:0.01em;
+  color:rgba(255,255,255,0.36); letter-spacing:0.01em;
 }
-/* feature pills */
+/* small icon row inside card */
+#ln-icon-row {
+  display:flex; align-items:center; justify-content:center; gap:10px;
+  margin-bottom:14px; opacity:0; transform:translateY(6px);
+  transition:opacity 0.35s, transform 0.35s cubic-bezier(0.34,1.56,0.64,1);
+}
+#ln-icon-row img {
+  width:26px; height:26px; object-fit:contain; border-radius:6px;
+  background:rgba(255,255,255,0.04);
+  box-shadow:0 2px 8px rgba(0,0,0,0.4);
+}
+/* pills */
 .ln-pills {
-  display:flex; gap:6px; flex-wrap:wrap;
-  justify-content:center; margin-bottom:20px;
+  display:flex; gap:6px; flex-wrap:wrap; justify-content:center; margin-bottom:18px;
 }
 .ln-pill {
   font-family:'DM Mono',monospace; font-size:10.5px;
   padding:4px 10px; border-radius:5px;
-  border:1px solid rgba(255,255,255,0.1);
-  background:rgba(255,255,255,0.04);
-  color:rgba(255,255,255,0.45);
-  opacity:0; transform:translateY(6px) scale(0.92);
-  transition:opacity 0.32s ease, transform 0.32s cubic-bezier(0.34,1.56,0.64,1);
+  border:1px solid rgba(255,255,255,0.1); background:rgba(255,255,255,0.04);
+  color:rgba(255,255,255,0.42);
+  opacity:0; transform:translateY(5px) scale(0.92);
+  transition:opacity 0.3s ease, transform 0.3s cubic-bezier(0.34,1.56,0.64,1);
 }
 /* cta */
 #ln-cta {
   display:inline-flex; align-items:center; gap:8px;
   padding:10px 22px; border-radius:9px;
-  background:#ffffff; color:#000000;
-  font-size:13px; font-weight:700;
-  font-family:'DM Mono',monospace; letter-spacing:-0.01em;
-  cursor:pointer; border:none;
+  background:#fff; color:#000;
+  font-size:13px; font-weight:700; font-family:'DM Mono',monospace; letter-spacing:-0.01em;
+  cursor:pointer; border:none; margin-bottom:4px;
   opacity:0; transform:translateY(8px) scale(0.94);
   transition:opacity 0.38s ease, transform 0.46s cubic-bezier(0.34,1.56,0.64,1);
   box-shadow:0 2px 14px rgba(0,0,0,0.45), 0 1px 0 rgba(255,255,255,0.2) inset;
-  margin-bottom:4px;
 }
 #ln-cta:hover { opacity:0.86; transform:scale(1.04) !important; }
 /* dismiss */
@@ -1955,13 +2010,24 @@ function dismissLaunch(){
 #ln-dismiss:hover { color:rgba(255,255,255,0.45); }
 </style>
 
+<!-- ── LAUNCH NOTIFICATION HTML ── -->
 <div id="launchNotif">
-  <div id="launchCard">
-    <div class="ln-icons-row">
-      <span class="ln-icon"><img src="https://cdn-icons-png.flaticon.com/512/8242/8242984.png" alt="CSV" style="width:42px;height:42px;object-fit:contain;border-radius:8px;"></span>
-      <span class="ln-icon"><img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Microsoft_Office_Excel_%282025%E2%80%93present%29.svg/1280px-Microsoft_Office_Excel_%282025%E2%80%93present%29.svg.png" alt="Excel" style="width:42px;height:42px;object-fit:contain;border-radius:8px;"></span>
-      <span class="ln-icon"><img src="https://jsondata.reactbd.com/logo.png" alt="JSON" style="width:42px;height:42px;object-fit:contain;border-radius:8px;"></span>
+
+  <!-- free-floating icons, no box -->
+  <div id="ln-stage">
+    <div class="ln-floater" id="lni-0">
+      <img src="https://cdn-icons-png.flaticon.com/512/8242/8242984.png" alt="CSV">
     </div>
+    <div class="ln-floater" id="lni-1">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Microsoft_Office_Excel_%282025%E2%80%93present%29.svg/1280px-Microsoft_Office_Excel_%282025%E2%80%93present%29.svg.png" alt="Excel">
+    </div>
+    <div class="ln-floater" id="lni-2">
+      <img src="https://jsondata.reactbd.com/logo.png" alt="JSON">
+    </div>
+  </div>
+
+  <!-- card — hidden until icons vanish -->
+  <div id="launchCard">
     <div id="ln-chip">
       <span class="ln-pulse"></span>
       <span id="ln-chip-txt"></span>
@@ -1969,6 +2035,12 @@ function dismissLaunch(){
     <div id="ln-divider"></div>
     <div id="ln-headline"><span id="ln-headline-txt" class="ln-typing"></span></div>
     <div id="ln-sub"><span id="ln-sub-txt" class="ln-typing"></span></div>
+    <!-- small icons inside card -->
+    <div id="ln-icon-row">
+      <img src="https://cdn-icons-png.flaticon.com/512/8242/8242984.png" alt="CSV">
+      <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/6/60/Microsoft_Office_Excel_%282025%E2%80%93present%29.svg/1280px-Microsoft_Office_Excel_%282025%E2%80%93present%29.svg.png" alt="Excel">
+      <img src="https://jsondata.reactbd.com/logo.png" alt="JSON">
+    </div>
     <div class="ln-pills">
       <span class="ln-pill">anscom.export_csv()</span>
       <span class="ln-pill">anscom.export_excel()</span>
