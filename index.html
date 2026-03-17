@@ -1,73 +1,252 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AnsCom Quantitative Labs | Research Infrastructure</title>
-    
-    <!-- Fonts: Inter (UI) and JetBrains Mono (Data/Code) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
     
     <style>
-        /* 
-           THEME ENGINE: COMPUTATIONAL LABORATORY
-        */
         :root {
-            /* Lab Palette */
             --lab-slate: #0F172A;
             --lab-blue: #007AFF;
             --lab-white: #FFFFFF;
             --lab-gray: #F1F5F9;
             --lab-border: #E2E8F0;
-            
-            /* Data Visualization Colors */
-            --status-ok: #10B981;      /* Green */
-            --status-warn: #F59E0B;    /* Amber */
-            --status-err: #EF4444;     /* Red */
-            --status-active: #3B82F6;  /* Blue */
-
-            /* Typography */
+            --status-ok: #10B981;
+            --status-warn: #F59E0B;
+            --status-err: #EF4444;
+            --status-active: #3B82F6;
             --font-ui: 'Inter', system-ui, sans-serif;
             --font-code: 'JetBrains Mono', monospace;
-
-            /* Effects */
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --glass-bg: rgba(255, 255, 255, 0.95);
+            --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
+            --glass-bg: rgba(255,255,255,0.95);
+            --bg-main: #F1F5F9;
+            --bg-card: #FFFFFF;
+            --bg-nav: rgba(255,255,255,0.95);
+            --text-main: #1E293B;
+            --text-muted: #64748B;
+            --border-color: #E2E8F0;
         }
 
-        /* ACCESSIBILITY VARS (Dynamic) */
-        body.contrast-high { --lab-gray: #000; --lab-white: #000; --lab-slate: #fff; --text-main: #fff; border: 1px solid white; }
-        body.font-large { font-size: 120%; }
-        body.dyslexic { font-family: 'Comic Sans MS', 'Verdana', sans-serif !important; }
-        body.saturation-low { filter: grayscale(100%); }
-        body.cursor-large { cursor: help !important; }
+        [data-theme="dark"] {
+            --lab-gray: #0A0F1E;
+            --lab-border: #1E293B;
+            --glass-bg: rgba(10,15,30,0.97);
+            --bg-main: #080D1A;
+            --bg-card: #0F172A;
+            --bg-nav: rgba(8,13,26,0.97);
+            --text-main: #E2E8F0;
+            --text-muted: #94A3B8;
+            --border-color: #1E293B;
+            --lab-blue: #3B82F6;
+        }
 
-        * { box-sizing: border-box; margin: 0; padding: 0; outline: none; }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; }
         body {
             font-family: var(--font-ui);
-            background-color: var(--lab-gray);
-            color: #1E293B;
+            background-color: var(--bg-main);
+            color: var(--text-main);
             line-height: 1.5;
             overflow-x: hidden;
+            transition: background 0.3s, color 0.3s;
         }
-
         a { text-decoration: none; color: inherit; transition: 0.2s; }
 
-        /* --- 1. ACCESSIBILITY UTILITY BAR --- */
+        /* ── POPUP OVERLAY ─────────────────────────────────── */
+        .popup-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            backdrop-filter: blur(6px);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .popup-box {
+            background: #0F172A;
+            border: 1px solid #1E3A5F;
+            border-radius: 16px;
+            padding: 40px;
+            max-width: 520px;
+            width: 100%;
+            position: relative;
+            animation: slideUp 0.4s cubic-bezier(0.16,1,0.3,1);
+            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
+        }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        .popup-close {
+            position: absolute;
+            top: 16px; right: 16px;
+            background: rgba(255,255,255,0.1);
+            border: none;
+            color: #94A3B8;
+            width: 32px; height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            display: flex; align-items: center; justify-content: center;
+            transition: 0.2s;
+        }
+        .popup-close:hover { background: rgba(255,255,255,0.2); color: white; }
+
+        .popup-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(16,185,129,0.15);
+            color: #34D399;
+            border: 1px solid rgba(16,185,129,0.3);
+            padding: 5px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 700;
+            font-family: var(--font-code);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+        .popup-badge .dot {
+            width: 7px; height: 7px;
+            background: #34D399;
+            border-radius: 50%;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+        .popup-title {
+            font-size: 28px;
+            font-weight: 800;
+            color: #FFFFFF;
+            margin-bottom: 6px;
+            letter-spacing: -0.5px;
+        }
+        .popup-sub {
+            font-size: 13px;
+            color: #64748B;
+            font-family: var(--font-code);
+            margin-bottom: 24px;
+        }
+
+        .popup-features {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 28px;
+        }
+        .popup-feature {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 12px 16px;
+            background: rgba(255,255,255,0.04);
+            border: 1px solid rgba(255,255,255,0.07);
+            border-radius: 8px;
+        }
+        .popup-feature-icon {
+            width: 32px; height: 32px;
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+        .icon-json { background: rgba(59,130,246,0.2); }
+        .icon-tree { background: rgba(16,185,129,0.2); }
+        .icon-excel { background: rgba(34,197,94,0.2); }
+        .popup-feature-text strong {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: #E2E8F0;
+            margin-bottom: 2px;
+        }
+        .popup-feature-text span {
+            font-size: 11px;
+            color: #64748B;
+        }
+
+        .popup-actions {
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .popup-btn {
+            flex: 1;
+            min-width: 140px;
+            padding: 11px 20px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            text-align: center;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .popup-btn-primary {
+            background: var(--lab-blue);
+            color: white;
+        }
+        .popup-btn-primary:hover { background: #2563EB; transform: translateY(-1px); }
+        .popup-btn-secondary {
+            background: rgba(255,255,255,0.08);
+            color: #94A3B8;
+            border: 1px solid rgba(255,255,255,0.12);
+        }
+        .popup-btn-secondary:hover { background: rgba(255,255,255,0.12); color: white; }
+        .popup-btn-ghost {
+            background: transparent;
+            color: #64748B;
+            font-size: 12px;
+            text-decoration: underline;
+            cursor: pointer;
+            border: none;
+            width: 100%;
+            text-align: center;
+            margin-top: 8px;
+            padding: 4px;
+        }
+        .popup-btn-ghost:hover { color: #94A3B8; }
+
+        /* ── ACCESSIBILITY BAR ─────────────────────────────── */
         .access-bar {
-            background: #fff;
-            border-bottom: 1px solid var(--lab-border);
-            padding: 8px 40px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            padding: 7px 24px;
             font-size: 11px;
             display: flex;
             justify-content: flex-end;
-            gap: 15px;
-            font-weight: 600;
-            color: #64748B;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
         }
+
+        .dark-toggle {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 4px 12px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            transition: 0.2s;
+        }
+        .dark-toggle:hover { border-color: var(--lab-blue); color: var(--lab-blue); }
 
         .access-btn {
             background: none;
@@ -76,429 +255,584 @@
             display: flex;
             align-items: center;
             gap: 6px;
-            color: #64748B;
+            color: var(--text-muted);
             font-size: 11px;
             font-weight: 600;
         }
         .access-btn:hover { color: var(--lab-blue); }
+
         .access-panel {
             position: absolute;
-            top: 35px;
-            right: 40px;
-            background: white;
-            border: 1px solid var(--lab-border);
+            top: 40px; right: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
             padding: 20px;
             border-radius: 8px;
             box-shadow: var(--shadow-md);
             display: none;
             grid-template-columns: 1fr 1fr;
-            gap: 15px;
+            gap: 10px;
             z-index: 2000;
-            width: 300px;
+            width: 280px;
         }
         .access-panel.active { display: grid; }
-        
         .a11y-toggle {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             padding: 8px;
-            background: #f8fafc;
+            background: var(--bg-main);
             border-radius: 4px;
             cursor: pointer;
             border: 1px solid transparent;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
         }
-        .a11y-toggle:hover { border-color: var(--lab-blue); }
-        .a11y-toggle.active { background: #eff6ff; color: var(--lab-blue); border-color: var(--lab-blue); }
+        .a11y-toggle:hover { border-color: var(--lab-blue); color: var(--lab-blue); }
 
-        /* --- 2. LAB NAVIGATION --- */
+        /* ── NAVIGATION ────────────────────────────────────── */
         .lab-nav {
-            background: var(--glass-bg);
+            background: var(--bg-nav);
             backdrop-filter: blur(10px);
-            height: 65px;
-            border-bottom: 1px solid var(--lab-border);
+            height: 60px;
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
-            padding: 0 40px;
+            padding: 0 24px;
             position: sticky;
             top: 0;
             z-index: 1000;
+            gap: 16px;
         }
 
         .brand-block {
             display: flex;
             align-items: center;
-            gap: 12px;
-            margin-right: 40px;
+            gap: 10px;
+            margin-right: 20px;
         }
         .brand-logo {
-            width: 36px;
-            height: 36px;
-            background: var(--lab-slate);
-            color: white;
-            display: grid;
-            place-items: center;
-            border-radius: 6px;
-            font-family: var(--font-code);
-            font-weight: 700;
+            width: 36px; height: 36px;
+            border-radius: 50%;
+            overflow: hidden;
+            flex-shrink: 0;
+            border: 2px solid var(--border-color);
         }
-        .brand-info h1 { font-size: 16px; font-weight: 700; letter-spacing: -0.5px; }
-        .brand-info span { font-size: 10px; text-transform: uppercase; color: #64748B; font-weight: 600; }
+        .brand-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .brand-info h1 { font-size: 14px; font-weight: 700; letter-spacing: -0.3px; color: var(--text-main); }
+        .brand-info span { font-size: 10px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
 
-        .nav-items { display: flex; gap: 24px; }
-        .nav-link { font-size: 13px; font-weight: 500; color: #475569; position: relative; }
+        .nav-items { display: flex; gap: 20px; }
+        .nav-link { font-size: 13px; font-weight: 500; color: var(--text-muted); position: relative; white-space: nowrap; }
         .nav-link.active { color: var(--lab-blue); }
         .nav-link.active::after {
-            content: ''; position: absolute; bottom: -23px; left: 0; width: 100%; height: 2px; background: var(--lab-blue);
+            content: ''; position: absolute; bottom: -21px; left: 0; width: 100%; height: 2px; background: var(--lab-blue);
         }
 
-        .search-lab {
+        .nav-hamburger {
+            display: none;
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 6px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-muted);
             margin-left: auto;
-            position: relative;
         }
+
+        .search-lab { margin-left: auto; position: relative; }
         .lab-input {
-            background: #F1F5F9;
-            border: 1px solid transparent;
-            padding: 8px 12px 8px 35px;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            padding: 7px 12px 7px 32px;
             border-radius: 6px;
             font-family: var(--font-code);
             font-size: 12px;
-            width: 240px;
+            width: 200px;
+            color: var(--text-main);
             transition: 0.2s;
         }
-        .lab-input:focus { background: white; border-color: var(--lab-blue); width: 300px; box-shadow: 0 0 0 3px rgba(0,122,255,0.1); }
-        .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; opacity: 0.5; }
+        .lab-input:focus { background: var(--bg-card); border-color: var(--lab-blue); width: 260px; box-shadow: 0 0 0 3px rgba(0,122,255,0.1); outline: none; }
+        .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; opacity: 0.4; color: var(--text-main); }
 
-        /* --- 3. HERO: LATEST RELEASE --- */
+        /* ── HERO ──────────────────────────────────────────── */
         .release-deck {
-            background: linear-gradient(to right, #1e293b, #0f172a);
+            background: linear-gradient(135deg, #1e293b 0%, #0f172a 60%, #0a0f1e 100%);
             color: white;
-            padding: 60px 40px;
+            padding: 50px 24px;
             position: relative;
             overflow: hidden;
         }
-        
         .stream-deco {
             position: absolute;
             right: 0; top: 0; bottom: 0; width: 40%;
-            background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.03) 0px, rgba(255,255,255,0.03) 1px, transparent 1px, transparent 10px);
+            background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 12px);
             pointer-events: none;
         }
-
         .release-badge {
             display: inline-flex;
             align-items: center;
-            background: rgba(16, 185, 129, 0.2);
+            background: rgba(16,185,129,0.15);
             color: #34D399;
-            border: 1px solid rgba(16, 185, 129, 0.4);
+            border: 1px solid rgba(16,185,129,0.3);
             padding: 4px 12px;
             border-radius: 20px;
             font-size: 11px;
             font-weight: 600;
-            margin-bottom: 20px;
+            margin-bottom: 16px;
             font-family: var(--font-code);
         }
         .release-badge .dot { width: 6px; height: 6px; background: currentColor; border-radius: 50%; margin-right: 8px; animation: pulse 2s infinite; }
+        .release-title { font-size: clamp(24px, 5vw, 36px); font-weight: 700; margin-bottom: 12px; letter-spacing: -1px; }
+        .release-desc { max-width: 650px; font-size: clamp(13px, 2vw, 16px); color: #94A3B8; margin-bottom: 28px; line-height: 1.6; }
 
-        @keyframes pulse { 0% { opacity: 1; } 50% { opacity: 0.5; } 100% { opacity: 1; } }
-
-        .release-title { font-size: 36px; font-weight: 700; margin-bottom: 15px; letter-spacing: -1px; }
-        .release-desc { max-width: 700px; font-size: 16px; color: #94A3B8; margin-bottom: 30px; line-height: 1.6; }
-
-        .action-row { display: flex; gap: 15px; align-items: center; }
-
+        .action-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
         .btn {
             display: inline-flex;
             align-items: center;
             height: 40px;
-            padding: 0 20px;
+            padding: 0 18px;
             border-radius: 6px;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             transition: all 0.2s;
             text-decoration: none;
+            white-space: nowrap;
         }
-        .btn svg { width: 16px; height: 16px; margin-right: 8px; }
-        
+        .btn svg { width: 15px; height: 15px; margin-right: 7px; }
         .btn-primary { background: var(--lab-blue); color: white; border: 1px solid var(--lab-blue); }
-        .btn-primary:hover { background: #2563EB; }
-        
+        .btn-primary:hover { background: #2563EB; transform: translateY(-1px); }
         .btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
-        .btn-secondary:hover { background: rgba(255,255,255,0.2); }
+        .btn-secondary:hover { background: rgba(255,255,255,0.18); }
+        .btn-homepage { background: rgba(59,130,246,0.15); color: #93C5FD; border: 1px solid rgba(59,130,246,0.3); }
+        .btn-homepage:hover { background: rgba(59,130,246,0.25); }
 
-        .copy-citation { margin-left: 10px; font-size: 12px; color: #64748B; cursor: pointer; text-decoration: underline; }
-
-        /* --- 4. TELEMETRY RAIL --- */
+        /* ── TELEMETRY RAIL ────────────────────────────────── */
         .telemetry-rail {
-            background: #fff;
-            border-bottom: 1px solid var(--lab-border);
-            height: 36px;
+            background: var(--bg-card);
+            border-bottom: 1px solid var(--border-color);
+            height: 34px;
             display: flex;
             align-items: center;
             font-family: var(--font-code);
             font-size: 11px;
-            color: #475569;
+            color: var(--text-muted);
             overflow: hidden;
-            position: relative;
         }
         .rail-title {
-            padding: 0 20px;
-            background: #F8FAFC;
+            padding: 0 16px;
+            background: var(--bg-main);
             height: 100%;
             display: flex;
             align-items: center;
             font-weight: 700;
-            border-right: 1px solid var(--lab-border);
-            z-index: 10;
-        }
-        .rail-track {
-            display: flex;
-            animation: slide 35s linear infinite;
-        }
-        .rail-item {
-            display: flex;
-            align-items: center;
-            margin-right: 40px;
+            border-right: 1px solid var(--border-color);
             white-space: nowrap;
+            font-size: 10px;
         }
-        .rail-key { color: #94A3B8; margin-right: 8px; }
-        .rail-val { font-weight: 600; color: #0F172A; }
+        .rail-track { display: flex; animation: slide 35s linear infinite; }
+        .rail-item { display: flex; align-items: center; margin-right: 40px; white-space: nowrap; }
+        .rail-key { color: #94A3B8; margin-right: 6px; }
+        .rail-val { font-weight: 600; color: var(--text-main); }
         .rail-status { width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; }
         .st-ok { background: var(--status-ok); }
         .st-warn { background: var(--status-warn); }
-        
         @keyframes slide { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
 
-        /* --- 5. GRID LAYOUT --- */
+        /* ── GRID LAYOUT ───────────────────────────────────── */
         .lab-container {
             max-width: 1400px;
             margin: 0 auto;
-            padding: 40px;
+            padding: 32px 24px;
             display: grid;
             grid-template-columns: 3fr 1fr;
-            gap: 40px;
+            gap: 32px;
         }
 
         .section-header {
-            font-size: 18px;
+            font-size: 16px;
             font-weight: 700;
-            color: var(--lab-slate);
-            margin-bottom: 20px;
+            color: var(--text-main);
+            margin-bottom: 16px;
             display: flex;
             align-items: center;
             justify-content: space-between;
         }
-        .count-pill { background: #E2E8F0; padding: 2px 8px; border-radius: 12px; font-size: 11px; }
+        .count-pill {
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            padding: 2px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            color: var(--text-muted);
+        }
 
         /* CARDS */
         .project-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
+            gap: 18px;
         }
-
         .lab-card {
-            background: white;
-            border: 1px solid var(--lab-border);
-            border-radius: 8px;
-            padding: 24px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 22px;
             transition: all 0.2s;
-            position: relative;
             display: flex;
             flex-direction: column;
         }
         .lab-card:hover {
-            box-shadow: var(--shadow-md);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
             border-color: #CBD5E1;
             transform: translateY(-2px);
         }
+        [data-theme="dark"] .lab-card:hover { border-color: #2D4A6E; }
 
-        .card-top { display: flex; justify-content: space-between; margin-bottom: 16px; }
-        .card-icon { 
-            width: 40px; height: 40px; 
-            border-radius: 6px; 
-            background: #F8FAFC; border: 1px solid var(--lab-border);
-            color: var(--lab-slate);
-            display: grid; place-items: center; font-weight: 700; font-family: var(--font-code);
+        .card-top { display: flex; justify-content: space-between; margin-bottom: 14px; align-items: flex-start; }
+        .card-icon {
+            width: 38px; height: 38px;
+            border-radius: 6px;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            color: var(--text-main);
+            display: grid; place-items: center;
+            font-weight: 700;
+            font-family: var(--font-code);
+            font-size: 13px;
         }
         .status-pill {
             font-size: 10px; font-weight: 700; text-transform: uppercase;
-            padding: 4px 8px; border-radius: 4px; height: fit-content;
+            padding: 3px 8px; border-radius: 4px;
         }
         .sp-live { background: #ECFDF5; color: #059669; }
         .sp-beta { background: #EFF6FF; color: #2563EB; }
+        [data-theme="dark"] .sp-live { background: rgba(16,185,129,0.15); color: #34D399; }
+        [data-theme="dark"] .sp-beta { background: rgba(59,130,246,0.15); color: #60A5FA; }
 
-        .card-title { font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--lab-slate); }
-        .card-desc { font-size: 13px; color: #64748B; margin-bottom: 20px; line-height: 1.6; flex-grow: 1; }
-
-        .tech-stack { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
-        .tech-badge { 
-            font-size: 10px; padding: 2px 6px; background: #F1F5F9; 
-            color: #475569; border-radius: 3px; font-family: var(--font-code); 
+        .card-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text-main); }
+        .card-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.6; flex-grow: 1; }
+        .tech-stack { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 16px; }
+        .tech-badge {
+            font-size: 10px; padding: 2px 6px;
+            background: var(--bg-main);
+            color: var(--text-muted);
+            border-radius: 3px;
+            font-family: var(--font-code);
+            border: 1px solid var(--border-color);
         }
-
         .card-actions {
-            border-top: 1px solid var(--lab-border);
-            padding-top: 16px;
+            border-top: 1px solid var(--border-color);
+            padding-top: 14px;
             display: flex;
             align-items: center;
             gap: 12px;
             flex-wrap: wrap;
         }
-        .action-link { 
-            font-size: 12px; font-weight: 600; color: #475569; 
-            display: flex; align-items: center; gap: 5px; 
+        .action-link {
+            font-size: 12px; font-weight: 600; color: var(--text-muted);
+            display: flex; align-items: center; gap: 5px;
         }
         .action-link:hover { color: var(--lab-blue); }
-
-        /* ZENODO BADGE SPECIFIC */
-        .zenodo-badge {
-            transition: opacity 0.2s;
-            height: 20px;
-            vertical-align: middle;
-        }
+        .zenodo-badge { height: 20px; vertical-align: middle; transition: opacity 0.2s; }
         .zenodo-badge:hover { opacity: 0.8; }
 
-        /* --- SIDEBAR --- */
+        /* ── SIDEBAR ───────────────────────────────────────── */
         .widget {
-            background: white;
-            border: 1px solid var(--lab-border);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
             border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
+            padding: 18px;
+            margin-bottom: 18px;
         }
-        .widget-head { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: #94A3B8; margin-bottom: 15px; }
-
+        .widget-head {
+            font-size: 11px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.5px; color: #94A3B8; margin-bottom: 14px;
+        }
         .sys-row {
-            display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 13px;
+            display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 12px;
         }
-        .sys-key { color: #64748B; }
-        .sys-val { font-family: var(--font-code); font-weight: 600; }
-
+        .sys-key { color: var(--text-muted); }
+        .sys-val { font-family: var(--font-code); font-weight: 600; color: var(--text-main); font-size: 11px; }
         .focus-area li {
-            font-size: 13px; color: #475569; margin-bottom: 8px; padding-left: 10px; border-left: 2px solid var(--lab-border);
+            font-size: 12px; color: var(--text-muted); margin-bottom: 7px;
+            padding-left: 10px; border-left: 2px solid var(--border-color);
         }
-        
         .paper-link {
-            display: block;
-            margin-bottom: 12px;
-            font-size: 13px;
-            color: #334155;
-            text-decoration: none;
-            padding-bottom: 8px;
-            border-bottom: 1px solid #f1f5f9;
+            display: block; margin-bottom: 10px; font-size: 12px;
+            color: var(--text-main); text-decoration: none;
+            padding-bottom: 8px; border-bottom: 1px solid var(--border-color);
         }
         .paper-link:hover { color: var(--lab-blue); }
-        .paper-meta { display: block; font-size: 10px; color: #94a3b8; margin-top: 4px; }
+        .paper-meta { display: block; font-size: 10px; color: #94a3b8; margin-top: 3px; }
 
+        /* ── MOBILE NAV MENU ───────────────────────────────── */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--bg-card);
+            z-index: 999;
+            padding: 80px 24px 24px;
+            flex-direction: column;
+            gap: 8px;
+        }
+        .mobile-menu.open { display: flex; }
+        .mobile-menu .nav-link {
+            font-size: 18px;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-weight: 600;
+        }
+        .mobile-close {
+            position: absolute;
+            top: 16px; right: 16px;
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 8px;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-muted);
+        }
+
+        /* ── SEARCH RESULTS ───────────────────────────────── */
+        .search-results {
+            position: absolute;
+            top: calc(100% + 6px);
+            right: 0;
+            width: 320px;
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+            z-index: 500;
+            display: none;
+            overflow: hidden;
+        }
+        .search-results.visible { display: block; }
+        .search-result-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            cursor: pointer;
+            transition: background 0.15s;
+            text-decoration: none;
+            color: var(--text-main);
+        }
+        .search-result-item:hover { background: var(--bg-main); }
+        .search-result-item + .search-result-item { border-top: 1px solid var(--border-color); }
+        .sr-icon {
+            width: 32px; height: 32px;
+            background: var(--bg-main);
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; font-weight: 700; font-family: var(--font-code);
+            flex-shrink: 0;
+        }
+        .sr-title { font-size: 13px; font-weight: 600; }
+        .sr-desc { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
+        .search-no-results { padding: 16px; font-size: 13px; color: var(--text-muted); text-align: center; }
+
+        /* ── A11Y STATES ──────────────────────────────────── */
+        body.font-large { font-size: 118%; }
+        body.dyslexic { font-family: 'Verdana', sans-serif !important; letter-spacing: 0.5px; }
+        body.high-contrast { filter: contrast(150%); }
+        body.relaxed-spacing * { line-height: 2 !important; }
+        body.reduce-motion * { animation: none !important; transition: none !important; }
+        body.focus-mode .lab-card:not(:hover) { opacity: 0.5; }
+        .a11y-toggle.active { background: #eff6ff; color: var(--lab-blue); border-color: var(--lab-blue); }
+
+        /* ── RESPONSIVE ────────────────────────────────────── */
         @media(max-width: 900px) {
             .lab-container { grid-template-columns: 1fr; }
-            .access-bar { justify-content: center; }
             .nav-items { display: none; }
+            .search-lab { display: none; }
+            .nav-hamburger { display: flex; }
+            .brand-info h1 { font-size: 12px; }
+        }
+
+        @media(max-width: 600px) {
+            .access-bar { justify-content: center; padding: 6px 12px; }
+            .release-deck { padding: 32px 16px; }
+            .action-row { gap: 8px; }
+            .btn { font-size: 12px; padding: 0 14px; height: 36px; }
+            .popup-box { padding: 24px; }
+            .popup-title { font-size: 22px; }
+            .popup-actions { flex-direction: column; }
+            .popup-btn { min-width: unset; }
+            .project-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body id="body">
 
-    <!-- 1. ACCESSIBILITY UTILITIES -->
-    <div class="access-bar">
-        <button class="access-btn" onclick="toggleAccessPanel()">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            ACCESSIBILITY OPTIONS (12)
-        </button>
-        <div id="google_translate_element"></div>
-        
-        <div class="access-panel" id="accessPanel">
-            <div class="a11y-toggle" onclick="toggleBodyClass('contrast-high')">High Contrast</div>
-            <div class="a11y-toggle" onclick="toggleBodyClass('font-large')">Larger Text</div>
-            <div class="a11y-toggle" onclick="toggleBodyClass('dyslexic')">Dyslexia Font</div>
-            <div class="a11y-toggle" onclick="toggleBodyClass('saturation-low')">Desaturate</div>
-            <div class="a11y-toggle" onclick="toggleBodyClass('cursor-large')">Large Cursor</div>
-            <div class="a11y-toggle" onclick="alert('Screen Reader Optimization Active')">Screen Reader Mode</div>
-            <div class="a11y-toggle" onclick="document.body.style.lineHeight='2'">Relaxed Spacing</div>
-            <div class="a11y-toggle" onclick="document.body.style.letterSpacing='1px'">Wide Text</div>
+    <!-- ── RELEASE POPUP ──────────────────────────────────── -->
+    <div class="popup-overlay" id="releasePopup">
+        <div class="popup-box">
+            <button class="popup-close" onclick="closePopup()">✕</button>
+            
+            <div class="popup-badge">
+                <span class="dot"></span>
+                New Release — anscom v1.3.0
+            </div>
+            
+            <h2 class="popup-title">Export Features are Live</h2>
+            <p class="popup-sub">anscom · March 15, 2026 · PyPI</p>
+
+            <div class="popup-features">
+                <div class="popup-feature">
+                    <div class="popup-feature-icon icon-json">📄</div>
+                    <div class="popup-feature-text">
+                        <strong>export_json — Native, Zero Dependencies</strong>
+                        <span>Export full scan results as formatted JSON. Uses Python's built-in json module — no pip install needed.</span>
+                    </div>
+                </div>
+                <div class="popup-feature">
+                    <div class="popup-feature-icon icon-tree">🌲</div>
+                    <div class="popup-feature-text">
+                        <strong>export_tree — DFS Tree to .txt</strong>
+                        <span>Save full directory tree to a text file simultaneously alongside stdout. Terabyte-scale ready.</span>
+                    </div>
+                </div>
+                <div class="popup-feature">
+                    <div class="popup-feature-icon icon-excel">📊</div>
+                    <div class="popup-feature-text">
+                        <strong>export_excel — Structured XLSX Report</strong>
+                        <span>3-sheet Excel report: Categories, Extensions, Summary. Requires openpyxl (pip install anscom[excel]).</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="popup-actions">
+                <a href="https://pypi.org/project/anscom/" target="_blank" class="popup-btn popup-btn-primary">
+                    📦 View on PyPI
+                </a>
+                <a href="https://anscomqs.github.io/anscom/" target="_blank" class="popup-btn popup-btn-secondary">
+                    🌐 Official Docs
+                </a>
+                <a href="https://github.com/PC5518/anscom-nfie-python-extension" target="_blank" class="popup-btn popup-btn-secondary">
+                    ⭐ GitHub
+                </a>
+            </div>
+            <button class="popup-btn-ghost" onclick="closePopup()">Dismiss — don't show again</button>
         </div>
     </div>
 
-    <!-- 2. LAB NAVIGATION -->
+    <!-- ── ACCESSIBILITY BAR ──────────────────────────────── -->
+    <div class="access-bar" style="position:relative;">
+        <button class="dark-toggle" onclick="toggleDark()" id="darkToggleBtn">
+            🌙 Dark Mode
+        </button>
+        <button class="access-btn" onclick="toggleAccessPanel()">
+            ⚙ ACCESSIBILITY
+        </button>
+        <div class="access-panel" id="accessPanel">
+            <div class="a11y-toggle" id="toggle-text" onclick="toggleFontSize()">🔤 Larger Text</div>
+            <div class="a11y-toggle" id="toggle-dyslexic" onclick="toggleDyslexic()">📖 Dyslexia Font</div>
+            <div class="a11y-toggle" id="toggle-contrast" onclick="toggleContrast()">⬛ High Contrast</div>
+            <div class="a11y-toggle" id="toggle-spacing" onclick="toggleSpacing()">↕ Relaxed Spacing</div>
+            <div class="a11y-toggle" id="toggle-animations" onclick="toggleAnimations()">⏸ Reduce Motion</div>
+            <div class="a11y-toggle" id="toggle-focus" onclick="toggleFocusMode()">🎯 Focus Mode</div>
+        </div>
+        <div id="google_translate_element"></div>
+    </div>
+
+    <!-- ── NAVIGATION ────────────────────────────────────── -->
     <nav class="lab-nav">
         <div class="brand-block">
-            <a href="https://github.com/PC5518" class="brand-logo">A</a>
+            <a href="https://github.com/PC5518" class="brand-logo">
+                <img src="https://avatars.githubusercontent.com/u/252811141?s=400&u=1ab402f781d9a27985950db4447723e90a1c3703&v=4" alt="Aditya Narayan Singh">
+            </a>
             <div class="brand-info">
-                <h1>Independent Labs (Aditya Narayan Singh)</h1>
-                <span>Quant Research & Infra</span>
+                <h1>Independent Labs — Aditya Narayan Singh</h1>
+                <span>Quant Research & Infrastructure</span>
             </div>
         </div>
-
         <div class="nav-items">
             <a href="#" class="nav-link active">Modules</a>
             <a href="#" class="nav-link">Publications</a>
             <a href="#" class="nav-link">System Status</a>
             <a href="https://pc5518.github.io/AnsComfinancialsuite/contact/" class="nav-link">Contact</a>
         </div>
-
         <div class="search-lab">
             <span class="search-icon">λ</span>
-            <input type="text" class="lab-input" placeholder="Query modules or symbols...">
+            <input type="text" class="lab-input" id="searchInput" placeholder="Query modules or symbols..." oninput="handleSearch(this.value)" onblur="setTimeout(()=>hideSearch(),200)">
+            <div class="search-results" id="searchResults"></div>
         </div>
+        <button class="nav-hamburger" onclick="toggleMobileMenu()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+            </svg>
+        </button>
     </nav>
 
-    <!-- 3. HERO: LATEST RELEASE -->
+    <!-- ── MOBILE MENU ─────────────────────────────────────── -->
+    <div class="mobile-menu" id="mobileMenu">
+        <button class="mobile-close" onclick="toggleMobileMenu()">✕</button>
+        <a href="#" class="nav-link active" onclick="toggleMobileMenu()">Modules</a>
+        <a href="#" class="nav-link" onclick="toggleMobileMenu()">Publications</a>
+        <a href="#" class="nav-link" onclick="toggleMobileMenu()">System Status</a>
+        <a href="https://pc5518.github.io/AnsComfinancialsuite/contact/" class="nav-link">Contact</a>
+        <div style="margin-top:20px;">
+            <input type="text" class="lab-input" style="width:100%;" placeholder="Query modules...">
+        </div>
+    </div>
+
+    <!-- ── HERO ──────────────────────────────────────────── -->
     <header class="release-deck">
         <div class="stream-deco"></div>
         <div style="position:relative; z-index:2;">
             <div class="release-badge">
-                <span class="dot"></span> LATEST DEPLOYMENT: V0.6.0
+                <span class="dot"></span> LATEST: anscom v1.3.0 — Export Release
             </div>
-            <h1 class="release-title">AnsCom C-Accelerated Filesystem Engine</h1>
+            <h1 class="release-title">AnsCom C-Accelerated<br>Filesystem Engine</h1>
             <p class="release-desc">
-                High-performance Python bindings for recursive data partitioning. Designed for massive engineering data lakes, bridging raw C speed with Pythonic usability. Now available on PyPI.
+                High-performance Python C extension for recursive filesystem intelligence. Native C99 with multi-threaded scanning, JSON/Tree/Excel export, and terabyte-scale support. Now on PyPI.
             </p>
             <div class="action-row">
                 <a href="https://pypi.org/project/anscom/" target="_blank" class="btn btn-primary">
                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm0 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm-1 4v4h-3v2h3v4h2v-4h3v-2h-3v-4h-2z"/></svg>
-                    View on PyPI
+                    PyPI
                 </a>
                 <a href="https://github.com/PC5518/anscom-nfie-python-extension" target="_blank" class="btn btn-secondary">
                     <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                    Source Code
+                    GitHub
+                </a>
+                <a href="https://anscomqs.github.io/anscom/" target="_blank" class="btn btn-homepage">
+                    🌐 anscom Homepage
                 </a>
             </div>
         </div>
     </header>
 
-    <!-- 4. LOGICAL TELEMETRY RAIL -->
+    <!-- ── TELEMETRY RAIL ─────────────────────────────────── -->
     <div class="telemetry-rail">
         <div class="rail-title">LAB TELEMETRY</div>
         <div class="rail-track">
-            <div class="rail-item">
-                <div class="rail-status st-ok"></div>
-                <span class="rail-key">ANSCOM_BUILD:</span><span class="rail-val">PASSING (v1.0.0)</span>
-            </div>
-            <div class="rail-item">
-                <div class="rail-status st-ok"></div>
-                <span class="rail-key">GOLD_FV_ENGINE:</span><span class="rail-val">ONLINE (Latency 12ms)</span>
-            </div>
-            <div class="rail-item">
-                <div class="rail-status st-ok"></div>
-                <span class="rail-key">NET_DEPTH:</span><span class="rail-val">MONITORING (40 Nodes)</span>
-            </div>
-            <div class="rail-item">
-                <div class="rail-status st-warn"></div>
-                <span class="rail-key">ZENTEC_MODEL:</span><span class="rail-val">RETRAINING (Epoch 4/10)</span>
-            </div>
-            <div class="rail-item">
-                <div class="rail-status st-ok"></div>
-                <span class="rail-key">PAPER_STATUS:</span><span class="rail-val">PUBLISHED (Jan 15)</span>
-            </div>
-            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">ANSCOM_BUILD:</span><span class="rail-val">PASSING</span></div>
+            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">ANSCOM_BUILD:</span><span class="rail-val">PASSING (v1.3.0)</span></div>
+            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">GOLD_FV_ENGINE:</span><span class="rail-val">ONLINE (Latency 12ms)</span></div>
+            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">NET_DEPTH:</span><span class="rail-val">MONITORING (40 Nodes)</span></div>
+            <div class="rail-item"><div class="rail-status st-warn"></div><span class="rail-key">ZENTEC_MODEL:</span><span class="rail-val">RETRAINING (Epoch 4/10)</span></div>
+            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">EXPORT_JSON:</span><span class="rail-val">LIVE (v1.3.0)</span></div>
+            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">EXPORT_TREE:</span><span class="rail-val">LIVE (v1.3.0)</span></div>
+            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">PYPI_STATUS:</span><span class="rail-val">PUBLISHED</span></div>
+            <!-- duplicate for seamless loop -->
+            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">ANSCOM_BUILD:</span><span class="rail-val">PASSING (v1.3.0)</span></div>
+            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">GOLD_FV_ENGINE:</span><span class="rail-val">ONLINE (Latency 12ms)</span></div>
+            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">NET_DEPTH:</span><span class="rail-val">MONITORING (40 Nodes)</span></div>
+            <div class="rail-item"><div class="rail-status st-warn"></div><span class="rail-key">ZENTEC_MODEL:</span><span class="rail-val">RETRAINING (Epoch 4/10)</span></div>
+            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">EXPORT_JSON:</span><span class="rail-val">LIVE (v1.3.0)</span></div>
+            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">EXPORT_TREE:</span><span class="rail-val">LIVE (v1.3.0)</span></div>
+            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">PYPI_STATUS:</span><span class="rail-val">PUBLISHED</span></div>
         </div>
     </div>
 
-    <!-- 5. MAIN CONTENT -->
+    <!-- ── MAIN CONTENT ───────────────────────────────────── -->
     <div class="lab-container">
-        
         <main>
             <div class="section-header">
                 <span>Active Research Modules</span>
@@ -506,8 +840,32 @@
             </div>
 
             <div class="project-grid">
-                
-                <!-- MODULE 1: Gold Engine WITH ZENODO BADGE -->
+
+                <!-- MODULE 1: anscom -->
+                <article class="lab-card">
+                    <div class="card-top">
+                        <div class="card-icon">FS</div>
+                        <span class="status-pill sp-live">v1.3.0 Live</span>
+                    </div>
+                    <h3 class="card-title">AnsCom NFIE — Filesystem Scanner</h3>
+                    <p class="card-desc">Native C99 Python extension for terabyte-scale recursive filesystem scanning. Multi-threaded, cross-platform, with JSON/Tree/Excel export. Published on PyPI.</p>
+                    <div class="tech-stack">
+                        <span class="tech-badge">C99</span>
+                        <span class="tech-badge">PYTHON</span>
+                        <span class="tech-badge">MULTI-THREAD</span>
+                        <span class="tech-badge">PYPI</span>
+                    </div>
+                    <div class="card-actions">
+                        <a href="https://github.com/PC5518/anscom-nfie-python-extension" class="action-link">
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            Repository
+                        </a>
+                        <a href="https://pypi.org/project/anscom/" target="_blank" class="action-link">📦 PyPI</a>
+                        <a href="https://anscomqs.github.io/anscom/" target="_blank" class="action-link">🌐 Homepage</a>
+                    </div>
+                </article>
+
+                <!-- MODULE 2: Gold Engine -->
                 <article class="lab-card">
                     <div class="card-top">
                         <div class="card-icon">Au</div>
@@ -525,14 +883,13 @@
                             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
                             Repository
                         </a>
-                        <!-- ZENODO BADGE LINK -->
-                        <a href="https://zenodo.org/records/18185485" target="_blank" title="View Research Paper">
+                        <a href="https://zenodo.org/records/18185485" target="_blank" title="Research Paper">
                             <img src="https://zenodo.org/badge/DOI/10.5281/zenodo.18185485.svg" alt="DOI" class="zenodo-badge">
                         </a>
                     </div>
                 </article>
 
-                <!-- MODULE 2: Telemetry -->
+                <!-- MODULE 3: Telemetry -->
                 <article class="lab-card">
                     <div class="card-top">
                         <div class="card-icon">Tx</div>
@@ -546,13 +903,13 @@
                     </div>
                     <div class="card-actions">
                         <a href="https://github.com/PC5518/anscom-netDepth-ultimate" class="action-link">
-                             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                             Repository
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            Repository
                         </a>
                     </div>
                 </article>
 
-                <!-- MODULE 3: ZENTEC ML -->
+                <!-- MODULE 4: ZENTEC -->
                 <article class="lab-card">
                     <div class="card-top">
                         <div class="card-icon">ML</div>
@@ -566,13 +923,13 @@
                     </div>
                     <div class="card-actions">
                         <a href="https://github.com/PC5518/nse-zentec-stock-prediction-ml" class="action-link">
-                             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                             Repository
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            Repository
                         </a>
                     </div>
                 </article>
 
-                <!-- MODULE 4: AI Index -->
+                <!-- MODULE 5: AI10 Index -->
                 <article class="lab-card">
                     <div class="card-top">
                         <div class="card-icon">Ix</div>
@@ -586,13 +943,13 @@
                     </div>
                     <div class="card-actions">
                         <a href="https://github.com/PC5518/anscom-ai10-tech-index" class="action-link">
-                             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                             Repository
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            Repository
                         </a>
                     </div>
                 </article>
 
-                <!-- MODULE 5: Nifty Scanner -->
+                <!-- MODULE 6: NIFTY Scanner -->
                 <article class="lab-card">
                     <div class="card-top">
                         <div class="card-icon">N5</div>
@@ -606,8 +963,8 @@
                     </div>
                     <div class="card-actions">
                         <a href="https://github.com/PC5518/ansCom-terminal-equity_marketos" class="action-link">
-                             <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                             Repository
+                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                            Repository
                         </a>
                     </div>
                 </article>
@@ -616,33 +973,35 @@
         </main>
 
         <aside>
-            <!-- CLOCK WIDGET -->
+            <!-- CLOCK -->
             <div class="widget">
                 <div class="widget-head">Global Time</div>
-                <div style="font-size: 28px; font-weight: 300; margin-bottom: 20px;" id="local-clock">--:--:--</div>
-                <div class="sys-row">
-                    <span class="sys-key">NEW DELHI</span><span class="sys-val" id="time-delhi">--:--</span>
-                </div>
-                <div class="sys-row">
-                    <span class="sys-key">NEW YORK</span><span class="sys-val" id="time-ny">--:--</span>
-                </div>
-                <div class="sys-row">
-                    <span class="sys-key">LONDON</span><span class="sys-val" id="time-london">--:--</span>
-                </div>
-                <div class="sys-row">
-                    <span class="sys-key">TOKYO</span><span class="sys-val" id="time-tokyo">--:--</span>
-                </div>
+                <div style="font-size:26px; font-weight:300; margin-bottom:16px; font-family:var(--font-code); color:var(--text-main);" id="local-clock">--:--:--</div>
+                <div class="sys-row"><span class="sys-key">NEW DELHI</span><span class="sys-val" id="time-delhi">--:--</span></div>
+                <div class="sys-row"><span class="sys-key">NEW YORK</span><span class="sys-val" id="time-ny">--:--</span></div>
+                <div class="sys-row"><span class="sys-key">LONDON</span><span class="sys-val" id="time-london">--:--</span></div>
+                <div class="sys-row"><span class="sys-key">TOKYO</span><span class="sys-val" id="time-tokyo">--:--</span></div>
             </div>
 
-            <!-- NEW PUBLICATIONS WIDGET -->
+            <!-- LATEST RELEASE WIDGET -->
+            <div class="widget">
+                <div class="widget-head">Latest Release</div>
+                <div class="sys-row"><span class="sys-key">Package</span><span class="sys-val">anscom</span></div>
+                <div class="sys-row"><span class="sys-key">Version</span><span class="sys-val" style="color:var(--status-ok)">v1.3.0</span></div>
+                <div class="sys-row"><span class="sys-key">Date</span><span class="sys-val">Mar 15, 2026</span></div>
+                <div class="sys-row"><span class="sys-key">New</span><span class="sys-val">export_json, export_tree, export_excel</span></div>
+                <a href="https://pypi.org/project/anscom/" target="_blank" style="display:block; margin-top:12px; padding:8px 14px; background:var(--lab-blue); color:white; border-radius:6px; font-size:12px; font-weight:600; text-align:center;">
+                    pip install anscom
+                </a>
+            </div>
+
+            <!-- PUBLICATIONS -->
             <div class="widget">
                 <div class="widget-head">Lab Publications</div>
-                <div style="margin-bottom:10px;">
-                    <a href="https://zenodo.org/records/18185485" target="_blank" class="paper-link">
-                        Post-Market Fair Value Estimation for Gold ETF Using Statistical Parity
-                    </a>
+                <a href="https://zenodo.org/records/18185485" target="_blank" class="paper-link">
+                    Post-Market Fair Value Estimation for Gold ETF Using Statistical Parity
                     <span class="paper-meta">DOI: 10.5281/zenodo.18185485</span>
-                </div>
+                </a>
             </div>
 
             <!-- RESEARCH FOCUS -->
@@ -656,60 +1015,92 @@
                     <li>Market Structure</li>
                 </ul>
             </div>
-            
+
+            <!-- LAB STATUS -->
             <div class="widget">
                 <div class="widget-head">Lab Status</div>
-                <div class="sys-row">
-                    <span class="sys-key">Lead</span><span class="sys-val">Aditya Narayan Singh PC5518</span>
-                </div>
-                <div class="sys-row">
-                    <span class="sys-key">Active Projects</span><span class="sys-val">6</span>
-                </div>
-                <div class="sys-row">
-                    <span class="sys-key">System</span><span style="color:var(--status-ok); font-weight:700;">OPERATIONAL</span>
-                </div>
+                <div class="sys-row"><span class="sys-key">Lead</span><span class="sys-val">Aditya Narayan Singh</span></div>
+                <div class="sys-row"><span class="sys-key">Active Projects</span><span class="sys-val">6</span></div>
+                <div class="sys-row"><span class="sys-key">PyPI Packages</span><span class="sys-val">1 (anscom)</span></div>
+                <div class="sys-row"><span class="sys-key">System</span><span style="color:var(--status-ok); font-weight:700; font-size:11px;">OPERATIONAL</span></div>
             </div>
         </aside>
-
     </div>
 
-    <!-- GOOGLE TRANSLATE SCRIPT -->
+    <!-- GOOGLE TRANSLATE -->
     <script type="text/javascript">
         function googleTranslateElementInit() {
-          new google.translate.TranslateElement({
-            pageLanguage: 'en',
-            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-            autoDisplay: false
-          }, 'google_translate_element');
+            new google.translate.TranslateElement({
+                pageLanguage: 'en',
+                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+                autoDisplay: false
+            }, 'google_translate_element');
         }
     </script>
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     <script>
-        // Accessibility Logic
+        // ── POPUP ──────────────────────────────────────────
+        function closePopup() {
+            document.getElementById('releasePopup').style.display = 'none';
+            localStorage.setItem('anscom_v130_seen', 'true');
+        }
+        // Show popup only once
+        window.addEventListener('load', function() {
+            if (!localStorage.getItem('anscom_v130_seen')) {
+                document.getElementById('releasePopup').style.display = 'flex';
+            } else {
+                document.getElementById('releasePopup').style.display = 'none';
+            }
+        });
+
+        // ── DARK MODE ──────────────────────────────────────
+        function toggleDark() {
+            const html = document.documentElement;
+            const isDark = html.getAttribute('data-theme') === 'dark';
+            html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+            document.getElementById('darkToggleBtn').textContent = isDark ? '🌙 Dark Mode' : '☀️ Light Mode';
+            localStorage.setItem('anscom_theme', isDark ? 'light' : 'dark');
+        }
+        // Restore saved theme
+        const savedTheme = localStorage.getItem('anscom_theme');
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.getElementById('darkToggleBtn').textContent = '☀️ Light Mode';
+        }
+
+        // ── ACCESSIBILITY ──────────────────────────────────
         function toggleAccessPanel() {
             document.getElementById('accessPanel').classList.toggle('active');
         }
 
-        function toggleBodyClass(className) {
-            document.body.classList.toggle(className);
+        // ── MOBILE MENU ────────────────────────────────────
+        function toggleMobileMenu() {
+            document.getElementById('mobileMenu').classList.toggle('open');
         }
 
-        // Clock Logic
+        // ── CLOCKS ─────────────────────────────────────────
         function updateClocks() {
             const now = new Date();
-            const localOptions = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
-            const cityOptions = { hour: '2-digit', minute: '2-digit', hour12: false };
-            const getCityTime = (timeZone) => new Intl.DateTimeFormat('en-US', { ...cityOptions, timeZone }).format(now);
-
-            document.getElementById('local-clock').innerText = now.toLocaleTimeString([], localOptions);
-            document.getElementById('time-delhi').innerText = getCityTime('Asia/Kolkata');
-            document.getElementById('time-ny').innerText = getCityTime('America/New_York');
-            document.getElementById('time-london').innerText = getCityTime('Europe/London');
-            document.getElementById('time-tokyo').innerText = getCityTime('Asia/Tokyo');
+            const localOpts = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            const cityOpts = { hour: '2-digit', minute: '2-digit', hour12: false };
+            const t = (tz) => new Intl.DateTimeFormat('en-US', { ...cityOpts, timeZone: tz }).format(now);
+            document.getElementById('local-clock').innerText = now.toLocaleTimeString([], localOpts);
+            document.getElementById('time-delhi').innerText = t('Asia/Kolkata');
+            document.getElementById('time-ny').innerText = t('America/New_York');
+            document.getElementById('time-london').innerText = t('Europe/London');
+            document.getElementById('time-tokyo').innerText = t('Asia/Tokyo');
         }
         setInterval(updateClocks, 1000);
         updateClocks();
+
+        // Close panels on outside click
+        document.addEventListener('click', function(e) {
+            const panel = document.getElementById('accessPanel');
+            if (!e.target.closest('.access-btn') && !e.target.closest('.access-panel')) {
+                panel.classList.remove('active');
+            }
+        });
     </script>
 
 </body>
