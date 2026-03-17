@@ -1040,12 +1040,54 @@
     <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
 
     <script>
+        // ── SEARCH DATA ────────────────────────────────────
+        const MODULES = [
+            { icon: 'FS', title: 'AnsCom NFIE — Filesystem Scanner', desc: 'Native C99 Python extension · v1.3.0', url: 'https://pypi.org/project/anscom/' },
+            { icon: 'Au', title: 'Gold ETF Fair Value Engine', desc: 'Post-market pricing · XAUUSD/USDINR parity', url: 'https://github.com/PC5518/gold-etf-postmarket-fair-value-engine' },
+            { icon: 'Tx', title: 'netDepth Monitoring', desc: 'Telemetry · 40+ network metrics', url: 'https://github.com/PC5518/anscom-netDepth-ultimate' },
+            { icon: 'ML', title: 'ZENTEC Prediction', desc: 'Random Forest · NSE OHLC time-series', url: 'https://github.com/PC5518/nse-zentec-stock-prediction-ml' },
+            { icon: 'Ix', title: 'AnsCom AI10 Index', desc: 'Top 10 AI-exposed US equities index', url: 'https://github.com/PC5518/anscom-ai10-tech-index' },
+            { icon: 'N5', title: 'NIFTY-500 Scanner', desc: 'Liquidity void & volatility scanner', url: 'https://github.com/PC5518/ansCom-terminal-equity_marketos' },
+            { icon: '📄', title: 'export_json', desc: 'anscom feature · zero dependencies JSON export', url: 'https://pypi.org/project/anscom/' },
+            { icon: '🌲', title: 'export_tree', desc: 'anscom feature · DFS tree to .txt file', url: 'https://pypi.org/project/anscom/' },
+            { icon: '📊', title: 'export_excel', desc: 'anscom feature · XLSX report with openpyxl', url: 'https://pypi.org/project/anscom/' },
+            { icon: '📃', title: 'Gold ETF Research Paper', desc: 'DOI: 10.5281/zenodo.18185485', url: 'https://zenodo.org/records/18185485' },
+            { icon: '🌐', title: 'anscom Homepage', desc: 'Official documentation site', url: 'https://anscomqs.github.io/anscom/' },
+            { icon: '👤', title: 'GitHub Profile', desc: 'PC5518 · Aditya Narayan Singh', url: 'https://github.com/PC5518' },
+        ];
+
+        function handleSearch(query) {
+            const box = document.getElementById('searchResults');
+            if (!query.trim()) { box.classList.remove('visible'); return; }
+            const q = query.toLowerCase();
+            const matches = MODULES.filter(m =>
+                m.title.toLowerCase().includes(q) ||
+                m.desc.toLowerCase().includes(q)
+            );
+            if (matches.length === 0) {
+                box.innerHTML = '<div class="search-no-results">No results for "' + query + '"</div>';
+            } else {
+                box.innerHTML = matches.slice(0, 6).map(m => `
+                    <a class="search-result-item" href="${m.url}" target="_blank">
+                        <div class="sr-icon">${m.icon}</div>
+                        <div>
+                            <div class="sr-title">${m.title}</div>
+                            <div class="sr-desc">${m.desc}</div>
+                        </div>
+                    </a>
+                `).join('');
+            }
+            box.classList.add('visible');
+        }
+        function hideSearch() {
+            document.getElementById('searchResults').classList.remove('visible');
+        }
+
         // ── POPUP ──────────────────────────────────────────
         function closePopup() {
             document.getElementById('releasePopup').style.display = 'none';
             localStorage.setItem('anscom_v130_seen', 'true');
         }
-        // Show popup only once
         window.addEventListener('load', function() {
             if (!localStorage.getItem('anscom_v130_seen')) {
                 document.getElementById('releasePopup').style.display = 'flex';
@@ -1062,7 +1104,6 @@
             document.getElementById('darkToggleBtn').textContent = isDark ? '🌙 Dark Mode' : '☀️ Light Mode';
             localStorage.setItem('anscom_theme', isDark ? 'light' : 'dark');
         }
-        // Restore saved theme
         const savedTheme = localStorage.getItem('anscom_theme');
         if (savedTheme === 'dark') {
             document.documentElement.setAttribute('data-theme', 'dark');
@@ -1072,6 +1113,30 @@
         // ── ACCESSIBILITY ──────────────────────────────────
         function toggleAccessPanel() {
             document.getElementById('accessPanel').classList.toggle('active');
+        }
+        function toggleFontSize() {
+            document.body.classList.toggle('font-large');
+            document.getElementById('toggle-text').classList.toggle('active');
+        }
+        function toggleDyslexic() {
+            document.body.classList.toggle('dyslexic');
+            document.getElementById('toggle-dyslexic').classList.toggle('active');
+        }
+        function toggleContrast() {
+            document.body.classList.toggle('high-contrast');
+            document.getElementById('toggle-contrast').classList.toggle('active');
+        }
+        function toggleSpacing() {
+            document.body.classList.toggle('relaxed-spacing');
+            document.getElementById('toggle-spacing').classList.toggle('active');
+        }
+        function toggleAnimations() {
+            document.body.classList.toggle('reduce-motion');
+            document.getElementById('toggle-animations').classList.toggle('active');
+        }
+        function toggleFocusMode() {
+            document.body.classList.toggle('focus-mode');
+            document.getElementById('toggle-focus').classList.toggle('active');
         }
 
         // ── MOBILE MENU ────────────────────────────────────
