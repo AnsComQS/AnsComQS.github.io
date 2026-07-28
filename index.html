@@ -1,1194 +1,1010 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light">
+<html lang="en" data-theme="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aditya Narayan Singh | Personal projects status</title>
-    <link rel="icon" type="image/png" href="https://avatars.githubusercontent.com/u/252811141?s=400&u=1ab402f781d9a27985950db4447723e90a1c3703&v=4">
-    <link rel="apple-touch-icon" href="https://avatars.githubusercontent.com/u/252811141?s=400&u=1ab402f781d9a27985950db4447723e90a1c3703&v=4">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6394222804664607"
-     crossorigin="anonymous"></script>
-    
-    <style>
-        :root {
-            --lab-slate: #0F172A;
-            --lab-blue: #007AFF;
-            --lab-white: #FFFFFF;
-            --lab-gray: #F1F5F9;
-            --lab-border: #E2E8F0;
-            --status-ok: #10B981;
-            --status-warn: #F59E0B;
-            --status-err: #EF4444;
-            --status-active: #3B82F6;
-            --font-ui: 'Inter', system-ui, sans-serif;
-            --font-code: 'JetBrains Mono', monospace;
-            --shadow-sm: 0 1px 2px 0 rgba(0,0,0,0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0,0,0,0.1);
-            --glass-bg: rgba(255,255,255,0.95);
-            --bg-main: #F1F5F9;
-            --bg-card: #FFFFFF;
-            --bg-nav: rgba(255,255,255,0.95);
-            --text-main: #1E293B;
-            --text-muted: #64748B;
-            --border-color: #E2E8F0;
-        }
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>anscom documentation — Native Filesystem Intelligence Engine</title>
+<meta name="description" content="Official documentation for anscom v1.5.1 — a high-performance native C recursive file scanner for Python." />
+<style>
+/* ============================================================
+   THEME TOKENS  (VS Code–style docs)
+   ============================================================ */
+:root[data-theme="dark"]{
+  --bg:#1b1b1f; --bg-alt:#202026; --bg-card:#232329; --bg-code:#1e1e24;
+  --bg-nav:rgba(24,24,28,.85); --bg-sidebar:#1b1b1f;
+  --border:#2c2c33; --border-soft:#26262c; --border-strong:#3a3a43;
+  --text:#e6e6e6; --text-2:#b7b7bd; --text-3:#8a8a92; --text-4:#66666e;
+  --accent:#4da3ff; --accent-2:#3b8eea; --accent-soft:rgba(77,163,255,.12);
+  --accent-bd:rgba(77,163,255,.3);
+  --green:#4ec9b0; --amber:#d7ba7d; --purple:#c586c0; --red:#f48771;
+  --btn-bg:#0e70c0; --btn-bg-h:#1177cf; --btn-text:#ffffff;
+  --code-key:#569cd6; --code-str:#ce9178; --code-com:#6a9955;
+  --code-fn:#dcdcaa; --code-num:#b5cea8; --code-punct:#d4d4d4;
+  --shadow:0 8px 30px rgba(0,0,0,.4);
+  --ann-bg:#252531;
+}
+:root[data-theme="light"]{
+  --bg:#ffffff; --bg-alt:#f6f7f9; --bg-card:#ffffff; --bg-code:#f4f5f7;
+  --bg-nav:rgba(255,255,255,.85); --bg-sidebar:#fbfbfc;
+  --border:#e3e5e8; --border-soft:#eceef0; --border-strong:#d4d7db;
+  --text:#1b1b1f; --text-2:#3c3c43; --text-3:#6a6a73; --text-4:#9a9aa2;
+  --accent:#0067c0; --accent-2:#0e70c0; --accent-soft:rgba(0,103,192,.08);
+  --accent-bd:rgba(0,103,192,.28);
+  --green:#0a7d63; --amber:#8a6d00; --purple:#a1339c; --red:#c4462f;
+  --btn-bg:#0e70c0; --btn-bg-h:#0f7ad4; --btn-text:#ffffff;
+  --code-key:#0000ff; --code-str:#a31515; --code-com:#008000;
+  --code-fn:#795e26; --code-num:#098658; --code-punct:#1b1b1f;
+  --shadow:0 6px 24px rgba(0,0,0,.08);
+  --ann-bg:#eef2f7;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:104px}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:-apple-system,"Segoe UI",system-ui,Roboto,Helvetica,Arial,sans-serif;
+  font-size:15px;line-height:1.6;-webkit-font-smoothing:antialiased;
+  transition:background .2s,color .2s;
+}
+a{color:var(--accent);text-decoration:none}
+a:hover{text-decoration:underline}
+code,pre,.mono{font-family:"SF Mono","Cascadia Code",Consolas,"Liberation Mono",monospace}
 
-        [data-theme="dark"] {
-            --lab-gray: #0A0F1E;
-            --lab-border: #1E293B;
-            --glass-bg: rgba(10,15,30,0.97);
-            --bg-main: #080D1A;
-            --bg-card: #0F172A;
-            --bg-nav: rgba(8,13,26,0.97);
-            --text-main: #E2E8F0;
-            --text-muted: #94A3B8;
-            --border-color: #1E293B;
-            --lab-blue: #3B82F6;
-        }
+/* ============================================================
+   ANNOUNCEMENT BAR
+   ============================================================ */
+.announce{
+  background:var(--ann-bg);border-bottom:1px solid var(--border);
+  text-align:center;font-size:13px;padding:8px 16px;color:var(--text-2);
+}
+.announce a{font-weight:500}
+.announce .tag{
+  display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.05em;
+  background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-bd);
+  padding:1px 7px;border-radius:20px;margin-right:8px;vertical-align:1px;
+}
 
-        * { box-sizing: border-box; margin: 0; padding: 0; }
-        body {
-            font-family: var(--font-ui);
-            background-color: var(--bg-main);
-            color: var(--text-main);
-            line-height: 1.5;
-            overflow-x: hidden;
-            transition: background 0.3s, color 0.3s;
-        }
-        a { text-decoration: none; color: inherit; transition: 0.2s; }
+/* ============================================================
+   TOP NAV
+   ============================================================ */
+nav.top{
+  position:sticky;top:0;z-index:100;
+  display:flex;align-items:center;gap:18px;
+  height:50px;padding:0 20px;
+  background:var(--bg-nav);border-bottom:1px solid var(--border);
+  backdrop-filter:blur(12px) saturate(160%);
+  -webkit-backdrop-filter:blur(12px) saturate(160%);
+}
+.brand{display:flex;align-items:center;gap:9px;color:var(--text);font-weight:600;font-size:15px;letter-spacing:-.01em}
+.brand:hover{text-decoration:none}
+.brand .logo{width:26px;height:26px;flex-shrink:0}
+.nav-links{display:flex;align-items:center;gap:2px;margin-left:8px}
+.nav-links a{
+  color:var(--text-2);font-size:13.5px;padding:6px 10px;border-radius:6px;
+}
+.nav-links a:hover{color:var(--text);background:var(--bg-alt);text-decoration:none}
+.nav-spacer{flex:1}
+.search{
+  display:flex;align-items:center;gap:8px;
+  background:var(--bg-alt);border:1px solid var(--border);
+  border-radius:6px;padding:6px 10px;width:220px;color:var(--text-3);
+}
+.search:focus-within{border-color:var(--accent-bd)}
+.search input{
+  background:none;border:none;outline:none;color:var(--text);
+  font-size:13px;width:100%;font-family:inherit;
+}
+.search kbd{
+  font-size:10.5px;font-family:inherit;color:var(--text-4);
+  border:1px solid var(--border-strong);border-radius:4px;padding:1px 5px;
+}
+.icon-btn{
+  width:34px;height:34px;border-radius:6px;border:1px solid var(--border);
+  background:var(--bg-alt);color:var(--text-2);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.icon-btn:hover{color:var(--text);background:var(--bg-card)}
+.btn-primary{
+  background:var(--btn-bg);color:var(--btn-text);border:none;
+  padding:8px 15px;border-radius:6px;font-size:13.5px;font-weight:600;
+  cursor:pointer;display:inline-flex;align-items:center;gap:7px;
+  font-family:inherit;white-space:nowrap;
+}
+.btn-primary:hover{background:var(--btn-bg-h)}
+.hamburger{display:none}
 
-        /* ── POPUP OVERLAY ─────────────────────────────────── */
-        .popup-overlay {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.7);
-            backdrop-filter: blur(6px);
-            z-index: 9999;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 20px;
-            animation: fadeIn 0.3s ease;
-        }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+.layout{display:flex;align-items:flex-start}
+aside.sidebar{
+  width:270px;flex-shrink:0;position:sticky;top:51px;
+  height:calc(100vh - 51px);overflow-y:auto;
+  background:var(--bg-sidebar);border-right:1px solid var(--border);
+  padding:20px 10px 60px;
+}
+aside.sidebar::-webkit-scrollbar{width:8px}
+aside.sidebar::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:4px}
+.sb-title{
+  font-size:11px;font-weight:700;letter-spacing:.08em;text-transform:uppercase;
+  color:var(--text-4);padding:6px 14px 10px;
+}
+.sb-group{margin-bottom:2px}
+.sb-group-head{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:7px 14px;border-radius:6px;cursor:pointer;user-select:none;
+  font-size:12px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--text-3);
+}
+.sb-group-head:hover{background:var(--bg-alt);color:var(--text-2)}
+.sb-group-head svg{transition:transform .18s;flex-shrink:0}
+.sb-group.collapsed .sb-group-head svg{transform:rotate(-90deg)}
+.sb-group.collapsed .sb-items{display:none}
+.sb-items{padding:2px 0 6px}
+.sb-items a{
+  display:block;font-size:13.5px;color:var(--text-3);
+  padding:6px 14px 6px 22px;border-radius:6px;margin:1px 0;
+  border-left:2px solid transparent;
+}
+.sb-items a:hover{color:var(--text);background:var(--bg-alt);text-decoration:none}
+.sb-items a.active{
+  color:var(--accent);background:var(--accent-soft);
+  border-left-color:var(--accent);font-weight:500;
+}
+.sb-solo{
+  display:block;font-size:14px;color:var(--text-2);font-weight:500;
+  padding:8px 14px;border-radius:6px;margin-bottom:4px;
+}
+.sb-solo:hover{color:var(--text);background:var(--bg-alt);text-decoration:none}
+.sb-solo.active{color:var(--accent);background:var(--accent-soft)}
 
-        .popup-box {
-            background: #0F172A;
-            border: 1px solid #1E3A5F;
-            border-radius: 16px;
-            padding: 40px;
-            max-width: 520px;
-            width: 100%;
-            position: relative;
-            animation: slideUp 0.4s cubic-bezier(0.16,1,0.3,1);
-            box-shadow: 0 25px 60px rgba(0,0,0,0.5);
-        }
-        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+main{flex:1;min-width:0;padding:40px 48px 120px;max-width:940px}
 
-        .popup-close {
-            position: absolute;
-            top: 16px; right: 16px;
-            background: rgba(255,255,255,0.1);
-            border: none;
-            color: #94A3B8;
-            width: 32px; height: 32px;
-            border-radius: 50%;
-            cursor: pointer;
-            font-size: 16px;
-            display: flex; align-items: center; justify-content: center;
-            transition: 0.2s;
-        }
-        .popup-close:hover { background: rgba(255,255,255,0.2); color: white; }
+/* ============================================================
+   HERO
+   ============================================================ */
+.page-title{font-size:40px;font-weight:600;letter-spacing:-.025em;line-height:1.1;margin-bottom:14px}
+.page-sub{font-size:16.5px;color:var(--text-2);max-width:680px;margin-bottom:34px;line-height:1.6}
+.hero-card{
+  display:flex;gap:28px;align-items:stretch;
+  background:var(--bg-card);border:1px solid var(--border);
+  border-radius:12px;padding:28px 30px;margin-bottom:44px;box-shadow:var(--shadow);
+}
+.hero-card .hc-left{flex:1;min-width:0}
+.hero-card h2{font-size:22px;font-weight:600;margin-bottom:10px;letter-spacing:-.01em}
+.hero-card p{color:var(--text-2);font-size:14.5px;margin-bottom:16px;line-height:1.62}
+.hero-card .hc-link{font-weight:600;font-size:14.5px;display:inline-flex;align-items:center;gap:5px}
+.hc-right{
+  flex:0 0 340px;background:var(--bg-code);border:1px solid var(--border);
+  border-radius:9px;overflow:hidden;display:flex;flex-direction:column;
+}
+.hc-bar{display:flex;align-items:center;gap:6px;padding:9px 12px;border-bottom:1px solid var(--border)}
+.hc-bar .d{width:11px;height:11px;border-radius:50%}
+.hc-bar .r{background:#ff5f57}.hc-bar .y{background:#febc2e}.hc-bar .g{background:#28c840}
+.hc-bar span{margin-left:6px;font-size:11.5px;color:var(--text-4);font-family:inherit}
+.hc-code{padding:14px 16px;font-size:12.5px;line-height:1.75;overflow-x:auto}
 
-        .popup-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            background: rgba(16,185,129,0.15);
-            color: #34D399;
-            border: 1px solid rgba(16,185,129,0.3);
-            padding: 5px 14px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 700;
-            font-family: var(--font-code);
-            margin-bottom: 20px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .popup-badge .dot {
-            width: 7px; height: 7px;
-            background: #34D399;
-            border-radius: 50%;
-            animation: pulse 2s infinite;
-        }
-        @keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: 0.4; } }
+/* ============================================================
+   "WHAT DO YOU WANT TO DO" CARD GRID
+   ============================================================ */
+.section-h{font-size:26px;font-weight:600;letter-spacing:-.02em;margin:8px 0 22px}
+.card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:12px}
+.do-card{
+  background:var(--bg-card);border:1px solid var(--border);border-radius:10px;
+  padding:22px 20px;cursor:pointer;transition:border-color .15s,transform .15s,background .15s;
+  display:block;color:inherit;
+}
+.do-card:hover{border-color:var(--border-strong);background:var(--bg-alt);text-decoration:none;transform:translateY(-2px)}
+.do-card .ic{
+  width:38px;height:38px;border-radius:9px;background:var(--accent-soft);
+  color:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:14px;
+}
+.do-card h3{font-size:15.5px;font-weight:600;margin-bottom:6px;color:var(--text)}
+.do-card p{font-size:13px;color:var(--text-3);line-height:1.55}
 
-        .popup-title {
-            font-size: 28px;
-            font-weight: 800;
-            color: #FFFFFF;
-            margin-bottom: 6px;
-            letter-spacing: -0.5px;
-        }
-        .popup-sub {
-            font-size: 13px;
-            color: #64748B;
-            font-family: var(--font-code);
-            margin-bottom: 24px;
-        }
+/* ============================================================
+   DOC ARTICLE
+   ============================================================ */
+.doc-sec{padding-top:46px;margin-top:20px;border-top:1px solid var(--border-soft)}
+.doc-sec:first-of-type{border-top:none}
+.doc-sec h2{font-size:27px;font-weight:600;letter-spacing:-.02em;margin-bottom:8px;scroll-margin-top:100px}
+.doc-sec h3{font-size:18px;font-weight:600;margin:30px 0 10px;letter-spacing:-.01em}
+.doc-sec p{color:var(--text-2);margin:12px 0;line-height:1.72}
+.doc-sec ul,.doc-sec ol{margin:12px 0 12px 22px;color:var(--text-2)}
+.doc-sec li{margin:6px 0;line-height:1.65}
+.doc-sec p code,.doc-sec li code,.doc-sec td code{
+  font-size:12.5px;background:var(--bg-alt);border:1px solid var(--border-soft);
+  padding:1px 6px;border-radius:4px;color:var(--green);
+}
+.lead{font-size:16px;color:var(--text-2)}
 
-        .popup-features {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-bottom: 28px;
-        }
-        .popup-feature {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-            padding: 12px 16px;
-            background: rgba(255,255,255,0.04);
-            border: 1px solid rgba(255,255,255,0.07);
-            border-radius: 8px;
-        }
-        .popup-feature-icon {
-            width: 32px; height: 32px;
-            border-radius: 6px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 14px;
-            flex-shrink: 0;
-        }
-        .icon-json { background: rgba(59,130,246,0.2); }
-        .icon-tree { background: rgba(16,185,129,0.2); }
-        .icon-excel { background: rgba(34,197,94,0.2); }
-        .popup-feature-text strong {
-            display: block;
-            font-size: 13px;
-            font-weight: 600;
-            color: #E2E8F0;
-            margin-bottom: 2px;
-        }
-        .popup-feature-text span {
-            font-size: 11px;
-            color: #64748B;
-        }
+/* code blocks */
+.codeblock{position:relative;margin:16px 0}
+.codeblock pre{
+  background:var(--bg-code);border:1px solid var(--border);border-radius:9px;
+  padding:16px 18px;overflow-x:auto;font-size:13px;line-height:1.7;
+}
+.codeblock .lang{
+  position:absolute;top:9px;right:44px;font-size:10.5px;letter-spacing:.06em;
+  text-transform:uppercase;color:var(--text-4);
+}
+.copy-btn{
+  position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:6px;
+  background:var(--bg-alt);border:1px solid var(--border);color:var(--text-3);
+  cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;
+}
+.codeblock:hover .copy-btn{opacity:1}
+.copy-btn:hover{color:var(--text);background:var(--bg-card)}
+.copy-btn.done{color:var(--green)}
+.tok-key{color:var(--code-key)}.tok-str{color:var(--code-str)}.tok-com{color:var(--code-com)}
+.tok-fn{color:var(--code-fn)}.tok-num{color:var(--code-num)}.tok-punct{color:var(--code-punct)}
 
-        .popup-actions {
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .popup-btn {
-            flex: 1;
-            min-width: 140px;
-            padding: 11px 20px;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            border: none;
-            text-align: center;
-            transition: all 0.2s;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 8px;
-        }
-        .popup-btn-primary {
-            background: var(--lab-blue);
-            color: white;
-        }
-        .popup-btn-primary:hover { background: #2563EB; transform: translateY(-1px); }
-        .popup-btn-secondary {
-            background: rgba(255,255,255,0.08);
-            color: #94A3B8;
-            border: 1px solid rgba(255,255,255,0.12);
-        }
-        .popup-btn-secondary:hover { background: rgba(255,255,255,0.12); color: white; }
-        .popup-btn-ghost {
-            background: transparent;
-            color: #64748B;
-            font-size: 12px;
-            text-decoration: underline;
-            cursor: pointer;
-            border: none;
-            width: 100%;
-            text-align: center;
-            margin-top: 8px;
-            padding: 4px;
-        }
-        .popup-btn-ghost:hover { color: #94A3B8; }
+/* callout */
+.note{
+  display:flex;gap:12px;background:var(--accent-soft);border:1px solid var(--accent-bd);
+  border-radius:9px;padding:14px 16px;margin:18px 0;font-size:13.5px;color:var(--text-2);line-height:1.6;
+}
+.note.warn{background:rgba(215,186,125,.1);border-color:rgba(215,186,125,.35)}
+.note .ni{flex-shrink:0;color:var(--accent);margin-top:1px}
+.note.warn .ni{color:var(--amber)}
+.note strong{color:var(--text)}
 
-        /* ── ACCESSIBILITY BAR ─────────────────────────────── */
-        .access-bar {
-            background: var(--bg-card);
-            border-bottom: 1px solid var(--border-color);
-            padding: 7px 24px;
-            font-size: 11px;
-            display: flex;
-            justify-content: flex-end;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
+/* tables */
+.tbl-wrap{overflow-x:auto;margin:18px 0;border:1px solid var(--border);border-radius:9px}
+table.doc{width:100%;border-collapse:collapse;font-size:13.5px}
+table.doc th{
+  text-align:left;font-size:11px;letter-spacing:.05em;text-transform:uppercase;
+  color:var(--text-4);font-weight:700;padding:11px 14px;background:var(--bg-alt);
+  border-bottom:1px solid var(--border);white-space:nowrap;
+}
+table.doc td{padding:11px 14px;border-bottom:1px solid var(--border-soft);color:var(--text-2);vertical-align:top}
+table.doc tr:last-child td{border-bottom:none}
+table.doc td:first-child{color:var(--green);font-family:"SF Mono","Cascadia Code",Consolas,monospace;font-size:12.5px;white-space:nowrap}
+.pill{display:inline-block;font-size:11px;font-weight:600;padding:1px 8px;border-radius:20px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-bd);margin-left:6px;vertical-align:1px}
+.pill.new{background:rgba(78,201,176,.12);color:var(--green);border-color:rgba(78,201,176,.3)}
 
-        .dark-toggle {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            background: none;
-            border: 1px solid var(--border-color);
-            padding: 4px 12px;
-            border-radius: 20px;
-            cursor: pointer;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-muted);
-            transition: 0.2s;
-        }
-        .dark-toggle:hover { border-color: var(--lab-blue); color: var(--lab-blue); }
+/* badges row */
+.badges{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 30px}
+.badge{
+  display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:500;
+  padding:5px 11px;border-radius:6px;border:1px solid var(--border);background:var(--bg-alt);color:var(--text-2);
+}
+.badge svg{flex-shrink:0}
 
-        .access-btn {
-            background: none;
-            border: none;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            color: var(--text-muted);
-            font-size: 11px;
-            font-weight: 600;
-        }
-        .access-btn:hover { color: var(--lab-blue); }
+/* changelog */
+.cl-entry{border-left:2px solid var(--border);padding:0 0 4px 20px;margin:0 0 26px;position:relative}
+.cl-entry::before{content:"";position:absolute;left:-6px;top:4px;width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.cl-entry.old::before{background:var(--text-4)}
+.cl-ver{font-size:17px;font-weight:700}
+.cl-date{font-size:12.5px;color:var(--text-4);margin-left:8px;font-weight:400}
+.cl-entry ul{margin-top:10px}
 
-        .access-panel {
-            position: absolute;
-            top: 40px; right: 24px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: var(--shadow-md);
-            display: none;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            z-index: 2000;
-            width: 280px;
-        }
-        .access-panel.active { display: grid; }
-        .a11y-toggle {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            padding: 8px;
-            background: var(--bg-main);
-            border-radius: 4px;
-            cursor: pointer;
-            border: 1px solid transparent;
-            font-size: 11px;
-            font-weight: 600;
-            color: var(--text-muted);
-        }
-        .a11y-toggle:hover { border-color: var(--lab-blue); color: var(--lab-blue); }
+/* footer */
+footer{border-top:1px solid var(--border);padding:34px 48px;color:var(--text-3);font-size:13px;display:flex;justify-content:space-between;flex-wrap:wrap;gap:18px}
+footer a{color:var(--text-2)}
+.foot-links{display:flex;gap:18px;flex-wrap:wrap}
 
-        /* ── NAVIGATION ────────────────────────────────────── */
-        .lab-nav {
-            background: var(--bg-nav);
-            backdrop-filter: blur(10px);
-            height: 60px;
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            align-items: center;
-            padding: 0 24px;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            gap: 16px;
-        }
-
-        .brand-block {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-right: 20px;
-        }
-        .brand-logo {
-            width: 36px; height: 36px;
-            border-radius: 50%;
-            overflow: hidden;
-            flex-shrink: 0;
-            border: 2px solid var(--border-color);
-        }
-        .brand-logo img { width: 100%; height: 100%; object-fit: cover; display: block; }
-        .brand-info h1 { font-size: 14px; font-weight: 700; letter-spacing: -0.3px; color: var(--text-main); }
-        .brand-info span { font-size: 10px; text-transform: uppercase; color: var(--text-muted); font-weight: 600; }
-
-        .nav-items { display: flex; gap: 20px; }
-        .nav-link { font-size: 13px; font-weight: 500; color: var(--text-muted); position: relative; white-space: nowrap; }
-        .nav-link.active { color: var(--lab-blue); }
-        .nav-link.active::after {
-            content: ''; position: absolute; bottom: -21px; left: 0; width: 100%; height: 2px; background: var(--lab-blue);
-        }
-
-        .nav-hamburger {
-            display: none;
-            background: none;
-            border: 1px solid var(--border-color);
-            padding: 6px;
-            border-radius: 6px;
-            cursor: pointer;
-            color: var(--text-muted);
-            margin-left: auto;
-        }
-
-        .search-lab { margin-left: auto; position: relative; }
-        .lab-input {
-            background: var(--bg-main);
-            border: 1px solid var(--border-color);
-            padding: 7px 12px 7px 32px;
-            border-radius: 6px;
-            font-family: var(--font-code);
-            font-size: 12px;
-            width: 200px;
-            color: var(--text-main);
-            transition: 0.2s;
-        }
-        .lab-input:focus { background: var(--bg-card); border-color: var(--lab-blue); width: 260px; box-shadow: 0 0 0 3px rgba(0,122,255,0.1); outline: none; }
-        .search-icon { position: absolute; left: 10px; top: 50%; transform: translateY(-50%); font-size: 12px; opacity: 0.4; color: var(--text-main); }
-
-        /* ── HERO ──────────────────────────────────────────── */
-        .release-deck {
-            background: linear-gradient(135deg, #1e293b 0%, #0f172a 60%, #0a0f1e 100%);
-            color: white;
-            padding: 50px 24px;
-            position: relative;
-            overflow: hidden;
-        }
-        .stream-deco {
-            position: absolute;
-            right: 0; top: 0; bottom: 0; width: 40%;
-            background-image: repeating-linear-gradient(45deg, rgba(255,255,255,0.02) 0px, rgba(255,255,255,0.02) 1px, transparent 1px, transparent 12px);
-            pointer-events: none;
-        }
-        .release-badge {
-            display: inline-flex;
-            align-items: center;
-            background: rgba(16,185,129,0.15);
-            color: #34D399;
-            border: 1px solid rgba(16,185,129,0.3);
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 11px;
-            font-weight: 600;
-            margin-bottom: 16px;
-            font-family: var(--font-code);
-        }
-        .release-badge .dot { width: 6px; height: 6px; background: currentColor; border-radius: 50%; margin-right: 8px; animation: pulse 2s infinite; }
-        .release-title { font-size: clamp(24px, 5vw, 36px); font-weight: 700; margin-bottom: 12px; letter-spacing: -1px; }
-        .release-desc { max-width: 650px; font-size: clamp(13px, 2vw, 16px); color: #94A3B8; margin-bottom: 28px; line-height: 1.6; }
-
-        .action-row { display: flex; gap: 12px; align-items: center; flex-wrap: wrap; }
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            height: 40px;
-            padding: 0 18px;
-            border-radius: 6px;
-            font-size: 13px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.2s;
-            text-decoration: none;
-            white-space: nowrap;
-        }
-        .btn svg { width: 15px; height: 15px; margin-right: 7px; }
-        .btn-primary { background: var(--lab-blue); color: white; border: 1px solid var(--lab-blue); }
-        .btn-primary:hover { background: #2563EB; transform: translateY(-1px); }
-        .btn-secondary { background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); }
-        .btn-secondary:hover { background: rgba(255,255,255,0.18); }
-        .btn-homepage { background: rgba(59,130,246,0.15); color: #93C5FD; border: 1px solid rgba(59,130,246,0.3); }
-        .btn-homepage:hover { background: rgba(59,130,246,0.25); }
-
-        /* ── TELEMETRY RAIL ────────────────────────────────── */
-        .telemetry-rail {
-            background: var(--bg-card);
-            border-bottom: 1px solid var(--border-color);
-            height: 34px;
-            display: flex;
-            align-items: center;
-            font-family: var(--font-code);
-            font-size: 11px;
-            color: var(--text-muted);
-            overflow: hidden;
-        }
-        .rail-title {
-            padding: 0 16px;
-            background: var(--bg-main);
-            height: 100%;
-            display: flex;
-            align-items: center;
-            font-weight: 700;
-            border-right: 1px solid var(--border-color);
-            white-space: nowrap;
-            font-size: 10px;
-        }
-        .rail-track { display: flex; animation: slide 35s linear infinite; }
-        .rail-item { display: flex; align-items: center; margin-right: 40px; white-space: nowrap; }
-        .rail-key { color: #94A3B8; margin-right: 6px; }
-        .rail-val { font-weight: 600; color: var(--text-main); }
-        .rail-status { width: 6px; height: 6px; border-radius: 50%; margin-right: 6px; }
-        .st-ok { background: var(--status-ok); }
-        .st-warn { background: var(--status-warn); }
-        @keyframes slide { 0% { transform: translateX(0); } 100% { transform: translateX(-100%); } }
-
-        /* ── GRID LAYOUT ───────────────────────────────────── */
-        .lab-container {
-            max-width: 1400px;
-            margin: 0 auto;
-            padding: 32px 24px;
-            display: grid;
-            grid-template-columns: 3fr 1fr;
-            gap: 32px;
-        }
-
-        .section-header {
-            font-size: 16px;
-            font-weight: 700;
-            color: var(--text-main);
-            margin-bottom: 16px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-        .count-pill {
-            background: var(--bg-main);
-            border: 1px solid var(--border-color);
-            padding: 2px 8px;
-            border-radius: 12px;
-            font-size: 11px;
-            color: var(--text-muted);
-        }
-
-        /* CARDS */
-        .project-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(290px, 1fr));
-            gap: 18px;
-        }
-        .lab-card {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 10px;
-            padding: 22px;
-            transition: all 0.2s;
-            display: flex;
-            flex-direction: column;
-        }
-        .lab-card:hover {
-            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
-            border-color: #CBD5E1;
-            transform: translateY(-2px);
-        }
-        [data-theme="dark"] .lab-card:hover { border-color: #2D4A6E; }
-
-        .card-top { display: flex; justify-content: space-between; margin-bottom: 14px; align-items: flex-start; }
-        .card-icon {
-            width: 38px; height: 38px;
-            border-radius: 6px;
-            background: var(--bg-main);
-            border: 1px solid var(--border-color);
-            color: var(--text-main);
-            display: grid; place-items: center;
-            font-weight: 700;
-            font-family: var(--font-code);
-            font-size: 13px;
-        }
-        .status-pill {
-            font-size: 10px; font-weight: 700; text-transform: uppercase;
-            padding: 3px 8px; border-radius: 4px;
-        }
-        .sp-live { background: #ECFDF5; color: #059669; }
-        .sp-beta { background: #EFF6FF; color: #2563EB; }
-        [data-theme="dark"] .sp-live { background: rgba(16,185,129,0.15); color: #34D399; }
-        [data-theme="dark"] .sp-beta { background: rgba(59,130,246,0.15); color: #60A5FA; }
-
-        .card-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; color: var(--text-main); }
-        .card-desc { font-size: 12px; color: var(--text-muted); margin-bottom: 16px; line-height: 1.6; flex-grow: 1; }
-        .tech-stack { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 16px; }
-        .tech-badge {
-            font-size: 10px; padding: 2px 6px;
-            background: var(--bg-main);
-            color: var(--text-muted);
-            border-radius: 3px;
-            font-family: var(--font-code);
-            border: 1px solid var(--border-color);
-        }
-        .card-actions {
-            border-top: 1px solid var(--border-color);
-            padding-top: 14px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            flex-wrap: wrap;
-        }
-        .action-link {
-            font-size: 12px; font-weight: 600; color: var(--text-muted);
-            display: flex; align-items: center; gap: 5px;
-        }
-        .action-link:hover { color: var(--lab-blue); }
-        .zenodo-badge { height: 20px; vertical-align: middle; transition: opacity 0.2s; }
-        .zenodo-badge:hover { opacity: 0.8; }
-
-        /* ── SIDEBAR ───────────────────────────────────────── */
-        .widget {
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            padding: 18px;
-            margin-bottom: 18px;
-        }
-        .widget-head {
-            font-size: 11px; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 0.5px; color: #94A3B8; margin-bottom: 14px;
-        }
-        .sys-row {
-            display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 12px;
-        }
-        .sys-key { color: var(--text-muted); }
-        .sys-val { font-family: var(--font-code); font-weight: 600; color: var(--text-main); font-size: 11px; }
-        .focus-area li {
-            font-size: 12px; color: var(--text-muted); margin-bottom: 7px;
-            padding-left: 10px; border-left: 2px solid var(--border-color);
-        }
-        .paper-link {
-            display: block; margin-bottom: 10px; font-size: 12px;
-            color: var(--text-main); text-decoration: none;
-            padding-bottom: 8px; border-bottom: 1px solid var(--border-color);
-        }
-        .paper-link:hover { color: var(--lab-blue); }
-        .paper-meta { display: block; font-size: 10px; color: #94a3b8; margin-top: 3px; }
-
-        /* ── MOBILE NAV MENU ───────────────────────────────── */
-        .mobile-menu {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: var(--bg-card);
-            z-index: 999;
-            padding: 80px 24px 24px;
-            flex-direction: column;
-            gap: 8px;
-        }
-        .mobile-menu.open { display: flex; }
-        .mobile-menu .nav-link {
-            font-size: 18px;
-            padding: 12px 0;
-            border-bottom: 1px solid var(--border-color);
-            font-weight: 600;
-        }
-        .mobile-close {
-            position: absolute;
-            top: 16px; right: 16px;
-            background: none;
-            border: 1px solid var(--border-color);
-            padding: 8px;
-            border-radius: 6px;
-            cursor: pointer;
-            color: var(--text-muted);
-        }
-
-        /* ── SEARCH RESULTS ───────────────────────────────── */
-        .search-results {
-            position: absolute;
-            top: calc(100% + 6px);
-            right: 0;
-            width: 320px;
-            background: var(--bg-card);
-            border: 1px solid var(--border-color);
-            border-radius: 8px;
-            box-shadow: 0 8px 24px rgba(0,0,0,0.15);
-            z-index: 500;
-            display: none;
-            overflow: hidden;
-        }
-        .search-results.visible { display: block; }
-        .search-result-item {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            padding: 12px 16px;
-            cursor: pointer;
-            transition: background 0.15s;
-            text-decoration: none;
-            color: var(--text-main);
-        }
-        .search-result-item:hover { background: var(--bg-main); }
-        .search-result-item + .search-result-item { border-top: 1px solid var(--border-color); }
-        .sr-icon {
-            width: 32px; height: 32px;
-            background: var(--bg-main);
-            border: 1px solid var(--border-color);
-            border-radius: 6px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 12px; font-weight: 700; font-family: var(--font-code);
-            flex-shrink: 0;
-        }
-        .sr-title { font-size: 13px; font-weight: 600; }
-        .sr-desc { font-size: 11px; color: var(--text-muted); margin-top: 1px; }
-        .search-no-results { padding: 16px; font-size: 13px; color: var(--text-muted); text-align: center; }
-
-        /* ── A11Y STATES ──────────────────────────────────── */
-        body.font-large { font-size: 118%; }
-        body.dyslexic { font-family: 'Verdana', sans-serif !important; letter-spacing: 0.5px; }
-        body.high-contrast { filter: contrast(150%); }
-        body.relaxed-spacing * { line-height: 2 !important; }
-        body.reduce-motion * { animation: none !important; transition: none !important; }
-        body.focus-mode .lab-card:not(:hover) { opacity: 0.5; }
-        .a11y-toggle.active { background: #eff6ff; color: var(--lab-blue); border-color: var(--lab-blue); }
-
-        /* ── RESPONSIVE ────────────────────────────────────── */
-        @media(max-width: 900px) {
-            .lab-container { grid-template-columns: 1fr; }
-            .nav-items { display: none; }
-            .search-lab { display: none; }
-            .nav-hamburger { display: flex; }
-            .brand-info h1 { font-size: 12px; }
-        }
-
-        @media(max-width: 600px) {
-            .access-bar { justify-content: center; padding: 6px 12px; }
-            .release-deck { padding: 32px 16px; }
-            .action-row { gap: 8px; }
-            .btn { font-size: 12px; padding: 0 14px; height: 36px; }
-            .popup-box { padding: 24px; }
-            .popup-title { font-size: 22px; }
-            .popup-actions { flex-direction: column; }
-            .popup-btn { min-width: unset; }
-            .project-grid { grid-template-columns: 1fr; }
-        }
-    </style>
+/* on this page (right rail) hidden on small */
+/* responsive */
+@media(max-width:1000px){
+  main{padding:32px 24px 100px}
+  .card-grid{grid-template-columns:1fr 1fr}
+  .hero-card{flex-direction:column}
+  .hc-right{flex:1}
+}
+@media(max-width:760px){
+  .nav-links,.search{display:none}
+  .hamburger{display:flex}
+  aside.sidebar{
+    position:fixed;left:0;top:51px;z-index:90;width:280px;
+    transform:translateX(-100%);transition:transform .25s;box-shadow:var(--shadow);
+  }
+  body.sb-open aside.sidebar{transform:translateX(0)}
+  .card-grid{grid-template-columns:1fr}
+  .page-title{font-size:32px}
+  main{padding:26px 18px 90px}
+  footer{padding:26px 18px;flex-direction:column}
+}
+.sb-scrim{display:none;position:fixed;inset:51px 0 0 0;background:rgba(0,0,0,.5);z-index:80}
+body.sb-open .sb-scrim{display:block}
+</style>
 </head>
-<body id="body">
+<body>
 
-    <!-- ── RELEASE POPUP ──────────────────────────────────── -->
-    <div class="popup-overlay" id="releasePopup">
-        <div class="popup-box">
-            <button class="popup-close" onclick="closePopup()">✕</button>
-            
-            <div class="popup-badge">
-                <span class="dot"></span>
-                New Release — anscom v1.3.0
-            </div>
-            
-            <h2 class="popup-title">Export Features are Live</h2>
-            <p class="popup-sub">anscom · March 15, 2026 · PyPI</p>
+<!-- ANNOUNCEMENT -->
+<div class="announce">
+  <span class="tag">NEW</span>
+  <a href="#changelog">anscom v1.5.1 is out — <code style="font-size:12px">pwd()</code>, <code style="font-size:12px">scanned_path</code>, and a quieter silent mode →</a>
+</div>
 
-            <div class="popup-features">
-                <div class="popup-feature">
-                    <div class="popup-feature-icon icon-json">📄</div>
-                    <div class="popup-feature-text">
-                        <strong>export_json — Native, Zero Dependencies</strong>
-                        <span>Export full scan results as formatted JSON. Uses Python's built-in json module — no pip install needed.</span>
-                    </div>
-                </div>
-                <div class="popup-feature">
-                    <div class="popup-feature-icon icon-tree">🌲</div>
-                    <div class="popup-feature-text">
-                        <strong>export_tree — DFS Tree to .txt</strong>
-                        <span>Save full directory tree to a text file simultaneously alongside stdout. Terabyte-scale ready.</span>
-                    </div>
-                </div>
-                <div class="popup-feature">
-                    <div class="popup-feature-icon icon-excel">📊</div>
-                    <div class="popup-feature-text">
-                        <strong>export_excel — Structured XLSX Report</strong>
-                        <span>3-sheet Excel report: Categories, Extensions, Summary. Requires openpyxl (pip install anscom[excel]).</span>
-                    </div>
-                </div>
-            </div>
+<!-- NAV -->
+<nav class="top">
+  <button class="icon-btn hamburger" onclick="toggleSidebar()" aria-label="Menu">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+  </button>
+  <a class="brand" href="#top">
+    <svg class="logo" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="2" y="6" width="28" height="22" rx="4" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.6"/>
+      <path d="M2 11 L13 11 L15.5 8 L30 8" stroke="var(--accent)" stroke-width="1.6" fill="none"/>
+      <circle cx="19" cy="19" r="4.4" stroke="var(--accent)" stroke-width="1.8" fill="none"/>
+      <line x1="22.2" y1="22.2" x2="26" y2="26" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/>
+    </svg>
+    anscom
+  </a>
+  <div class="nav-links">
+    <a href="#overview">Docs</a>
+    <a href="#api-scan">API</a>
+    <a href="#features">Features</a>
+    <a href="#changelog">Release Notes</a>
+    <a href="https://github.com/PC5518/anscom-nfie-python-extension" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://pypi.org/project/anscom/" target="_blank" rel="noopener">PyPI</a>
+  </div>
+  <div class="nav-spacer"></div>
+  <div class="search">
+    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input id="searchInput" type="text" placeholder="Search docs" oninput="filterNav(this.value)" />
+    <kbd>/</kbd>
+  </div>
+  <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme" id="themeBtn">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.9" y1="4.9" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.1" y2="19.1"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.9" y1="19.1" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.1" y2="4.9"/></svg>
+  </button>
+  <button class="btn-primary" onclick="copyText('pip install anscom', this)">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+    pip install anscom
+  </button>
+</nav>
 
-            <div class="popup-actions">
-                <a href="https://pypi.org/project/anscom/" target="_blank" class="popup-btn popup-btn-primary">
-                    📦 View on PyPI
-                </a>
-                <a href="https://anscomqs.github.io/anscom/" target="_blank" class="popup-btn popup-btn-secondary">
-                    🌐 Official Docs
-                </a>
-                <a href="https://github.com/PC5518/anscom-nfie-python-extension" target="_blank" class="popup-btn popup-btn-secondary">
-                    ⭐ GitHub
-                </a>
-            </div>
-            <button class="popup-btn-ghost" onclick="closePopup()">Dismiss — don't show again</button>
-        </div>
+<div class="sb-scrim" onclick="toggleSidebar()"></div>
+
+<div class="layout" id="top">
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-title">Documentation</div>
+  <a class="sb-solo" href="#overview">Overview</a>
+
+  <div class="sb-group">
+    <div class="sb-group-head" onclick="toggleGroup(this)">Get Started
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="sb-items">
+      <a href="#install">Installation</a>
+      <a href="#quickstart">Quick Start</a>
+      <a href="#verify">Verify</a>
+    </div>
+  </div>
+
+  <div class="sb-group">
+    <div class="sb-group-head" onclick="toggleGroup(this)">API Reference
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="sb-items">
+      <a href="#api-scan">anscom.scan()</a>
+      <a href="#api-pwd">anscom.pwd()</a>
+      <a href="#parameters">Parameters</a>
+      <a href="#returns">Return Value</a>
+    </div>
+  </div>
+
+  <div class="sb-group">
+    <div class="sb-group-head" onclick="toggleGroup(this)">Features
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="sb-items">
+      <a href="#features">Feature Overview</a>
+      <a href="#current-dir">Current Directory</a>
+      <a href="#largest">Largest Files</a>
+      <a href="#duplicates">Duplicate Detection</a>
+      <a href="#regex">Regex Filter</a>
+      <a href="#filters">Extensions &amp; Size</a>
+      <a href="#exports">CSV / JSON Export</a>
+      <a href="#tree">Tree View</a>
+    </div>
+  </div>
+
+  <div class="sb-group">
+    <div class="sb-group-head" onclick="toggleGroup(this)">Output
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="sb-items">
+      <a href="#report">Report Format</a>
+      <a href="#categories">File Categories</a>
+    </div>
+  </div>
+
+  <div class="sb-group">
+    <div class="sb-group-head" onclick="toggleGroup(this)">Internals
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="sb-items">
+      <a href="#architecture">Architecture</a>
+      <a href="#security">Security</a>
+    </div>
+  </div>
+
+  <div class="sb-group">
+    <div class="sb-group-head" onclick="toggleGroup(this)">Resources
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </div>
+    <div class="sb-items">
+      <a href="#enterprise">Enterprise Recipes</a>
+      <a href="#changelog">Changelog</a>
+      <a href="#license">License</a>
+    </div>
+  </div>
+</aside>
+
+<!-- MAIN -->
+<main>
+  <h1 class="page-title">anscom documentation</h1>
+  <p class="page-sub">A high-performance, native&nbsp;C recursive file scanner for Python. Point it at any directory and it returns a complete, structured breakdown — file counts, categories, extensions, largest files, duplicates — in a single call, with constant memory at any scale.</p>
+
+  <div class="badges">
+    <span class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg> v1.5.1</span>
+    <span class="badge">Python 3.6+</span>
+    <span class="badge">Windows · Linux · macOS</span>
+    <span class="badge">MIT License</span>
+    <span class="badge">Zero dependencies</span>
+  </div>
+
+  <!-- HERO CARD -->
+  <div class="hero-card">
+    <div class="hc-left">
+      <h2>Get started with anscom</h2>
+      <p>Install from PyPI, then scan any directory — or the current one with no arguments at all. Every result is a plain Python <code>dict</code> that plugs straight into a pipeline, dashboard, or audit.</p>
+      <a class="hc-link" href="#install">Get started
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
+      </a>
+    </div>
+    <div class="hc-right">
+      <div class="hc-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span>python3</span></div>
+      <div class="hc-code mono"><span class="tok-key">import</span> anscom
+
+result <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>()  <span class="tok-com"># scans the current dir</span>
+
+<span class="tok-fn">print</span>(result[<span class="tok-str">"total_files"</span>])
+<span class="tok-fn">print</span>(result[<span class="tok-str">"scanned_path"</span>])</div>
+    </div>
+  </div>
+
+  <!-- WHAT DO YOU WANT TO DO -->
+  <h2 class="section-h">What do you want to do?</h2>
+  <div class="card-grid">
+    <a class="do-card" href="#install">
+      <div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
+      <h3>Install anscom</h3>
+      <p><code>pip install anscom</code> on Windows, Linux, or macOS. No configuration required.</p>
+    </a>
+    <a class="do-card" href="#quickstart">
+      <div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></div>
+      <h3>Run your first scan</h3>
+      <p>Scan any path — or the current directory with no arguments — and read the returned dict.</p>
+    </a>
+    <a class="do-card" href="#duplicates">
+      <div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg></div>
+      <h3>Find duplicates &amp; big files</h3>
+      <p>Detect duplicate content and the top-N largest files in one traversal.</p>
+    </a>
+    <a class="do-card" href="#exports">
+      <div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
+      <h3>Export to CSV / JSON</h3>
+      <p>Write a full per-file inventory or report straight from the scan — zero dependencies.</p>
+    </a>
+    <a class="do-card" href="#regex">
+      <div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg></div>
+      <h3>Filter with regex</h3>
+      <p>Restrict the scan to matching paths, or whitelist specific extensions.</p>
+    </a>
+    <a class="do-card" href="#api-scan">
+      <div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></div>
+      <h3>Read the API reference</h3>
+      <p>Every parameter of <code>scan()</code>, the <code>pwd()</code> helper, and the return dict.</p>
+    </a>
+  </div>
+
+  <!-- ===================== OVERVIEW ===================== -->
+  <section class="doc-sec" id="overview">
+    <h2>Overview</h2>
+    <p class="lead">anscom is a Python C&nbsp;extension that scans directories at raw OS speed.</p>
+    <p>It uses direct kernel syscalls — <code>getdents64</code> on Linux, <code>FindFirstFileW</code> on Windows, <code>readdir</code>/<code>lstat</code> on macOS — a multi-threaded work queue, and per-thread statistics accumulation. It never loads file contents into memory (except an optional bounded read for duplicate detection), never follows symlinks, and its memory footprint does not grow with the number of files on disk.</p>
+    <p>Unlike <code>os.walk</code> or <code>pathlib.rglob</code>, the entire traversal runs in C with the GIL released, so scanning tens of millions of files uses no more memory than scanning tens of thousands. The result is always a plain Python <code>dict</code>.</p>
+    <div class="note"><span class="ni"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+    <div><strong>New in v1.5.1.</strong> <code>anscom.pwd()</code> returns the current directory, <code>scan()</code> now works with no arguments (defaults to the current directory), and every result includes a <code>scanned_path</code> key. <code>silent=True</code> is now fully silent. See the <a href="#changelog">changelog</a>.</div></div>
+  </section>
+
+  <!-- ===================== INSTALL ===================== -->
+  <section class="doc-sec" id="install">
+    <h2>Installation</h2>
+    <p>anscom is published on PyPI and works on Python&nbsp;3.6 and later.</p>
+    <div class="codeblock"><span class="lang">bash</span><pre><span class="tok-com"># install / upgrade</span>
+pip install --upgrade anscom</pre></div>
+    <p>On Linux and macOS the default source build is portable. To compile with CPU-specific optimizations tuned to your machine (best when you build and run on the same host), opt in with an environment variable:</p>
+    <div class="codeblock"><span class="lang">bash</span><pre>ANSCOM_NATIVE=1 pip install anscom</pre></div>
+    <div class="note warn"><span class="ni"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+    <div><strong>Windows source builds</strong> require the “Desktop development with C++” workload from Visual Studio Build Tools. Pre-built wheels avoid this where available.</div></div>
+  </section>
+
+  <!-- ===================== QUICK START ===================== -->
+  <section class="doc-sec" id="quickstart">
+    <h2>Quick Start</h2>
+    <p>The entire public surface is two functions: <code>scan()</code> and <code>pwd()</code>.</p>
+    <div class="codeblock"><span class="lang">python</span><pre><span class="tok-key">import</span> anscom
+
+<span class="tok-com"># Scan the current directory — no argument needed</span>
+result <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>()
+
+<span class="tok-com"># Silent scan — suppress all terminal output, just get the dict</span>
+result <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(<span class="tok-str">"."</span>, silent<span class="tok-punct">=</span><span class="tok-key">True</span>)
+<span class="tok-fn">print</span>(result[<span class="tok-str">"total_files"</span>], <span class="tok-str">"files in"</span>, <span class="tok-fn">round</span>(result[<span class="tok-str">"duration_seconds"</span>], <span class="tok-num">3</span>), <span class="tok-str">"s"</span>)
+<span class="tok-fn">print</span>(<span class="tok-str">"Scanned:"</span>, result[<span class="tok-str">"scanned_path"</span>])
+
+<span class="tok-com"># Scan a specific path, deeper</span>
+result <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(<span class="tok-str">"/home/user/projects"</span>, max_depth<span class="tok-punct">=</span><span class="tok-num">20</span>, silent<span class="tok-punct">=</span><span class="tok-key">True</span>)
+
+<span class="tok-key">for</span> cat, count <span class="tok-key">in</span> result[<span class="tok-str">"categories"</span>].<span class="tok-fn">items</span>():
+    <span class="tok-key">if</span> count:
+        <span class="tok-fn">print</span>(<span class="tok-str">f"{cat:20s} {count:>10,}"</span>)</pre></div>
+  </section>
+
+  <!-- ===================== VERIFY ===================== -->
+  <section class="doc-sec" id="verify">
+    <h2>Verify</h2>
+    <div class="codeblock"><span class="lang">python</span><pre><span class="tok-key">import</span> anscom
+r <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(<span class="tok-str">"."</span>, silent<span class="tok-punct">=</span><span class="tok-key">True</span>)
+<span class="tok-fn">print</span>(<span class="tok-str">f"anscom is working. Files found: {r['total_files']}"</span>)</pre></div>
+  </section>
+
+  <!-- ===================== API: SCAN ===================== -->
+  <section class="doc-sec" id="api-scan">
+    <h2>anscom.scan()</h2>
+    <p>Recursively scans <code>path</code> and returns a result dictionary. All arguments except <code>path</code> are keyword-friendly, and <code>path</code> itself is optional.</p>
+    <div class="codeblock"><span class="lang">python</span><pre>anscom.<span class="tok-fn">scan</span>(
+    path<span class="tok-punct">=</span><span class="tok-str">"."</span>,            <span class="tok-com"># str  — optional, defaults to the current directory</span>
+    max_depth<span class="tok-punct">=</span><span class="tok-num">6</span>,         <span class="tok-com"># int  — recursion depth, clamped to [0, 64]</span>
+    show_tree<span class="tok-punct">=</span><span class="tok-key">False</span>,     <span class="tok-com"># bool — print a DFS tree (forces workers=1)</span>
+    workers<span class="tok-punct">=</span><span class="tok-num">0</span>,           <span class="tok-com"># int  — 0 = auto-detect CPU count</span>
+    min_size<span class="tok-punct">=</span><span class="tok-num">0</span>,          <span class="tok-com"># int  — skip files smaller than N bytes</span>
+    extensions<span class="tok-punct">=</span><span class="tok-key">None</span>,     <span class="tok-com"># list — whitelist of extensions to count</span>
+    callback<span class="tok-punct">=</span><span class="tok-key">None</span>,       <span class="tok-com"># func — progress callback (~1/sec)</span>
+    silent<span class="tok-punct">=</span><span class="tok-key">False</span>,        <span class="tok-com"># bool — suppress all terminal output</span>
+    ignore_junk<span class="tok-punct">=</span><span class="tok-key">False</span>,   <span class="tok-com"># bool — skip node_modules, .git, etc.</span>
+    export_json<span class="tok-punct">=</span><span class="tok-key">None</span>,    <span class="tok-com"># str  — write the result dict to JSON</span>
+    export_tree<span class="tok-punct">=</span><span class="tok-key">None</span>,    <span class="tok-com"># str  — write the tree to a .txt (needs show_tree)</span>
+    return_files<span class="tok-punct">=</span><span class="tok-key">False</span>,  <span class="tok-com"># bool — include a per-file list in the dict</span>
+    export_csv<span class="tok-punct">=</span><span class="tok-key">None</span>,     <span class="tok-com"># str  — write a per-file CSV inventory</span>
+    largest_n<span class="tok-punct">=</span><span class="tok-num">0</span>,         <span class="tok-com"># int  — report the top-N largest files</span>
+    find_duplicates<span class="tok-punct">=</span><span class="tok-key">False</span>, <span class="tok-com"># bool — detect duplicate files</span>
+    regex_filter<span class="tok-punct">=</span><span class="tok-key">None</span>,   <span class="tok-com"># str  — only count paths matching this pattern</span>
+) <span class="tok-punct">-&gt;</span> <span class="tok-key">dict</span></pre></div>
+    <div class="note"><span class="ni"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+    <div>Exports are <strong>parameters of <code>scan()</code></strong>, not separate functions. A single scan pass can write JSON, CSV, and a tree at once — no re-scanning.</div></div>
+  </section>
+
+  <!-- ===================== API: PWD ===================== -->
+  <section class="doc-sec" id="api-pwd">
+    <h2>anscom.pwd() <span class="pill new">new</span></h2>
+    <p>Returns the current working directory as an absolute path string — the Unix <code>pwd</code>, as a value. It <strong>returns</strong> (never prints), so it stays composable.</p>
+    <div class="codeblock"><span class="lang">python</span><pre><span class="tok-key">import</span> anscom
+
+root <span class="tok-punct">=</span> anscom.<span class="tok-fn">pwd</span>()      <span class="tok-com"># e.g. '/home/user/project'</span>
+anscom.<span class="tok-fn">scan</span>(root)          <span class="tok-com"># feed it straight back in</span></pre></div>
+    <p><strong>Signature:</strong> <code>anscom.pwd() -&gt; str</code>. Takes no arguments. Raises <code>OSError</code> if the working directory cannot be read (for example, if it has been deleted).</p>
+  </section>
+
+  <!-- ===================== PARAMETERS ===================== -->
+  <section class="doc-sec" id="parameters">
+    <h2>Parameters</h2>
+    <div class="tbl-wrap"><table class="doc">
+      <thead><tr><th>Parameter</th><th>Type</th><th>Default</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>path</td><td>str</td><td>"."</td><td>Target directory. Optional — omit it, or pass <code>""</code>/<code>None</code>, to scan the current working directory. Relative or absolute.</td></tr>
+        <tr><td>max_depth</td><td>int</td><td>6</td><td>Recursion depth limit. Clamped to [0, 64]. Depth 0 = immediate children only.</td></tr>
+        <tr><td>show_tree</td><td>bool</td><td>False</td><td>Print a DFS-ordered directory tree to stdout. Forces <code>workers=1</code> for correct ordering.</td></tr>
+        <tr><td>workers</td><td>int</td><td>0</td><td>Worker thread count. 0 auto-detects the CPU core count.</td></tr>
+        <tr><td>min_size</td><td>int</td><td>0</td><td>Skip files smaller than this many bytes. 0 = no filter.</td></tr>
+        <tr><td>extensions</td><td>list</td><td>None</td><td>Whitelist. When set, only these extensions are counted (lowercase, no dot).</td></tr>
+        <tr><td>callback</td><td>callable</td><td>None</td><td>Called roughly every second with the current file count as one int.</td></tr>
+        <tr><td>silent</td><td>bool</td><td>False</td><td>Suppress all terminal output — banner, live counter, and summary report.</td></tr>
+        <tr><td>ignore_junk</td><td>bool</td><td>False</td><td>Skip common junk directories (<code>node_modules</code>, <code>.git</code>, <code>__pycache__</code>…) entirely.</td></tr>
+        <tr><td>export_json</td><td>str</td><td>None</td><td>Path to write the full result dict as formatted JSON. Zero dependencies.</td></tr>
+        <tr><td>export_tree</td><td>str</td><td>None</td><td>Path to write the tree text (requires <code>show_tree=True</code>).</td></tr>
+        <tr><td>return_files</td><td>bool</td><td>False</td><td>Add a <code>files</code> key: one dict per file (<code>path, size, ext, category, mtime</code>).</td></tr>
+        <tr><td>export_csv</td><td>str</td><td>None</td><td>Path to write a per-file UTF-8 CSV. RFC 4180-quoted. Zero dependencies.</td></tr>
+        <tr><td>largest_n</td><td>int</td><td>0</td><td>If &gt; 0, add a <code>largest_files</code> key with the top-N files by size.</td></tr>
+        <tr><td>find_duplicates</td><td>bool</td><td>False</td><td>Add a <code>duplicates</code> key: groups of same-size files with matching CRC32.</td></tr>
+        <tr><td>regex_filter</td><td>str</td><td>None</td><td>Only count files whose full path matches this regular expression.</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ===================== RETURN VALUE ===================== -->
+  <section class="doc-sec" id="returns">
+    <h2>Return Value</h2>
+    <p>Always a <code>dict</code>. Six keys are present on every scan; three more appear on demand.</p>
+    <div class="tbl-wrap"><table class="doc">
+      <thead><tr><th>Key</th><th>Type</th><th>Always?</th><th>Description</th></tr></thead>
+      <tbody>
+        <tr><td>total_files</td><td>int</td><td>✓</td><td>Files that passed all filters and were categorized.</td></tr>
+        <tr><td>scan_errors</td><td>int</td><td>✓</td><td>Paths that could not be opened (permissions, broken links).</td></tr>
+        <tr><td>duration_seconds</td><td>float</td><td>✓</td><td>Wall-clock time from first thread spawn to last join.</td></tr>
+        <tr><td>scanned_path <span class="pill new">new</span></td><td>str</td><td>✓</td><td>Absolute path that was actually walked (resolved from <code>path</code>).</td></tr>
+        <tr><td>categories</td><td>dict</td><td>✓</td><td>All 9 categories, always present even when zero.</td></tr>
+        <tr><td>extensions</td><td>dict</td><td>✓</td><td>Only extensions with a count &gt; 0.</td></tr>
+        <tr><td>files</td><td>list</td><td>return_files</td><td>Per-file records: <code>path, size, ext, category, mtime</code>.</td></tr>
+        <tr><td>largest_files</td><td>list</td><td>largest_n &gt; 0</td><td>Top-N files by size: <code>path, size</code>.</td></tr>
+        <tr><td>duplicates</td><td>list</td><td>find_duplicates</td><td>Groups of paths sharing size + CRC32 of the first 4&nbsp;KB.</td></tr>
+      </tbody>
+    </table></div>
+    <div class="codeblock"><span class="lang">python</span><pre>result <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(<span class="tok-str">"/data"</span>, silent<span class="tok-punct">=</span><span class="tok-key">True</span>)
+<span class="tok-com"># {</span>
+<span class="tok-com">#   'total_files': 21008,</span>
+<span class="tok-com">#   'scan_errors': 0,</span>
+<span class="tok-com">#   'duration_seconds': 1.5186,</span>
+<span class="tok-com">#   'scanned_path': '/data',</span>
+<span class="tok-com">#   'categories': {'Code/Source': 5955, 'Documents': 203, ...},</span>
+<span class="tok-com">#   'extensions': {'py': 5955, 'pyc': 5707, ...},</span>
+<span class="tok-com"># }</span></pre></div>
+  </section>
+
+  <!-- ===================== FEATURES OVERVIEW ===================== -->
+  <section class="doc-sec" id="features">
+    <h2>Features</h2>
+    <p>All heavier features are strictly opt-in — a plain <code>anscom.scan(".")</code> runs the fast counting path with zero per-file allocation.</p>
+    <div class="card-grid" style="margin-top:18px">
+      <a class="do-card" href="#current-dir"><h3>Current Directory</h3><p><code>pwd()</code>, no-argument <code>scan()</code>, and <code>scanned_path</code> on every result.</p></a>
+      <a class="do-card" href="#largest"><h3>Largest Files</h3><p>Top-N by size via a per-thread min-heap — O(log N) per file.</p></a>
+      <a class="do-card" href="#duplicates"><h3>Duplicates</h3><p>Size bucket then CRC32 of the first 4&nbsp;KB — zero I/O for unique sizes.</p></a>
+      <a class="do-card" href="#regex"><h3>Regex Filter</h3><p>Native POSIX <code>regexec</code> on Linux/macOS — no GIL in the hot loop.</p></a>
+      <a class="do-card" href="#exports"><h3>CSV / JSON Export</h3><p>Per-file inventory or full report, written in the same pass.</p></a>
+      <a class="do-card" href="#tree"><h3>Tree View</h3><p>Strict DFS topology streamed line-by-line at any scale.</p></a>
+    </div>
+  </section>
+
+  <!-- ===================== CURRENT DIR ===================== -->
+  <section class="doc-sec" id="current-dir">
+    <h2>Current Directory <span class="pill new">new in 1.5.1</span></h2>
+    <p>Two conveniences for working with the current directory, both returning values (nothing is printed):</p>
+    <div class="codeblock"><span class="lang">python</span><pre><span class="tok-com"># pwd() — the current directory as a string</span>
+root <span class="tok-punct">=</span> anscom.<span class="tok-fn">pwd</span>()               <span class="tok-com"># '/home/user/project'</span>
+
+<span class="tok-com"># scan() with no path scans the current directory</span>
+r <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(silent<span class="tok-punct">=</span><span class="tok-key">True</span>)
+<span class="tok-fn">print</span>(r[<span class="tok-str">"scanned_path"</span>])          <span class="tok-com"># resolved absolute path</span>
+
+<span class="tok-com"># scanned_path is resolved even for relative input</span>
+r <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(<span class="tok-str">"../logs"</span>, silent<span class="tok-punct">=</span><span class="tok-key">True</span>)
+<span class="tok-fn">print</span>(r[<span class="tok-str">"scanned_path"</span>])          <span class="tok-com"># e.g. '/home/user/logs'</span></pre></div>
+    <p>If a path cannot be resolved (missing or unreadable), <code>scanned_path</code> falls back to the raw input so the key is always present.</p>
+  </section>
+
+  <!-- ===================== LARGEST ===================== -->
+  <section class="doc-sec" id="largest">
+    <h2>Largest Files</h2>
+    <p>Set <code>largest_n=N</code> to get the top-N files by size across the whole scan. Each worker keeps a min-heap of capacity N — O(log N) per file, no extra pass, no full sort. Heaps merge after the threads join.</p>
+    <div class="codeblock"><span class="lang">python</span><pre>result <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(<span class="tok-str">"/mnt/storage"</span>, largest_n<span class="tok-punct">=</span><span class="tok-num">20</span>, silent<span class="tok-punct">=</span><span class="tok-key">True</span>)
+
+<span class="tok-key">for</span> f <span class="tok-key">in</span> result[<span class="tok-str">"largest_files"</span>]:
+    <span class="tok-fn">print</span>(<span class="tok-str">f"{f['size'] / 1024**3:.2f} GB  {f['path']}"</span>)</pre></div>
+  </section>
+
+  <!-- ===================== DUPLICATES ===================== -->
+  <section class="doc-sec" id="duplicates">
+    <h2>Duplicate Detection</h2>
+    <p>Set <code>find_duplicates=True</code> for a two-phase scan: files are bucketed by size (unique sizes are skipped with zero I/O), then each same-size group has the first 4&nbsp;KB read and CRC32-compared. Matching groups are returned as lists of paths.</p>
+    <div class="note warn"><span class="ni"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
+    <div>These are <strong>candidate</strong> duplicates: same size + same first-4&nbsp;KB CRC32. For a byte-exact guarantee, do a full-content compare on each returned group before deleting anything.</div></div>
+    <div class="codeblock"><span class="lang">python</span><pre>result <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(<span class="tok-str">"/media"</span>, find_duplicates<span class="tok-punct">=</span><span class="tok-key">True</span>, silent<span class="tok-punct">=</span><span class="tok-key">True</span>)
+<span class="tok-fn">print</span>(<span class="tok-str">f"Duplicate groups: {len(result['duplicates'])}"</span>)
+
+<span class="tok-com"># Reclaimable space (combine with return_files=True)</span>
+result <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(<span class="tok-str">"/media"</span>, find_duplicates<span class="tok-punct">=</span><span class="tok-key">True</span>, return_files<span class="tok-punct">=</span><span class="tok-key">True</span>, silent<span class="tok-punct">=</span><span class="tok-key">True</span>)
+size <span class="tok-punct">=</span> {f[<span class="tok-str">"path"</span>]: f[<span class="tok-str">"size"</span>] <span class="tok-key">for</span> f <span class="tok-key">in</span> result[<span class="tok-str">"files"</span>]}
+wasted <span class="tok-punct">=</span> <span class="tok-fn">sum</span>(<span class="tok-fn">sum</span>(size[p] <span class="tok-key">for</span> p <span class="tok-key">in</span> g[<span class="tok-num">1</span>:]) <span class="tok-key">for</span> g <span class="tok-key">in</span> result[<span class="tok-str">"duplicates"</span>])
+<span class="tok-fn">print</span>(<span class="tok-str">f"Reclaimable: {wasted / 1024**3:.2f} GB"</span>)</pre></div>
+  </section>
+
+  <!-- ===================== REGEX ===================== -->
+  <section class="doc-sec" id="regex">
+    <h2>Regex Filter</h2>
+    <p>Pass <code>regex_filter</code> to count only files whose full path matches the pattern. On Linux and macOS this uses POSIX <code>regcomp</code>/<code>regexec</code> entirely in C with no GIL; on Windows it falls back to Python’s <code>re</code>. Invalid patterns raise <code>ValueError</code> before the scan starts.</p>
+    <div class="codeblock"><span class="lang">python</span><pre><span class="tok-com"># Only Python files under a tests/ directory</span>
+result <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(<span class="tok-str">"/repo"</span>, regex_filter<span class="tok-punct">=</span><span class="tok-str">r"/tests/.*\.py$"</span>, silent<span class="tok-punct">=</span><span class="tok-key">True</span>)
+<span class="tok-fn">print</span>(<span class="tok-str">f"Matched: {result['total_files']}"</span>)</pre></div>
+  </section>
+
+  <!-- ===================== FILTERS ===================== -->
+  <section class="doc-sec" id="filters">
+    <h2>Extensions &amp; Size</h2>
+    <p>Combine an extension whitelist with a minimum size and junk exclusion for fast, targeted audits.</p>
+    <div class="codeblock"><span class="lang">python</span><pre><span class="tok-com"># Only web source, over 1 KB, skipping node_modules/.git/etc.</span>
+result <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(
+    <span class="tok-str">"/project"</span>,
+    extensions<span class="tok-punct">=</span>[<span class="tok-str">"js"</span>, <span class="tok-str">"ts"</span>, <span class="tok-str">"jsx"</span>, <span class="tok-str">"css"</span>, <span class="tok-str">"html"</span>],
+    min_size<span class="tok-punct">=</span><span class="tok-num">1024</span>,
+    ignore_junk<span class="tok-punct">=</span><span class="tok-key">True</span>,
+    silent<span class="tok-punct">=</span><span class="tok-key">True</span>,
+)</pre></div>
+    <p>Directories skipped by <code>ignore_junk=True</code> (case-insensitive, at any depth):</p>
+    <p style="font-size:12.5px;color:var(--text-3)"><code>.git</code> <code>.svn</code> <code>.hg</code> <code>.idea</code> <code>.vscode</code> <code>node_modules</code> <code>bower_components</code> <code>site-packages</code> <code>.venv</code> <code>venv</code> <code>env</code> <code>build</code> <code>dist</code> <code>target</code> <code>__pycache__</code> <code>temp</code> <code>tmp</code> <code>.cache</code> <code>.pytest_cache</code> <code>.mypy_cache</code></p>
+  </section>
+
+  <!-- ===================== EXPORTS ===================== -->
+  <section class="doc-sec" id="exports">
+    <h2>CSV / JSON Export</h2>
+    <p>Exports are parameters of <code>scan()</code>. One traversal can write multiple files at once, with no re-scan and no third-party dependency.</p>
+    <div class="codeblock"><span class="lang">python</span><pre>anscom.<span class="tok-fn">scan</span>(
+    <span class="tok-str">"/data"</span>,
+    export_json<span class="tok-punct">=</span><span class="tok-str">"report.json"</span>,     <span class="tok-com"># full result dict as JSON</span>
+    export_csv<span class="tok-punct">=</span><span class="tok-str">"inventory.csv"</span>,    <span class="tok-com"># per-file: path,size,ext,category,mtime</span>
+    silent<span class="tok-punct">=</span><span class="tok-key">True</span>,
+)</pre></div>
+    <p>Load the CSV downstream, or convert to Excel through pandas:</p>
+    <div class="codeblock"><span class="lang">python</span><pre><span class="tok-key">import</span> pandas <span class="tok-key">as</span> pd
+df <span class="tok-punct">=</span> pd.<span class="tok-fn">read_csv</span>(<span class="tok-str">"inventory.csv"</span>)
+<span class="tok-fn">print</span>(df.<span class="tok-fn">groupby</span>(<span class="tok-str">"category"</span>)[<span class="tok-str">"size"</span>].<span class="tok-fn">sum</span>())
+df.<span class="tok-fn">to_excel</span>(<span class="tok-str">"report.xlsx"</span>, index<span class="tok-punct">=</span><span class="tok-key">False</span>)   <span class="tok-com"># Excel via pandas</span></pre></div>
+    <div class="note"><span class="ni"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
+    <div>A native <code>export_excel</code> existed in v1.3.0 but was <strong>removed in v1.5.0</strong> (it crashed on Windows). Use <code>export_csv</code> plus <code>pandas.to_excel()</code> instead — it’s faster and dependency-free at scan time.</div></div>
+  </section>
+
+  <!-- ===================== TREE ===================== -->
+  <section class="doc-sec" id="tree">
+    <h2>Tree View</h2>
+    <p>With <code>show_tree=True</code>, anscom prints a DFS-ordered tree as each entry is discovered and, optionally, mirrors it to a file. Workers are forced to 1 for strict ordering; lines are streamed with no buffer, so a 50-million-entry filesystem produces 50 million lines without memory growth.</p>
+    <div class="codeblock"><span class="lang">python</span><pre>anscom.<span class="tok-fn">scan</span>(<span class="tok-str">"."</span>, show_tree<span class="tok-punct">=</span><span class="tok-key">True</span>, max_depth<span class="tok-punct">=</span><span class="tok-num">4</span>,
+            export_tree<span class="tok-punct">=</span><span class="tok-str">"tree.txt"</span>, silent<span class="tok-punct">=</span><span class="tok-key">True</span>)</pre></div>
+    <div class="codeblock"><pre>  |-- [src]
+  |   |-- main.py
+  |   |-- [lib]
+  |   |   |-- utils.py
+  |-- config.json
+  |-- [tests]
+  |   |-- test_core.py</pre></div>
+    <p><code>[brackets]</code> mark directories; unbracketed names are files.</p>
+  </section>
+
+  <!-- ===================== REPORT ===================== -->
+  <section class="doc-sec" id="report">
+    <h2>Report Format</h2>
+    <p>When <code>silent=False</code> (the default), anscom prints a summary report and an extension breakdown on completion. <code>silent=True</code> suppresses everything — banner, live counter, and report.</p>
+    <div class="codeblock"><pre>=== SUMMARY REPORT ================================
++-----------------+--------------+----------+
+| Category        | Count        | Percent  |
++-----------------+--------------+----------+
+| Code/Source     |         5955 |   28.34% |
+| System/Config   |         5707 |   27.16% |
+| Other/Unknown   |         8992 |   42.81% |
+| Documents       |          203 |    0.97% |
+| Images          |          151 |    0.72% |
++-----------------+--------------+----------+
+| TOTAL FILES     |        21008 |  100.00% |
++-----------------+--------------+----------+
+
+Time     : 1.5186 seconds
+Errors   : 0 (permission denied / inaccessible)</pre></div>
+    <p>With <code>largest_n</code> or <code>find_duplicates</code> enabled, a “TOP N LARGEST FILES” and/or “DUPLICATES SUMMARY” section is appended.</p>
+  </section>
+
+  <!-- ===================== CATEGORIES ===================== -->
+  <section class="doc-sec" id="categories">
+    <h2>File Categories</h2>
+    <p>170+ extensions across 9 categories, in a table validated at module load. Any extension not in the table falls into <em>Other/Unknown</em>.</p>
+    <div class="tbl-wrap"><table class="doc">
+      <thead><tr><th>Category</th><th>Sample extensions</th></tr></thead>
+      <tbody>
+        <tr><td>Code/Source</td><td style="color:var(--text-2)">c cpp cs go h html java js json jsx kt lua php py r rb rs sh sql swift ts vue xml yaml yml</td></tr>
+        <tr><td>Documents</td><td style="color:var(--text-2)">csv doc docx epub md odp ods odt pdf ppt pptx rtf txt xls xlsx</td></tr>
+        <tr><td>Images</td><td style="color:var(--text-2)">ai avif bmp gif heic ico jpeg jpg png psd raw svg tiff webp</td></tr>
+        <tr><td>Videos</td><td style="color:var(--text-2)">avi flv mkv mov mp4 mpeg ogv webm wmv</td></tr>
+        <tr><td>Audio</td><td style="color:var(--text-2)">aac flac m4a mid mp3 ogg wav wma</td></tr>
+        <tr><td>Archives</td><td style="color:var(--text-2)">7z bz2 deb dmg gz iso jar rar tar tgz zip</td></tr>
+        <tr><td>Executables</td><td style="color:var(--text-2)">app bin class dll elf exe msi pyd so</td></tr>
+        <tr><td>System/Config</td><td style="color:var(--text-2)">bak cfg conf db env gitignore ini log pyc reg sys tmp ttf woff</td></tr>
+        <tr><td>Other/Unknown</td><td style="color:var(--text-2)">Any extension not in the table above</td></tr>
+      </tbody>
+    </table></div>
+  </section>
+
+  <!-- ===================== ARCHITECTURE ===================== -->
+  <section class="doc-sec" id="architecture">
+    <h2>Architecture</h2>
+    <p>Six engineering choices determine correctness and throughput:</p>
+    <ul>
+      <li><strong>Direct OS syscalls.</strong> <code>getdents64</code> on Linux (128&nbsp;KB read buffer, <code>d_type</code> avoids a stat), <code>FindFirstFileW</code> on Windows, <code>readdir</code>/<code>lstat</code> on macOS.</li>
+      <li><strong>Multi-threaded worker pool.</strong> N threads auto-detected from the core count, all blocked on a condition variable before the first directory opens, pulling from a shared 131,072-slot ring queue.</li>
+      <li><strong>Slab path allocator.</strong> Each thread allocates one contiguous block up front; path assembly during traversal does zero heap allocation.</li>
+      <li><strong>Per-thread statistics.</strong> No shared counters during counting — each thread writes its own struct; results merge in one serial pass after join.</li>
+      <li><strong>FNV-1a hash table.</strong> A 512-slot open-addressing table gives O(1) extension lookup, built once at import and never modified.</li>
+      <li><strong>GIL released for the whole scan.</strong> Workers run under <code>Py_BEGIN_ALLOW_THREADS</code>; the GIL is re-acquired only for the progress callback and final dict construction.</li>
+    </ul>
+    <p>On a plain count-only scan (v1.5.1), the per-thread file buffer is no longer pre-allocated, so the hot path performs zero heap work.</p>
+  </section>
+
+  <!-- ===================== SECURITY ===================== -->
+  <section class="doc-sec" id="security">
+    <h2>Security &amp; Safety</h2>
+    <ul>
+      <li><strong>No file contents read</strong> — only directory entries and metadata. The one exception is <code>find_duplicates=True</code>, which reads up to 4&nbsp;KB per candidate (bounded, opt-in, read-only).</li>
+      <li><strong>Symlinks never followed</strong> — <code>fstatat(AT_SYMLINK_NOFOLLOW)</code> / <code>lstat</code> on POSIX, reparse points skipped on Windows.</li>
+      <li><strong>Depth hard-capped at 64</strong> — enforced in C at the top of every recursion.</li>
+      <li><strong>Bounded path assembly</strong> — every path is built with <code>snprintf</code> into a fixed buffer.</li>
+      <li><strong>Errors counted, not silenced</strong> — every failed open increments <code>scan_errors</code> and the scan continues.</li>
+      <li><strong>Zero mandatory dependencies</strong> — the core is pure C, so there is no supply-chain surface.</li>
+    </ul>
+  </section>
+
+  <!-- ===================== ENTERPRISE ===================== -->
+  <section class="doc-sec" id="enterprise">
+    <h2>Enterprise Recipes</h2>
+    <h3>Everything at once</h3>
+    <div class="codeblock"><span class="lang">python</span><pre><span class="tok-key">import</span> anscom
+
+<span class="tok-fn">print</span>(<span class="tok-str">"Scanning:"</span>, anscom.<span class="tok-fn">pwd</span>())
+
+result <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(                <span class="tok-com"># no path -&gt; current directory</span>
+    max_depth<span class="tok-punct">=</span><span class="tok-num">20</span>,
+    workers<span class="tok-punct">=</span><span class="tok-num">32</span>,
+    ignore_junk<span class="tok-punct">=</span><span class="tok-key">True</span>,
+    silent<span class="tok-punct">=</span><span class="tok-key">True</span>,
+    return_files<span class="tok-punct">=</span><span class="tok-key">True</span>,
+    largest_n<span class="tok-punct">=</span><span class="tok-num">50</span>,
+    find_duplicates<span class="tok-punct">=</span><span class="tok-key">True</span>,
+    export_json<span class="tok-punct">=</span><span class="tok-str">"audit.json"</span>,
+    export_csv<span class="tok-punct">=</span><span class="tok-str">"inventory.csv"</span>,
+)
+
+<span class="tok-fn">print</span>(<span class="tok-str">f"Root       : {result['scanned_path']}"</span>)
+<span class="tok-fn">print</span>(<span class="tok-str">f"Files      : {result['total_files']:,}"</span>)
+<span class="tok-fn">print</span>(<span class="tok-str">f"Duration   : {result['duration_seconds']:.3f}s"</span>)
+<span class="tok-fn">print</span>(<span class="tok-str">f"Dup groups : {len(result['duplicates'])}"</span>)</pre></div>
+
+    <h3>CI/CD policy gate</h3>
+    <div class="codeblock"><span class="lang">python</span><pre><span class="tok-key">import</span> anscom, sys
+r <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(<span class="tok-str">"./repo"</span>, silent<span class="tok-punct">=</span><span class="tok-key">True</span>, ignore_junk<span class="tok-punct">=</span><span class="tok-key">True</span>)
+<span class="tok-key">if</span> r[<span class="tok-str">"categories"</span>][<span class="tok-str">"Executables"</span>] <span class="tok-punct">&gt;</span> <span class="tok-num">0</span>:
+    <span class="tok-fn">print</span>(<span class="tok-str">"POLICY VIOLATION: executables in repo"</span>)
+    sys.<span class="tok-fn">exit</span>(<span class="tok-num">1</span>)</pre></div>
+  </section>
+
+  <!-- ===================== CHANGELOG ===================== -->
+  <section class="doc-sec" id="changelog">
+    <h2>Changelog</h2>
+
+    <div class="cl-entry">
+      <div class="cl-ver">v1.5.1 <span class="cl-date">July 2026 · current</span></div>
+      <ul>
+        <li><strong>Added</strong> <code>pwd()</code> — the current working directory as an absolute string.</li>
+        <li><strong>Added</strong> no-argument <code>scan()</code> — <code>path</code> is optional and defaults to the current directory.</li>
+        <li><strong>Added</strong> <code>scanned_path</code> — every result reports the absolute path actually walked.</li>
+        <li><strong>Fixed</strong> Python reference leaks in result-dict construction.</li>
+        <li><strong>Fixed</strong> <code>silent=True</code> now suppresses the startup banner and live progress line too.</li>
+        <li><strong>Improved</strong> plain count-only scans perform zero heap work on the hot path.</li>
+        <li><strong>Packaging</strong> <code>-march=native</code> is now opt-in via <code>ANSCOM_NATIVE=1</code>; LICENSE corrected.</li>
+      </ul>
     </div>
 
-    <!-- ── ACCESSIBILITY BAR ──────────────────────────────── -->
-    <div class="access-bar" style="position:relative;">
-        <button class="dark-toggle" onclick="toggleDark()" id="darkToggleBtn">
-            🌙 Dark Mode
-        </button>
-        <button class="access-btn" onclick="toggleAccessPanel()">
-            ⚙ ACCESSIBILITY
-        </button>
-        <div class="access-panel" id="accessPanel">
-            <div class="a11y-toggle" id="toggle-text" onclick="toggleFontSize()">🔤 Larger Text</div>
-            <div class="a11y-toggle" id="toggle-dyslexic" onclick="toggleDyslexic()">📖 Dyslexia Font</div>
-            <div class="a11y-toggle" id="toggle-contrast" onclick="toggleContrast()">⬛ High Contrast</div>
-            <div class="a11y-toggle" id="toggle-spacing" onclick="toggleSpacing()">↕ Relaxed Spacing</div>
-            <div class="a11y-toggle" id="toggle-animations" onclick="toggleAnimations()">⏸ Reduce Motion</div>
-            <div class="a11y-toggle" id="toggle-focus" onclick="toggleFocusMode()">🎯 Focus Mode</div>
-        </div>
-        <div id="google_translate_element"></div>
+    <div class="cl-entry old">
+      <div class="cl-ver">v1.5.0 <span class="cl-date">April 2026</span></div>
+      <ul>
+        <li>Added <code>return_files</code>, <code>export_csv</code>, <code>largest_n</code>, <code>find_duplicates</code>, <code>regex_filter</code>.</li>
+        <li>Removed <code>export_excel</code> (crashed on Windows) — use <code>export_csv</code> + <code>pandas.to_excel()</code>.</li>
+      </ul>
     </div>
 
-    <!-- ── NAVIGATION ────────────────────────────────────── -->
-    <nav class="lab-nav">
-        <div class="brand-block">
-            <a href="https://github.com/PC5518" class="brand-logo">
-                <img src="https://avatars.githubusercontent.com/u/252811141?s=400&u=1ab402f781d9a27985950db4447723e90a1c3703&v=4" alt="Aditya Narayan Singh">
-            </a>
-            <div class="brand-info">
-                <h1>Independent projects — Aditya Narayan Singh</h1>
-                <span>personal projects</span>
-            </div>
-        </div>
-        <div class="nav-items">
-            <a href="#" class="nav-link active">Modules</a>
-            <a href="#" class="nav-link">Publications</a>
-            <a href="#" class="nav-link">System Status</a>
-            <a href="https://pc5518.github.io/AnsComfinancialsuite/contact/" class="nav-link">Contact</a>
-        </div>
-        <div class="search-lab">
-            <span class="search-icon">λ</span>
-            <input type="text" class="lab-input" id="searchInput" placeholder="Query modules or symbols..." oninput="handleSearch(this.value)" onblur="setTimeout(()=>hideSearch(),200)">
-            <div class="search-results" id="searchResults"></div>
-        </div>
-        <button class="nav-hamburger" onclick="toggleMobileMenu()">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
-            </svg>
-        </button>
-    </nav>
-
-    <!-- ── MOBILE MENU ─────────────────────────────────────── -->
-    <div class="mobile-menu" id="mobileMenu">
-        <button class="mobile-close" onclick="toggleMobileMenu()">✕</button>
-        <a href="#" class="nav-link active" onclick="toggleMobileMenu()">Modules</a>
-        <a href="#" class="nav-link" onclick="toggleMobileMenu()">Publications</a>
-        <a href="#" class="nav-link" onclick="toggleMobileMenu()">System Status</a>
-        <a href="https://pc5518.github.io/AnsComfinancialsuite/contact/" class="nav-link">Contact</a>
-        <div style="margin-top:20px;">
-            <input type="text" class="lab-input" style="width:100%;" placeholder="Query modules...">
-        </div>
+    <div class="cl-entry old">
+      <div class="cl-ver">v1.3.0 <span class="cl-date">March 2026</span></div>
+      <ul>
+        <li>Added <code>export_json</code> and <code>export_tree</code>. MSVC / Windows build fixes.</li>
+      </ul>
     </div>
 
-    <!-- ── HERO ──────────────────────────────────────────── -->
-    <header class="release-deck">
-        <div class="stream-deco"></div>
-        <div style="position:relative; z-index:2;">
-            <div class="release-badge">
-                <span class="dot"></span> LATEST: anscom v1.3.0 — Export Release
-            </div>
-            <h1 class="release-title">AnsCom C-Accelerated<br>Filesystem Engine</h1>
-            <p class="release-desc">
-                High-performance Python C extension for recursive filesystem intelligence. Native C99 with multi-threaded scanning, JSON/Tree/Excel export, and terabyte-scale support. Now on PyPI.
-            </p>
-            <div class="action-row">
-                <a href="https://pypi.org/project/anscom/" target="_blank" class="btn btn-primary">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.627 0-12 5.373-12 12s5.373 12 12 12 12-5.373 12-12-5.373-12-12-12zm0 2c5.514 0 10 4.486 10 10s-4.486 10-10 10-10-4.486-10-10 4.486-10 10-10zm-1 4v4h-3v2h3v4h2v-4h3v-2h-3v-4h-2z"/></svg>
-                    PyPI
-                </a>
-                <a href="https://github.com/PC5518/anscom-nfie-python-extension" target="_blank" class="btn btn-secondary">
-                    <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                    GitHub
-                </a>
-                <a href="https://anscomqs.github.io/anscom/" target="_blank" class="btn btn-homepage">
-                    🌐 anscom Homepage
-                </a>
-            </div>
-        </div>
-    </header>
-
-    <!-- ── TELEMETRY RAIL ─────────────────────────────────── -->
-    <div class="telemetry-rail">
-        <div class="rail-title">LAB TELEMETRY</div>
-        <div class="rail-track">
-            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">ANSCOM_BUILD:</span><span class="rail-val">PASSING (v1.3.0)</span></div>
-            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">GOLD_FV_ENGINE:</span><span class="rail-val">ONLINE (Latency 12ms)</span></div>
-            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">NET_DEPTH:</span><span class="rail-val">MONITORING (40 Nodes)</span></div>
-            <div class="rail-item"><div class="rail-status st-warn"></div><span class="rail-key">ZENTEC_MODEL:</span><span class="rail-val">RETRAINING (Epoch 4/10)</span></div>
-            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">EXPORT_JSON:</span><span class="rail-val">LIVE (v1.3.0)</span></div>
-            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">EXPORT_TREE:</span><span class="rail-val">LIVE (v1.3.0)</span></div>
-            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">PYPI_STATUS:</span><span class="rail-val">PUBLISHED</span></div>
-            <!-- duplicate for seamless loop -->
-            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">ANSCOM_BUILD:</span><span class="rail-val">PASSING (v1.3.0)</span></div>
-            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">GOLD_FV_ENGINE:</span><span class="rail-val">ONLINE (Latency 12ms)</span></div>
-            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">NET_DEPTH:</span><span class="rail-val">MONITORING (40 Nodes)</span></div>
-            <div class="rail-item"><div class="rail-status st-warn"></div><span class="rail-key">ZENTEC_MODEL:</span><span class="rail-val">RETRAINING (Epoch 4/10)</span></div>
-            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">EXPORT_JSON:</span><span class="rail-val">LIVE (v1.3.0)</span></div>
-            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">EXPORT_TREE:</span><span class="rail-val">LIVE (v1.3.0)</span></div>
-            <div class="rail-item"><div class="rail-status st-ok"></div><span class="rail-key">PYPI_STATUS:</span><span class="rail-val">PUBLISHED</span></div>
-        </div>
+    <div class="cl-entry old">
+      <div class="cl-ver">v1.0.0 <span class="cl-date">March 2026</span></div>
+      <ul>
+        <li>Multi-threaded worker pool, <code>getdents64</code> backend, FNV-1a hash table, per-thread stats, slab allocator, <code>ignore_junk</code>, <code>min_size</code>, <code>extensions</code>, <code>callback</code>, <code>silent</code>.</li>
+      </ul>
     </div>
+  </section>
 
-    <!-- ── MAIN CONTENT ───────────────────────────────────── -->
-    <div class="lab-container">
-        <main>
-            <div class="section-header">
-                <span>under construction project</span>
-                <span class="count-pill">6 Total</span>
-            </div>
-
-            <div class="project-grid">
-
-                <!-- MODULE 1: anscom -->
-                <article class="lab-card">
-                    <div class="card-top">
-                        <div class="card-icon">FS</div>
-                        <span class="status-pill sp-live">v1.3.0 Live</span>
-                    </div>
-                    <h3 class="card-title">AnsCom NFIE — Filesystem Scanner</h3>
-                    <p class="card-desc">Native C99 Python extension for terabyte-scale recursive filesystem scanning. Multi-threaded, cross-platform, with JSON/Tree/Excel export. Published on PyPI.</p>
-                    <div class="tech-stack">
-                        <span class="tech-badge">C99</span>
-                        <span class="tech-badge">PYTHON</span>
-                        <span class="tech-badge">MULTI-THREAD</span>
-                        <span class="tech-badge">PYPI</span>
-                    </div>
-                    <div class="card-actions">
-                        <a href="https://github.com/PC5518/anscom-nfie-python-extension" class="action-link">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                            Repository
-                        </a>
-                        <a href="https://pypi.org/project/anscom/" target="_blank" class="action-link">📦 PyPI</a>
-                        <a href="https://anscomqs.github.io/anscom/" target="_blank" class="action-link">🌐 Homepage</a>
-                    </div>
-                </article>
-
-                <!-- MODULE 2: Gold Engine -->
-                <article class="lab-card">
-                    <div class="card-top">
-                        <div class="card-icon">Au</div>
-                        <span class="status-pill sp-live">Live Pricing</span>
-                    </div>
-                    <h3 class="card-title">Gold ETF Fair Value Engine</h3>
-                    <p class="card-desc">Post-market pricing engine. Approximates GOLDIETF NAV using real-time XAUUSD/USDINR parity feeds.</p>
-                    <div class="tech-stack">
-                        <span class="tech-badge">PYTHON</span>
-                        <span class="tech-badge">ARBITRAGE</span>
-                        <span class="tech-badge">FORENSICS</span>
-                    </div>
-                    <div class="card-actions">
-                        <a href="https://github.com/PC5518/gold-etf-postmarket-fair-value-engine" class="action-link">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                            Repository
-                        </a>
-                        <a href="https://zenodo.org/records/18185485" target="_blank" title="Research Paper">
-                            <img src="https://zenodo.org/badge/DOI/10.5281/zenodo.18185485.svg" alt="DOI" class="zenodo-badge">
-                        </a>
-                    </div>
-                </article>
-
-                <!-- MODULE 3: Telemetry -->
-                <article class="lab-card">
-                    <div class="card-top">
-                        <div class="card-icon">Tx</div>
-                        <span class="status-pill sp-live">Active</span>
-                    </div>
-                    <h3 class="card-title">netDepth Monitoring</h3>
-                    <p class="card-desc">Telemetry dashboard built with Ookla. Monitors 40+ network/market metrics via AnsCom Terminal.</p>
-                    <div class="tech-stack">
-                        <span class="tech-badge">NETWORKING</span>
-                        <span class="tech-badge">VISUALIZATION</span>
-                    </div>
-                    <div class="card-actions">
-                        <a href="https://github.com/PC5518/anscom-netDepth-ultimate" class="action-link">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                            Repository
-                        </a>
-                    </div>
-                </article>
-
-                <!-- MODULE 4: ZENTEC -->
-                <article class="lab-card">
-                    <div class="card-top">
-                        <div class="card-icon">ML</div>
-                        <span class="status-pill sp-beta">Inference</span>
-                    </div>
-                    <h3 class="card-title">ZENTEC Prediction</h3>
-                    <p class="card-desc">Random Forest time-series model. Trained on 10+ years of OHLC data to predict directional bias.</p>
-                    <div class="tech-stack">
-                        <span class="tech-badge">SCIKIT-LEARN</span>
-                        <span class="tech-badge">STATISTICS</span>
-                    </div>
-                    <div class="card-actions">
-                        <a href="https://github.com/PC5518/nse-zentec-stock-prediction-ml" class="action-link">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                            Repository
-                        </a>
-                    </div>
-                </article>
-
-                <!-- MODULE 5: AI10 Index -->
-                <article class="lab-card">
-                    <div class="card-top">
-                        <div class="card-icon">Ix</div>
-                        <span class="status-pill sp-live">Live Ticks</span>
-                    </div>
-                    <h3 class="card-title">AnsCom AI10 Index</h3>
-                    <p class="card-desc">Personalized technology index tracking top 10 AI-exposed US equities.</p>
-                    <div class="tech-stack">
-                        <span class="tech-badge">INDEXING</span>
-                        <span class="tech-badge">DATA FEED</span>
-                    </div>
-                    <div class="card-actions">
-                        <a href="https://github.com/PC5518/anscom-ai10-tech-index" class="action-link">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                            Repository
-                        </a>
-                    </div>
-                </article>
-
-                <!-- MODULE 6: NIFTY Scanner -->
-                <article class="lab-card">
-                    <div class="card-top">
-                        <div class="card-icon">N5</div>
-                        <span class="status-pill sp-live">Scanning</span>
-                    </div>
-                    <h3 class="card-title">NIFTY-500 Scanner</h3>
-                    <p class="card-desc">Liquidity void and volatility scanner for Indian equities. Part of MarketOS.</p>
-                    <div class="tech-stack">
-                        <span class="tech-badge">NSEPY</span>
-                        <span class="tech-badge">ALGORITHMIC</span>
-                    </div>
-                    <div class="card-actions">
-                        <a href="https://github.com/PC5518/ansCom-terminal-equity_marketos" class="action-link">
-                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
-                            Repository
-                        </a>
-                    </div>
-                </article>
-
-            </div>
-        </main>
-
-        <aside>
-            <!-- CLOCK -->
-            <div class="widget">
-                <div class="widget-head">Global Time</div>
-                <div style="font-size:26px; font-weight:300; margin-bottom:16px; font-family:var(--font-code); color:var(--text-main);" id="local-clock">--:--:--</div>
-                <div class="sys-row"><span class="sys-key">NEW DELHI</span><span class="sys-val" id="time-delhi">--:--</span></div>
-                <div class="sys-row"><span class="sys-key">NEW YORK</span><span class="sys-val" id="time-ny">--:--</span></div>
-                <div class="sys-row"><span class="sys-key">LONDON</span><span class="sys-val" id="time-london">--:--</span></div>
-                <div class="sys-row"><span class="sys-key">TOKYO</span><span class="sys-val" id="time-tokyo">--:--</span></div>
-            </div>
-
-            <!-- DEMO VIDEO -->
-            <div class="widget" style="padding:0; overflow:hidden;">
-                <div class="widget-head" style="padding:14px 18px 0;">anscom — Live Demo</div>
-                <div style="position:relative; padding-bottom:56.25%; height:0; overflow:hidden; margin-top:10px;">
-                    <iframe
-                        src="https://www.youtube.com/embed/uYN7zx7O-b4?autoplay=1&mute=1&loop=1&playlist=uYN7zx7O-b4&controls=1&modestbranding=1&rel=0"
-                        style="position:absolute; top:0; left:0; width:100%; height:100%; border:0;"
-                        allow="autoplay; encrypted-media"
-                        allowfullscreen
-                        title="anscom demo"
-                    ></iframe>
-                </div>
-                <div style="padding:10px 14px 14px; display:flex; justify-content:space-between; align-items:center;">
-                    <span style="font-size:11px; color:var(--text-muted); font-family:var(--font-code);">v1.3.0 · export features</span>
-                    <a href="https://www.youtube.com/watch?v=uYN7zx7O-b4" target="_blank" style="font-size:11px; font-weight:600; color:var(--lab-blue);">▶ YouTube</a>
-                </div>
-            </div>
-
-            <!-- LATEST RELEASE WIDGET -->
-            <div class="widget">
-                <div class="widget-head">Latest Release</div>
-                <div class="sys-row"><span class="sys-key">Package</span><span class="sys-val">anscom</span></div>
-                <div class="sys-row"><span class="sys-key">Version</span><span class="sys-val" style="color:var(--status-ok)">v1.3.0</span></div>
-                <div class="sys-row"><span class="sys-key">Date</span><span class="sys-val">Mar 15, 2026</span></div>
-                <div class="sys-row"><span class="sys-key">New</span><span class="sys-val">export_json, export_tree, export_excel</span></div>
-                <a href="https://pypi.org/project/anscom/" target="_blank" style="display:block; margin-top:12px; padding:8px 14px; background:var(--lab-blue); color:white; border-radius:6px; font-size:12px; font-weight:600; text-align:center;">
-                    pip install anscom
-                </a>
-            </div>
-
-            <!-- PUBLICATIONS -->
-            <div class="widget">
-                <div class="widget-head">Lab Publications</div>
-                <a href="https://zenodo.org/records/18185485" target="_blank" class="paper-link">
-                    Post-Market Fair Value Estimation for Gold ETF Using Statistical Parity
-                    <span class="paper-meta">DOI: 10.5281/zenodo.18185485</span>
-                </a>
-            </div>
-
-            <!-- RESEARCH FOCUS -->
-            <div class="widget">
-                <div class="widget-head">Research Areas</div>
-                <ul class="focus-area" style="list-style:none;">
-                    <li>Filesystem Intelligence</li>
-                    <li>Fair Value Arbitrage</li>
-                    <li>Network Telemetry</li>
-                    <li>ML Time-Series</li>
-                    <li>Market Structure</li>
-                </ul>
-            </div>
-
-            <!-- LAB STATUS -->
-            <div class="widget">
-                <div class="widget-head">Lab Status</div>
-                <div class="sys-row"><span class="sys-key">Lead</span><span class="sys-val">Aditya Narayan Singh</span></div>
-                <div class="sys-row"><span class="sys-key">Active Projects</span><span class="sys-val">6</span></div>
-                <div class="sys-row"><span class="sys-key">PyPI Packages</span><span class="sys-val">1 (anscom)</span></div>
-                <div class="sys-row"><span class="sys-key">System</span><span style="color:var(--status-ok); font-weight:700; font-size:11px;">OPERATIONAL</span></div>
-            </div>
-        </aside>
+  <!-- ===================== LICENSE ===================== -->
+  <section class="doc-sec" id="license">
+    <h2>License</h2>
+    <p>anscom is released under the <strong>MIT License</strong> — free for personal and commercial use. Copyright © 2026 Aditya Narayan Singh.</p>
+    <div class="badges" style="margin-top:16px">
+      <a class="badge" href="https://pypi.org/project/anscom/" target="_blank" rel="noopener">PyPI</a>
+      <a class="badge" href="https://github.com/PC5518/anscom-nfie-python-extension" target="_blank" rel="noopener">GitHub</a>
+      <a class="badge" href="https://anscomqs.github.io/anscom/" target="_blank" rel="noopener">Homepage</a>
     </div>
+  </section>
+</main>
+</div>
 
-    <!-- GOOGLE TRANSLATE -->
-    <script type="text/javascript">
-        function googleTranslateElementInit() {
-            new google.translate.TranslateElement({
-                pageLanguage: 'en',
-                layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
-                autoDisplay: false
-            }, 'google_translate_element');
-        }
-    </script>
-    <script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+<footer>
+  <div>anscom NFIE · Native Filesystem Intelligence Engine · Maintainer: Aditya Narayan Singh</div>
+  <div class="foot-links">
+    <a href="https://github.com/PC5518/anscom-nfie-python-extension" target="_blank" rel="noopener">GitHub</a>
+    <a href="https://pypi.org/project/anscom/" target="_blank" rel="noopener">PyPI</a>
+    <a href="#changelog">Changelog</a>
+    <span style="color:var(--text-4)">v1.5.1 · MIT</span>
+  </div>
+</footer>
 
-    <script>
-        // ── SEARCH DATA ────────────────────────────────────
-        const MODULES = [
-            { icon: 'FS', title: 'AnsCom NFIE — Filesystem Scanner', desc: 'Native C99 Python extension · v1.3.0', url: 'https://pypi.org/project/anscom/' },
-            { icon: 'Au', title: 'Gold ETF Fair Value Engine', desc: 'Post-market pricing · XAUUSD/USDINR parity', url: 'https://github.com/PC5518/gold-etf-postmarket-fair-value-engine' },
-            { icon: 'Tx', title: 'netDepth Monitoring', desc: 'Telemetry · 40+ network metrics', url: 'https://github.com/PC5518/anscom-netDepth-ultimate' },
-            { icon: 'ML', title: 'ZENTEC Prediction', desc: 'Random Forest · NSE OHLC time-series', url: 'https://github.com/PC5518/nse-zentec-stock-prediction-ml' },
-            { icon: 'Ix', title: 'AnsCom AI10 Index', desc: 'Top 10 AI-exposed US equities index', url: 'https://github.com/PC5518/anscom-ai10-tech-index' },
-            { icon: 'N5', title: 'NIFTY-500 Scanner', desc: 'Liquidity void & volatility scanner', url: 'https://github.com/PC5518/ansCom-terminal-equity_marketos' },
-            { icon: '📄', title: 'export_json', desc: 'anscom feature · zero dependencies JSON export', url: 'https://pypi.org/project/anscom/' },
-            { icon: '🌲', title: 'export_tree', desc: 'anscom feature · DFS tree to .txt file', url: 'https://pypi.org/project/anscom/' },
-            { icon: '📊', title: 'export_excel', desc: 'anscom feature · XLSX report with openpyxl', url: 'https://pypi.org/project/anscom/' },
-            { icon: '📃', title: 'Gold ETF Research Paper', desc: 'DOI: 10.5281/zenodo.18185485', url: 'https://zenodo.org/records/18185485' },
-            { icon: '🌐', title: 'anscom Homepage', desc: 'Official documentation site', url: 'https://anscomqs.github.io/anscom/' },
-            { icon: '👤', title: 'GitHub Profile', desc: 'PC5518 · Aditya Narayan Singh', url: 'https://github.com/PC5518' },
-        ];
+<script>
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 
-        function handleSearch(query) {
-            const box = document.getElementById('searchResults');
-            if (!query.trim()) { box.classList.remove('visible'); return; }
-            const q = query.toLowerCase();
-            const matches = MODULES.filter(m =>
-                m.title.toLowerCase().includes(q) ||
-                m.desc.toLowerCase().includes(q)
-            );
-            if (matches.length === 0) {
-                box.innerHTML = '<div class="search-no-results">No results for "' + query + '"</div>';
-            } else {
-                box.innerHTML = matches.slice(0, 6).map(m => `
-                    <a class="search-result-item" href="${m.url}" target="_blank">
-                        <div class="sr-icon">${m.icon}</div>
-                        <div>
-                            <div class="sr-title">${m.title}</div>
-                            <div class="sr-desc">${m.desc}</div>
-                        </div>
-                    </a>
-                `).join('');
-            }
-            box.classList.add('visible');
-        }
-        function hideSearch() {
-            document.getElementById('searchResults').classList.remove('visible');
-        }
+/* THEME */
+function toggleTheme(){
+  const root=document.documentElement;
+  const next=root.getAttribute('data-theme')==='dark'?'light':'dark';
+  root.setAttribute('data-theme',next);
+  const b=$('#themeBtn');
+  b.innerHTML = next==='dark'
+    ? '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.9" y1="4.9" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.1" y2="19.1"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.9" y1="19.1" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.1" y2="4.9"/></svg>'
+    : '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>';
+}
 
-        // ── POPUP ──────────────────────────────────────────
-        function closePopup() {
-            document.getElementById('releasePopup').style.display = 'none';
-            localStorage.setItem('anscom_v130_seen', 'true');
-        }
-        window.addEventListener('load', function() {
-            if (!localStorage.getItem('anscom_v130_seen')) {
-                document.getElementById('releasePopup').style.display = 'flex';
-            } else {
-                document.getElementById('releasePopup').style.display = 'none';
-            }
-        });
+/* SIDEBAR groups */
+function toggleGroup(head){ head.parentElement.classList.toggle('collapsed'); }
+function toggleSidebar(){ document.body.classList.toggle('sb-open'); }
 
-        // ── DARK MODE ──────────────────────────────────────
-        function toggleDark() {
-            const html = document.documentElement;
-            const isDark = html.getAttribute('data-theme') === 'dark';
-            html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-            document.getElementById('darkToggleBtn').textContent = isDark ? '🌙 Dark Mode' : '☀️ Light Mode';
-            localStorage.setItem('anscom_theme', isDark ? 'light' : 'dark');
-        }
-        const savedTheme = localStorage.getItem('anscom_theme');
-        if (savedTheme === 'dark') {
-            document.documentElement.setAttribute('data-theme', 'dark');
-            document.getElementById('darkToggleBtn').textContent = '☀️ Light Mode';
-        }
+/* COPY */
+function copyText(text,btn){
+  navigator.clipboard.writeText(text).then(()=>{
+    const old=btn.innerHTML; btn.classList.add('done');
+    if(btn.classList.contains('btn-primary')){ const t=btn.childNodes; btn.dataset.o=btn.innerHTML; btn.innerHTML='✓ copied'; }
+    else { btn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>'; }
+    setTimeout(()=>{ btn.classList.remove('done'); btn.innerHTML=btn.dataset.o||old; },1400);
+  });
+}
 
-        // ── ACCESSIBILITY ──────────────────────────────────
-        function toggleAccessPanel() {
-            document.getElementById('accessPanel').classList.toggle('active');
-        }
-        function toggleFontSize() {
-            document.body.classList.toggle('font-large');
-            document.getElementById('toggle-text').classList.toggle('active');
-        }
-        function toggleDyslexic() {
-            document.body.classList.toggle('dyslexic');
-            document.getElementById('toggle-dyslexic').classList.toggle('active');
-        }
-        function toggleContrast() {
-            document.body.classList.toggle('high-contrast');
-            document.getElementById('toggle-contrast').classList.toggle('active');
-        }
-        function toggleSpacing() {
-            document.body.classList.toggle('relaxed-spacing');
-            document.getElementById('toggle-spacing').classList.toggle('active');
-        }
-        function toggleAnimations() {
-            document.body.classList.toggle('reduce-motion');
-            document.getElementById('toggle-animations').classList.toggle('active');
-        }
-        function toggleFocusMode() {
-            document.body.classList.toggle('focus-mode');
-            document.getElementById('toggle-focus').classList.toggle('active');
-        }
+/* add copy buttons to code blocks */
+$$('.codeblock').forEach(cb=>{
+  const pre=cb.querySelector('pre'); if(!pre)return;
+  const btn=document.createElement('button');
+  btn.className='copy-btn';
+  btn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
+  btn.onclick=()=>copyText(pre.innerText,btn);
+  cb.appendChild(btn);
+});
 
-        // ── MOBILE MENU ────────────────────────────────────
-        function toggleMobileMenu() {
-            document.getElementById('mobileMenu').classList.toggle('open');
-        }
+/* SCROLLSPY */
+const links=[...$$('.sb-items a, .sb-solo')];
+const map={};
+links.forEach(a=>{const id=a.getAttribute('href').slice(1); if(id) map[id]=a;});
+const spy=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      links.forEach(l=>l.classList.remove('active'));
+      const a=map[e.target.id];
+      if(a){ a.classList.add('active');
+        const g=a.closest('.sb-group'); if(g) g.classList.remove('collapsed');
+      }
+    }
+  });
+},{rootMargin:'-90px 0px -70% 0px',threshold:0});
+$$('section.doc-sec, #overview').forEach(s=>{ if(s.id) spy.observe(s); });
 
-        // ── CLOCKS ─────────────────────────────────────────
-        function updateClocks() {
-            const now = new Date();
-            const localOpts = { hour: '2-digit', minute: '2-digit', second: '2-digit' };
-            const cityOpts = { hour: '2-digit', minute: '2-digit', hour12: false };
-            const t = (tz) => new Intl.DateTimeFormat('en-US', { ...cityOpts, timeZone: tz }).format(now);
-            document.getElementById('local-clock').innerText = now.toLocaleTimeString([], localOpts);
-            document.getElementById('time-delhi').innerText = t('Asia/Kolkata');
-            document.getElementById('time-ny').innerText = t('America/New_York');
-            document.getElementById('time-london').innerText = t('Europe/London');
-            document.getElementById('time-tokyo').innerText = t('Asia/Tokyo');
-        }
-        setInterval(updateClocks, 1000);
-        updateClocks();
+/* close mobile sidebar on link click */
+$$('.sb-items a, .sb-solo').forEach(a=>a.addEventListener('click',()=>document.body.classList.remove('sb-open')));
 
-        // Close panels on outside click
-        document.addEventListener('click', function(e) {
-            const panel = document.getElementById('accessPanel');
-            if (!e.target.closest('.access-btn') && !e.target.closest('.access-panel')) {
-                panel.classList.remove('active');
-            }
-        });
-    </script>
-
+/* SEARCH filter over sidebar */
+function filterNav(q){
+  q=q.trim().toLowerCase();
+  $$('.sb-group').forEach(g=>{
+    let any=false;
+    g.querySelectorAll('.sb-items a').forEach(a=>{
+      const hit=a.textContent.toLowerCase().includes(q);
+      a.style.display=hit||!q?'':'none';
+      if(hit) any=true;
+    });
+    g.style.display=(any||!q)?'':'none';
+    if(q&&any) g.classList.remove('collapsed');
+  });
+  $$('.sb-solo').forEach(a=>{ a.style.display=(!q||a.textContent.toLowerCase().includes(q))?'':'none'; });
+}
+/* "/" focuses search */
+document.addEventListener('keydown',e=>{
+  if(e.key==='/'&&document.activeElement.tagName!=='INPUT'){ e.preventDefault(); $('#searchInput').focus(); }
+  if(e.key==='Escape'){ $('#searchInput').blur(); filterNav(''); $('#searchInput').value=''; }
+});
+</script>
 </body>
 </html>
