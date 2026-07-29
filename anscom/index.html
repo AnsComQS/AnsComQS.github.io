@@ -1,70 +1,88 @@
 <!-- ══════════════════════════════════════════════════════════ -->
-<!-- REDIRECT NOTICE — paste this right after <body>, before   -->
-<!-- <div class="page">. Uses the same fonts/colors as the      -->
-<!-- rest of the page, so no extra CSS variables are needed.    -->
+<!-- REDIRECT NOTICE — paste inside <head>, right after <title>, -->
+<!-- AND paste the second block right after <body>.             -->
+<!-- Uses your own terminal/.dot/.t-val styling, no new look.   -->
 <!-- ══════════════════════════════════════════════════════════ -->
+
+<!-- 1) PUT THIS IN <head> — guarantees the redirect fires even if -->
+<!--    JS is blocked or delayed by a sandboxed preview.           -->
+<meta http-equiv="refresh" content="3;url=https://anscomqs.github.io/anscom/">
+
+
+<!-- 2) PUT THIS RIGHT AFTER <body> -->
 <style>
 #redirectOverlay {
   position:fixed; inset:0; z-index:99999;
   display:flex; align-items:center; justify-content:center;
-  background:rgba(0,0,0,0.82);
-  backdrop-filter:blur(24px) saturate(160%);
-  -webkit-backdrop-filter:blur(24px) saturate(160%);
-  opacity:1; transition:opacity 0.4s ease;
-  font-family: -apple-system, 'SF Pro Display', sans-serif;
+  background:#000;
+  opacity:1; transition:opacity 0.35s ease;
 }
 #redirectOverlay.hide { opacity:0; pointer-events:none; }
-.redirect-card {
+.redirect-term {
+  width:min(460px,88vw);
   background:#0d0d0d; border:1px solid rgba(255,255,255,0.12);
-  border-radius:16px; padding:36px 40px; width:min(380px,88vw);
-  text-align:center;
-  box-shadow: 0 0 0 1px rgba(255,255,255,0.04), 0 24px 80px rgba(0,0,0,0.7);
-  transform:translateY(8px) scale(0.97); opacity:0;
-  transition:transform 0.45s cubic-bezier(0.34,1.56,0.64,1), opacity 0.35s ease;
+  border-radius:12px; overflow:hidden;
+  box-shadow: 0 24px 80px rgba(0,0,0,0.7);
 }
-#redirectOverlay.show .redirect-card { transform:translateY(0) scale(1); opacity:1; }
-.redirect-spinner {
-  width:34px; height:34px; margin:0 auto 20px;
-  border:2.5px solid rgba(255,255,255,0.1);
-  border-top-color:#4ade80; border-radius:50%;
-  animation:redirect-spin 0.8s linear infinite;
+.redirect-term-bar {
+  padding:11px 16px; border-bottom:1px solid rgba(255,255,255,0.08);
+  display:flex; align-items:center; gap:7px; background:#111;
 }
-@keyframes redirect-spin { to { transform:rotate(360deg); } }
-.redirect-title {
-  font-size:16px; font-weight:600; color:#fff;
-  letter-spacing:-0.01em; margin-bottom:8px;
+.redirect-term-bar .dot { width:12px; height:12px; border-radius:50%; flex-shrink:0; }
+.redirect-term-bar .dot-r{background:#ff5f57;} .redirect-term-bar .dot-y{background:#ffbd2e;} .redirect-term-bar .dot-g{background:#28c840;}
+.redirect-term-title {
+  font-size:12px; color:rgba(255,255,255,0.28);
+  margin-left:6px; font-family:'DM Mono',monospace; flex:1;
 }
-.redirect-sub {
-  font-size:13px; color:rgba(255,255,255,0.5); line-height:1.6; margin-bottom:20px;
+.redirect-term-body {
+  padding:20px 22px 24px;
+  font-family:'DM Mono',monospace; font-size:13px; line-height:1.85;
+  min-height:110px;
 }
-.redirect-link {
-  font-family:'DM Mono',monospace; font-size:11.5px;
-  color:rgba(255,255,255,0.35); text-decoration:none;
-  border-bottom:1px solid rgba(255,255,255,0.15);
-  transition:color 0.15s;
+.redirect-term-body span { display:block; }
+.rt-p   { color:#4ade80; }
+.rt-hdr { color:rgba(255,255,255,0.35); }
+.rt-val { color:#4ade80; }
+.rt-cyn { color:#22d3ee; }
+.rt-cursor::after {
+  content:'█'; margin-left:2px; color:#4ade80;
+  animation:rt-blink 0.9s step-end infinite;
 }
-.redirect-link:hover { color:rgba(255,255,255,0.7); }
+@keyframes rt-blink { 0%,100%{opacity:1} 50%{opacity:0} }
 </style>
 
 <div id="redirectOverlay">
-  <div class="redirect-card">
-    <div class="redirect-spinner"></div>
-    <div class="redirect-title">Taking you to the latest site</div>
-    <div class="redirect-sub">Thank you for your patience.</div>
-    <a class="redirect-link" href="https://anscomqs.github.io/anscom/">Click here if you're not redirected</a>
+  <div class="redirect-term">
+    <div class="redirect-term-bar">
+      <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+      <span class="redirect-term-title">redirect.sh</span>
+    </div>
+    <div class="redirect-term-body" id="rt-body"></div>
   </div>
 </div>
 
 <script>
 (function(){
   var DEST = "https://anscomqs.github.io/anscom/";
-  var DELAY_MS = 2200; // how long the popup stays before redirecting
+  var body = document.getElementById('rt-body');
 
-  var overlay = document.getElementById('redirectOverlay');
-  requestAnimationFrame(function(){ overlay.classList.add('show'); });
+  function line(html){
+    var s = document.createElement('span');
+    s.innerHTML = html;
+    body.appendChild(s);
+  }
+  function sleep(ms){ return new Promise(function(r){ setTimeout(r, ms); }); }
 
-  setTimeout(function(){
+  async function run(){
+    line('<span class="rt-p">&gt;&gt;&gt; </span>resolving latest deployment<span class="rt-cursor"></span>');
+    await sleep(500);
+    body.lastChild.classList.remove('rt-cursor');
+    line('<span class="rt-hdr">found: anscomqs.github.io/anscom</span>');
+    await sleep(400);
+    line('<span class="rt-p">&gt;&gt;&gt; </span><span class="rt-val">redirecting now...</span>');
+    await sleep(700);
     window.location.href = DEST;
-  }, DELAY_MS);
+  }
+  run();
 })();
 </script>
