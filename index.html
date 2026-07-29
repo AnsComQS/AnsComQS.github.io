@@ -10,32 +10,32 @@
    THEME TOKENS  (VS Code–style docs)
    ============================================================ */
 :root[data-theme="dark"]{
-  --bg:#1b1b1f; --bg-alt:#202026; --bg-card:#232329; --bg-code:#1e1e24;
-  --bg-nav:rgba(24,24,28,.85); --bg-sidebar:#1b1b1f;
-  --border:#2c2c33; --border-soft:#26262c; --border-strong:#3a3a43;
-  --text:#e6e6e6; --text-2:#b7b7bd; --text-3:#8a8a92; --text-4:#66666e;
-  --accent:#4da3ff; --accent-2:#3b8eea; --accent-soft:rgba(77,163,255,.12);
-  --accent-bd:rgba(77,163,255,.3);
-  --green:#4ec9b0; --amber:#d7ba7d; --purple:#c586c0; --red:#f48771;
-  --btn-bg:#0e70c0; --btn-bg-h:#1177cf; --btn-text:#ffffff;
-  --code-key:#569cd6; --code-str:#ce9178; --code-com:#6a9955;
-  --code-fn:#dcdcaa; --code-num:#b5cea8; --code-punct:#d4d4d4;
-  --shadow:0 8px 30px rgba(0,0,0,.4);
-  --ann-bg:#252531;
+  --bg:#121316; --bg-alt:#1a1c20; --bg-card:#191a1e; --bg-code:#101113;
+  --bg-nav:rgba(14,15,17,.94); --bg-sidebar:#121316;
+  --border:#292b30; --border-soft:#1f2024; --border-strong:#3a3c42;
+  --text:#eceeef; --text-2:#a9abae; --text-3:#78797d; --text-4:#4e4f53;
+  --accent:#d4d5d7; --accent-2:#b8b9bc; --accent-soft:rgba(255,255,255,.06);
+  --accent-bd:rgba(255,255,255,.20);
+  --green:#c2c4c7; --amber:#a9abae; --purple:#9a9c9f; --red:#8a8c8f;
+  --btn-bg:#202226; --btn-bg-h:#282a2f; --btn-text:#eceeef;
+  --code-key:#d4d5d7; --code-str:#a9abae; --code-com:#75767a;
+  --code-fn:#c9b988; --code-num:#8fb996; --code-punct:#c7cdd4;
+  --shadow:0 2px 10px rgba(0,0,0,.4);
+  --ann-bg:#191a1e;
 }
 :root[data-theme="light"]{
-  --bg:#ffffff; --bg-alt:#f6f7f9; --bg-card:#ffffff; --bg-code:#f4f5f7;
-  --bg-nav:rgba(255,255,255,.85); --bg-sidebar:#fbfbfc;
-  --border:#e3e5e8; --border-soft:#eceef0; --border-strong:#d4d7db;
-  --text:#1b1b1f; --text-2:#3c3c43; --text-3:#6a6a73; --text-4:#9a9aa2;
-  --accent:#0067c0; --accent-2:#0e70c0; --accent-soft:rgba(0,103,192,.08);
-  --accent-bd:rgba(0,103,192,.28);
-  --green:#0a7d63; --amber:#8a6d00; --purple:#a1339c; --red:#c4462f;
-  --btn-bg:#0e70c0; --btn-bg-h:#0f7ad4; --btn-text:#ffffff;
-  --code-key:#0000ff; --code-str:#a31515; --code-com:#008000;
+  --bg:#ffffff; --bg-alt:#f5f5f4; --bg-card:#ffffff; --bg-code:#f3f3f2;
+  --bg-nav:rgba(255,255,255,.94); --bg-sidebar:#fafaf9;
+  --border:#e2e2e0; --border-soft:#ececea; --border-strong:#c9c9c6;
+  --text:#171717; --text-2:#44464a; --text-3:#6b6d70; --text-4:#98999b;
+  --accent:#3a3c40; --accent-2:#26282b; --accent-soft:rgba(0,0,0,.045);
+  --accent-bd:rgba(0,0,0,.22);
+  --green:#44464a; --amber:#6b6d70; --purple:#57585b; --red:#4c4d50;
+  --btn-bg:#efefec; --btn-bg-h:#e5e5e1; --btn-text:#171717;
+  --code-key:#3a3c40; --code-str:#a31515; --code-com:#008000;
   --code-fn:#795e26; --code-num:#098658; --code-punct:#1b1b1f;
-  --shadow:0 6px 24px rgba(0,0,0,.08);
-  --ann-bg:#eef2f7;
+  --shadow:0 2px 10px rgba(15,26,38,.06);
+  --ann-bg:#f2f0ea;
 }
 *{margin:0;padding:0;box-sizing:border-box}
 html{scroll-behavior:smooth;scroll-padding-top:104px}
@@ -58,9 +58,9 @@ code,pre,.mono{font-family:"SF Mono","Cascadia Code",Consolas,"Liberation Mono",
 }
 .announce a{font-weight:500}
 .announce .tag{
-  display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.05em;
-  background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-bd);
-  padding:1px 7px;border-radius:20px;margin-right:8px;vertical-align:1px;
+  display:inline-block;font-size:10.5px;font-weight:700;letter-spacing:.06em;
+  color:var(--accent);border:1px solid var(--border-strong);
+  padding:1px 7px;border-radius:4px;margin-right:8px;vertical-align:1px;
 }
 
 /* ============================================================
@@ -71,12 +71,12 @@ nav.top{
   display:flex;align-items:center;gap:18px;
   height:50px;padding:0 20px;
   background:var(--bg-nav);border-bottom:1px solid var(--border);
-  backdrop-filter:blur(12px) saturate(160%);
-  -webkit-backdrop-filter:blur(12px) saturate(160%);
+  backdrop-filter:blur(8px);
+  -webkit-backdrop-filter:blur(8px);
 }
-.brand{display:flex;align-items:center;gap:9px;color:var(--text);font-weight:600;font-size:15px;letter-spacing:-.01em}
+.brand{display:flex;align-items:center;gap:10px;color:var(--text);font-weight:600;font-size:15px;letter-spacing:-.01em}
 .brand:hover{text-decoration:none}
-.brand .logo{width:26px;height:26px;flex-shrink:0}
+.brand .logo{width:26px;height:26px;flex-shrink:0;border-radius:7px;object-fit:cover;border:1px solid var(--border-strong)}
 .nav-links{display:flex;align-items:center;gap:2px;margin-left:8px}
 .nav-links a{
   color:var(--text-2);font-size:13.5px;padding:6px 10px;border-radius:6px;
@@ -101,15 +101,16 @@ nav.top{
   width:34px;height:34px;border-radius:6px;border:1px solid var(--border);
   background:var(--bg-alt);color:var(--text-2);cursor:pointer;
   display:flex;align-items:center;justify-content:center;flex-shrink:0;
+  text-decoration:none;
 }
-.icon-btn:hover{color:var(--text);background:var(--bg-card)}
+.icon-btn:hover{color:var(--text);background:var(--bg-card);text-decoration:none}
 .btn-primary{
-  background:var(--btn-bg);color:var(--btn-text);border:none;
+  background:var(--btn-bg);color:var(--btn-text);border:1px solid var(--border-strong);
   padding:8px 15px;border-radius:6px;font-size:13.5px;font-weight:600;
   cursor:pointer;display:inline-flex;align-items:center;gap:7px;
-  font-family:inherit;white-space:nowrap;
+  font-family:inherit;white-space:nowrap;text-decoration:none;
 }
-.btn-primary:hover{background:var(--btn-bg-h)}
+.btn-primary:hover{background:var(--btn-bg-h);border-color:var(--accent-bd);color:var(--accent);text-decoration:none}
 .hamburger{display:none}
 
 /* ============================================================
@@ -167,7 +168,7 @@ main{flex:1;min-width:0;padding:40px 48px 120px;max-width:940px}
 .hero-card{
   display:flex;gap:28px;align-items:stretch;
   background:var(--bg-card);border:1px solid var(--border);
-  border-radius:12px;padding:28px 30px;margin-bottom:44px;box-shadow:var(--shadow);
+  border-radius:8px;padding:28px 30px;margin-bottom:44px;box-shadow:var(--shadow);
 }
 .hero-card .hc-left{flex:1;min-width:0}
 .hero-card h2{font-size:22px;font-weight:600;margin-bottom:10px;letter-spacing:-.01em}
@@ -189,14 +190,13 @@ main{flex:1;min-width:0;padding:40px 48px 120px;max-width:940px}
 .section-h{font-size:26px;font-weight:600;letter-spacing:-.02em;margin:8px 0 22px}
 .card-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:12px}
 .do-card{
-  background:var(--bg-card);border:1px solid var(--border);border-radius:10px;
-  padding:22px 20px;cursor:pointer;transition:border-color .15s,transform .15s,background .15s;
+  background:var(--bg-card);border:1px solid var(--border);border-radius:8px;
+  padding:22px 20px;cursor:pointer;transition:border-color .15s,background .15s;
   display:block;color:inherit;
 }
-.do-card:hover{border-color:var(--border-strong);background:var(--bg-alt);text-decoration:none;transform:translateY(-2px)}
+.do-card:hover{border-color:var(--border-strong);background:var(--bg-alt);text-decoration:none}
 .do-card .ic{
-  width:38px;height:38px;border-radius:9px;background:var(--accent-soft);
-  color:var(--accent);display:flex;align-items:center;justify-content:center;margin-bottom:14px;
+  color:var(--text-3);display:flex;align-items:center;margin-bottom:14px;
 }
 .do-card h3{font-size:15.5px;font-weight:600;margin-bottom:6px;color:var(--text)}
 .do-card p{font-size:13px;color:var(--text-3);line-height:1.55}
@@ -240,10 +240,11 @@ main{flex:1;min-width:0;padding:40px 48px 120px;max-width:940px}
 
 /* callout */
 .note{
-  display:flex;gap:12px;background:var(--accent-soft);border:1px solid var(--accent-bd);
-  border-radius:9px;padding:14px 16px;margin:18px 0;font-size:13.5px;color:var(--text-2);line-height:1.6;
+  display:flex;gap:12px;background:var(--bg-alt);border:1px solid var(--border);
+  border-left:3px solid var(--accent);border-radius:4px;
+  padding:13px 16px;margin:18px 0;font-size:13.5px;color:var(--text-2);line-height:1.6;
 }
-.note.warn{background:rgba(215,186,125,.1);border-color:rgba(215,186,125,.35)}
+.note.warn{border-left-color:var(--amber)}
 .note .ni{flex-shrink:0;color:var(--accent);margin-top:1px}
 .note.warn .ni{color:var(--amber)}
 .note strong{color:var(--text)}
@@ -259,8 +260,8 @@ table.doc th{
 table.doc td{padding:11px 14px;border-bottom:1px solid var(--border-soft);color:var(--text-2);vertical-align:top}
 table.doc tr:last-child td{border-bottom:none}
 table.doc td:first-child{color:var(--green);font-family:"SF Mono","Cascadia Code",Consolas,monospace;font-size:12.5px;white-space:nowrap}
-.pill{display:inline-block;font-size:11px;font-weight:600;padding:1px 8px;border-radius:20px;background:var(--accent-soft);color:var(--accent);border:1px solid var(--accent-bd);margin-left:6px;vertical-align:1px}
-.pill.new{background:rgba(78,201,176,.12);color:var(--green);border-color:rgba(78,201,176,.3)}
+.pill{display:inline-block;font-size:11px;font-weight:600;padding:1px 8px;border-radius:4px;background:transparent;color:var(--accent);border:1px solid var(--accent-bd);margin-left:6px;vertical-align:1px}
+.pill.new{color:var(--green);border-color:rgba(78,201,176,.35)}
 
 /* badges row */
 .badges{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 30px}
@@ -310,33 +311,23 @@ body.sb-open .sb-scrim{display:block}
 </head>
 <body>
 
-<!-- ANNOUNCEMENT -->
-<div class="announce">
-  <span class="tag">NEW</span>
-  <a href="#changelog">anscom v1.5.1 is out — <code style="font-size:12px">pwd()</code>, <code style="font-size:12px">scanned_path</code>, and a quieter silent mode →</a>
-</div>
-
 <!-- NAV -->
 <nav class="top">
   <button class="icon-btn hamburger" onclick="toggleSidebar()" aria-label="Menu">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
   </button>
   <a class="brand" href="#top">
-    <svg class="logo" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <rect x="2" y="6" width="28" height="22" rx="4" fill="var(--accent-soft)" stroke="var(--accent)" stroke-width="1.6"/>
-      <path d="M2 11 L13 11 L15.5 8 L30 8" stroke="var(--accent)" stroke-width="1.6" fill="none"/>
-      <circle cx="19" cy="19" r="4.4" stroke="var(--accent)" stroke-width="1.8" fill="none"/>
-      <line x1="22.2" y1="22.2" x2="26" y2="26" stroke="var(--accent)" stroke-width="1.8" stroke-linecap="round"/>
-    </svg>
+    <img class="logo" src="https://avatars.githubusercontent.com/u/252811141?s=400&u=1ab402f781d9a27985950db4447723e90a1c3703&v=4" alt="anscom" />
     anscom
+  </a>
+  <a class="icon-btn" href="https://github.com/PC5518/anscom-nfie-python-extension" target="_blank" rel="noopener" title="GitHub" aria-label="GitHub">
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0112 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z"/></svg>
   </a>
   <div class="nav-links">
     <a href="#overview">Docs</a>
     <a href="#api-scan">API</a>
     <a href="#features">Features</a>
     <a href="#changelog">Release Notes</a>
-    <a href="https://github.com/PC5518/anscom-nfie-python-extension" target="_blank" rel="noopener">GitHub</a>
-    <a href="https://pypi.org/project/anscom/" target="_blank" rel="noopener">PyPI</a>
   </div>
   <div class="nav-spacer"></div>
   <div class="search">
@@ -347,11 +338,12 @@ body.sb-open .sb-scrim{display:block}
   <button class="icon-btn" onclick="toggleTheme()" title="Toggle theme" id="themeBtn">
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="4"/><line x1="12" y1="20" x2="12" y2="22"/><line x1="4.9" y1="4.9" x2="6.3" y2="6.3"/><line x1="17.7" y1="17.7" x2="19.1" y2="19.1"/><line x1="2" y1="12" x2="4" y2="12"/><line x1="20" y1="12" x2="22" y2="12"/><line x1="4.9" y1="19.1" x2="6.3" y2="17.7"/><line x1="17.7" y1="6.3" x2="19.1" y2="4.9"/></svg>
   </button>
-  <button class="btn-primary" onclick="copyText('pip install anscom', this)">
-    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-    pip install anscom
-  </button>
+  <a class="btn-primary" href="https://pypi.org/project/anscom/" target="_blank" rel="noopener">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M11.561 0C8.89 0 8.73.14 8.73 1.56v2.93h5.66V5H5.85C4.3 5 2.74 6.77 2.28 9.23a16.77 16.77 0 000 5.54c.39 2.15 1.66 3.7 3.08 3.7h1.99v-3.52c0-1.74 1.5-3.27 3.25-3.27h5.66c1.45 0 2.6-1.18 2.6-2.64V1.56C18.86.14 17.68 0 16.06 0h-4.5zM9.37 1.35c.49 0 .88.4.88.9s-.39.9-.88.9-.88-.4-.88-.9.39-.9.88-.9z"/></svg>
+    PyPI
+  </a>
 </nav>
+
 
 <div class="sb-scrim" onclick="toggleSidebar()"></div>
 
@@ -427,6 +419,7 @@ body.sb-open .sb-scrim{display:block}
     <div class="sb-items">
       <a href="#enterprise">Enterprise Recipes</a>
       <a href="#changelog">Changelog</a>
+      <a href="#mascot">Mascot</a>
       <a href="#license">License</a>
     </div>
   </div>
@@ -519,7 +512,7 @@ pip install --upgrade anscom</pre></div>
     <p>On Linux and macOS the default source build is portable. To compile with CPU-specific optimizations tuned to your machine (best when you build and run on the same host), opt in with an environment variable:</p>
     <div class="codeblock"><span class="lang">bash</span><pre>ANSCOM_NATIVE=1 pip install anscom</pre></div>
     <div class="note warn"><span class="ni"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
-    <div><strong>Windows source builds</strong> require the “Desktop development with C++” workload from Visual Studio Build Tools. Pre-built wheels avoid this where available.</div></div>
+    <div><strong>Windows source builds</strong> require the "Desktop development with C++" workload from Visual Studio Build Tools. Pre-built wheels avoid this where available.</div></div>
   </section>
 
   <!-- ===================== QUICK START ===================== -->
@@ -704,7 +697,7 @@ wasted <span class="tok-punct">=</span> <span class="tok-fn">sum</span>(<span cl
   <!-- ===================== REGEX ===================== -->
   <section class="doc-sec" id="regex">
     <h2>Regex Filter</h2>
-    <p>Pass <code>regex_filter</code> to count only files whose full path matches the pattern. On Linux and macOS this uses POSIX <code>regcomp</code>/<code>regexec</code> entirely in C with no GIL; on Windows it falls back to Python’s <code>re</code>. Invalid patterns raise <code>ValueError</code> before the scan starts.</p>
+    <p>Pass <code>regex_filter</code> to count only files whose full path matches the pattern. On Linux and macOS this uses POSIX <code>regcomp</code>/<code>regexec</code> entirely in C with no GIL; on Windows it falls back to Python's <code>re</code>. Invalid patterns raise <code>ValueError</code> before the scan starts.</p>
     <div class="codeblock"><span class="lang">python</span><pre><span class="tok-com"># Only Python files under a tests/ directory</span>
 result <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(<span class="tok-str">"/repo"</span>, regex_filter<span class="tok-punct">=</span><span class="tok-str">r"/tests/.*\.py$"</span>, silent<span class="tok-punct">=</span><span class="tok-key">True</span>)
 <span class="tok-fn">print</span>(<span class="tok-str">f"Matched: {result['total_files']}"</span>)</pre></div>
@@ -742,7 +735,7 @@ df <span class="tok-punct">=</span> pd.<span class="tok-fn">read_csv</span>(<spa
 <span class="tok-fn">print</span>(df.<span class="tok-fn">groupby</span>(<span class="tok-str">"category"</span>)[<span class="tok-str">"size"</span>].<span class="tok-fn">sum</span>())
 df.<span class="tok-fn">to_excel</span>(<span class="tok-str">"report.xlsx"</span>, index<span class="tok-punct">=</span><span class="tok-key">False</span>)   <span class="tok-com"># Excel via pandas</span></pre></div>
     <div class="note"><span class="ni"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
-    <div>A native <code>export_excel</code> existed in v1.3.0 but was <strong>removed in v1.5.0</strong> (it crashed on Windows). Use <code>export_csv</code> plus <code>pandas.to_excel()</code> instead — it’s faster and dependency-free at scan time.</div></div>
+    <div>A native <code>export_excel</code> existed in v1.3.0 but was <strong>removed in v1.5.0</strong> (it crashed on Windows). Use <code>export_csv</code> plus <code>pandas.to_excel()</code> instead — it's faster and dependency-free at scan time.</div></div>
   </section>
 
   <!-- ===================== TREE ===================== -->
@@ -780,7 +773,7 @@ df.<span class="tok-fn">to_excel</span>(<span class="tok-str">"report.xlsx"</spa
 
 Time     : 1.5186 seconds
 Errors   : 0 (permission denied / inaccessible)</pre></div>
-    <p>With <code>largest_n</code> or <code>find_duplicates</code> enabled, a “TOP N LARGEST FILES” and/or “DUPLICATES SUMMARY” section is appended.</p>
+    <p>With <code>largest_n</code> or <code>find_duplicates</code> enabled, a "TOP N LARGEST FILES" and/or "DUPLICATES SUMMARY" section is appended.</p>
   </section>
 
   <!-- ===================== CATEGORIES ===================== -->
@@ -901,6 +894,49 @@ r <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(<span
       <ul>
         <li>Multi-threaded worker pool, <code>getdents64</code> backend, FNV-1a hash table, per-thread stats, slab allocator, <code>ignore_junk</code>, <code>min_size</code>, <code>extensions</code>, <code>callback</code>, <code>silent</code>.</li>
       </ul>
+    </div>
+  </section>
+
+  <!-- ===================== MASCOT ===================== -->
+  <section class="doc-sec" id="mascot">
+    <h2>Mascot</h2>
+    <p>Meet <strong>Chuhi</strong> — the anscom mascot. Run <code>anscom.about()</code> to print it in your own terminal.</p>
+    <div class="hc-right" style="max-width:620px;">
+      <div class="hc-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span>anscom.about()</span></div>
+      <pre class="mono" style="padding:18px 20px;font-size:11px;line-height:1.35;color:var(--text-2);overflow-x:auto;white-space:pre;margin:0;">                                       +#                                      
+                                      *---+                     ()              
+                                      -----+                  =:+=+%           
+                                      #--------.%.+@@....   #-==----+          
+             *                        :----%####%#%%%#%%%%--+=------@          
+              *                       .@###%%%%%%%%%%%%%---==-------@-         
+               *                  :+##%%%#%%%%%%%%%%%%%----=-------+#%%@=      
+       ^ *      .=             *###%%%%%%%%%%%%%%%%%%%#---+==-----=%%%%%%%@.   
+           .*     @          .#%%%%%%%%%%%%%%%%%%%%%%%%*====-----%%%%%%%%%%%%%*
+              +.   @       @#%%%%%%%% 0   %%%%%%%%%%%%%%%%-==--%%%%%%%%%%%%%%%%%
+                *.  @   %#%%%%%%%%#@  0  @%%%%%%%%%%%%%%%%%---%%%%%%%%%%%%%%%%%%
+                  @  @##%%%%%%%%%%%#@@@@@#%%%%%%%%%%%%#%%%%%#%%%%%%%%%%%%%%%%%:
+                   %#%%%%%%%%%%%%%%%%%%%%%%%%%%%%#%%%%%%%%%%%%%%%%%%%%%%%%%%%% 
+                :##%%%%%%%%%%%%%%%%%%%%%%%%%%%%#%%%%%#%%%%%%%%%%%%%%%%%%%%%%*  
+                ----+%%%%%%%%%%%%%%#%%%%%%%%#%%%%%%%%%%%##%%%@%%%%%%%#%##%%:   
+        @=@=^==()=+=%%%%%%%%%%%%%%%%@@%%%%%%%#%%%%%%%%%%%%%%%%%%%#%%%%%#%=    
+     .@:      . %%%%%%%%%%%%@%%%%%%%%%%%@%%%%%%%%%%%%%%%%%%%%%%%%###%%%     
+   #.        ()    %%%%      %%%%%@%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%+     
+ #           %.        %%%%%@%%@%%%%%@%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%      
+           .#              %#%@%%%%%%%%%%@%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%       
+          -                    :%%%%%%%.   %:  #@%%%%%%%%%%%%%%%%%%%%%         
+         #                      :.           -=     %%%%%%%%%%%%%%*            
+        +                        -              -     =%%%%%%%+                 
+        ()                         =                     .                      
+
+           #%#
+         -%%%%
+        %%#+%%.
+      =%%. -%%:     %%-%%%%%#   +%%%%%%#   =%%%%%%%. .%%%%%%%%    #%*%%%%%%=%%%%%#
+     %%#   -%%=    #%%    %%#  %%%       -%%-       %%%     %%#  =%%-   #%%:   %%#
+   =%%%%%%%%%%#   -%%.   -%%.  =%%%%%#  *%%        %%+      %%+  %%+   .%%-   -%%:
+  #%#::::::-%%%   %%+    %%=       +%%  #%%       .%%+    -%%+  %%%    %%*    %%= 
++%%=        %%%  %%%    %%%  #%%%#%%%.  -%%%%%%%-  *%%%%%%%=   +%%.   *%%    #%%  </pre>
+      <div style="padding:10px 20px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--text-3);text-align:center;">Chuhi — the anscom mascot</div>
     </div>
   </section>
 
