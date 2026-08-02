@@ -331,29 +331,56 @@ main{flex:1;min-width:0;padding:40px 48px 120px;max-width:940px}
 .os-pane.active{display:block}
 
 /* ============================================================
-   RELEASE HISTORY DRAWER
+   RELEASE HISTORY — nav trigger + hanging dropdown
    ============================================================ */
-.rel-scrim{
-  position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;
-  opacity:0;pointer-events:none;transition:opacity .22s;
+.rel-anchor{position:relative;display:flex;align-items:center;flex-shrink:0}
+.rel-trigger{
+  display:inline-flex;align-items:center;gap:7px;
+  height:34px;padding:0 11px;border-radius:6px;
+  background:var(--bg-alt);border:1px solid var(--border);
+  color:var(--text-2);font-family:inherit;font-size:13.5px;font-weight:500;
+  cursor:pointer;white-space:nowrap;
 }
-body.rel-open .rel-scrim{opacity:1;pointer-events:auto}
-.rel-drawer{
-  position:fixed;top:0;right:0;height:100vh;width:452px;max-width:93vw;z-index:201;
-  background:var(--bg);border-left:1px solid var(--border);
-  display:flex;flex-direction:column;
-  box-shadow:-16px 0 44px rgba(0,0,0,.38);
-  transform:translateX(103%);transition:transform .28s cubic-bezier(.4,0,.2,1);
+.rel-trigger:hover{color:var(--text);background:var(--bg-card);border-color:var(--border-strong)}
+.rel-trigger:focus-visible{outline:2px solid var(--accent-bd);outline-offset:2px}
+body.rel-open .rel-trigger{color:var(--accent);border-color:var(--accent-bd);background:var(--bg-card)}
+.rel-chip{
+  font-size:11px;font-weight:600;padding:1px 6px;border-radius:4px;
+  border:1px solid var(--border-strong);color:var(--text-3);
 }
-body.rel-open .rel-drawer{transform:none}
+body.rel-open .rel-chip{color:var(--accent);border-color:var(--accent-bd)}
+.rel-caret{color:var(--text-4);transition:transform .18s;flex-shrink:0}
+body.rel-open .rel-caret{transform:rotate(180deg);color:var(--accent)}
+
+.rel-pop{
+  position:absolute;top:calc(100% + 11px);right:0;z-index:120;
+  width:428px;max-width:calc(100vw - 24px);
+  max-height:min(600px,calc(100vh - 84px));
+  background:var(--bg-card);border:1px solid var(--border-strong);border-radius:10px;
+  box-shadow:0 20px 48px rgba(0,0,0,.45),0 2px 6px rgba(0,0,0,.25);
+  display:flex;flex-direction:column;overflow:hidden;
+  opacity:0;visibility:hidden;pointer-events:none;
+  transform:translateY(-9px) scale(.985);transform-origin:top right;
+  transition:opacity .17s ease,transform .17s cubic-bezier(.2,.9,.3,1),visibility 0s .17s;
+}
+body.rel-open .rel-pop{
+  opacity:1;visibility:visible;pointer-events:auto;transform:none;transition-delay:0s;
+}
+/* the little notch that pins the panel to its button */
+.rel-pop::before{
+  content:"";position:absolute;top:-6px;right:26px;width:10px;height:10px;
+  background:var(--bg-alt);border-left:1px solid var(--border-strong);
+  border-top:1px solid var(--border-strong);transform:rotate(45deg);
+}
 .rel-head{
-  display:flex;align-items:center;gap:10px;padding:15px 18px;
+  display:flex;align-items:center;gap:9px;padding:12px 14px;
   border-bottom:1px solid var(--border);background:var(--bg-alt);flex-shrink:0;
+  position:relative;z-index:1;
 }
 .rel-head h3{font-size:15px;font-weight:600;letter-spacing:-.01em}
 .rel-head .sub{font-size:12px;color:var(--text-4);margin-left:2px}
 .rel-close{margin-left:auto}
-.rel-list{flex:1;overflow-y:auto;padding:16px 18px 70px}
+.rel-list{flex:1;overflow-y:auto;overscroll-behavior:contain;padding:14px 16px 18px}
 .rel-list::-webkit-scrollbar{width:8px}
 .rel-list::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:4px}
 .rel-item{display:flex;gap:13px;align-items:stretch}
@@ -393,11 +420,17 @@ body.rel-open .rel-drawer{transform:none}
 .rel-item.current .rel-body code{background:var(--bg-card)}
 .rel-none{color:var(--text-4);font-style:italic}
 .rel-foot{
-  padding:12px 18px;border-top:1px solid var(--border);background:var(--bg-alt);
+  padding:11px 16px;border-top:1px solid var(--border);background:var(--bg-alt);
   font-size:12.5px;color:var(--text-3);display:flex;gap:16px;flex-shrink:0;
 }
+.rel-close{margin-left:auto;width:28px;height:28px}
 @media(prefers-reduced-motion:reduce){
-  .rel-drawer{transition:none}
+  .rel-pop{transition:opacity .01s}
+}
+@media(max-width:760px){
+  .rel-trigger{padding:0 9px;gap:6px}
+  .rel-trigger .rel-label,.rel-chip{display:none}
+  .rel-pop{width:min(400px,calc(100vw - 20px))}
 }
 
 /* callout */
@@ -493,6 +526,181 @@ body.sb-open .sb-scrim{display:block}
     <a href="#changelog" onclick="openReleases(event)">Release Notes</a>
   </div>
   <div class="nav-spacer"></div>
+  <div class="rel-anchor">
+    <button class="rel-trigger" id="relTrigger" onclick="toggleReleases(event)" aria-expanded="false" aria-controls="relPanel" aria-haspopup="dialog">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+      <span class="rel-label">Releases</span>
+      <span class="rel-chip">v1.5.2</span>
+      <svg class="rel-caret" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+    </button>
+    <div class="rel-pop" id="relPanel" role="dialog" aria-labelledby="relTitle" aria-hidden="true">
+      <div class="rel-head">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <h3 id="relTitle">Release history</h3>
+        <span class="sub">10 versions</span>
+        <button class="icon-btn rel-close" onclick="closeReleases(true)" aria-label="Close release history">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <div class="rel-list" id="relList">
+
+        <div class="rel-item current open">
+          <div class="rel-rail">
+            <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" fill="currentColor" fill-opacity=".22"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            <span class="line"></span>
+          </div>
+          <div class="rel-card">
+            <button class="rel-btn" onclick="relToggle(this)" aria-expanded="true">
+              <span class="rel-ver">1.5.2</span>
+              <span class="rel-tag">THIS VERSION</span>
+              <span class="rel-date">Jul 29, 2026</span>
+              <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="rel-body">
+              <strong>Mascot.</strong> Added <code>about()</code> — prints Chuhi, the anscom mascot (the house mouse of a Kolkata apartment), as original ASCII art with a short credit line, then returns <code>None</code>. Fully backward-compatible: no scan behavior, call signature, or output format changed.
+            </div>
+          </div>
+        </div>
+
+        <div class="rel-item">
+          <div class="rel-rail">
+            <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            <span class="line"></span>
+          </div>
+          <div class="rel-card">
+            <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
+              <span class="rel-ver">1.5.1</span>
+              <span class="rel-date">Jul 28, 2026</span>
+              <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="rel-body">
+              <strong>Ergonomics &amp; correctness.</strong> Added <code>pwd()</code> (returns the current working directory as an absolute string — the Unix <code>pwd</code>, as a value), no-argument <code>scan()</code> (defaults to the current working directory), and <code>scanned_path</code> in every result dict (absolute path actually walked). Fixed Python reference leaks in result-dict construction (<code>PyDict_SetItemString</code> / <code>PyList_Append</code> do not steal references). The per-thread file buffer is no longer pre-allocated on count-only scans — a plain <code>anscom.scan()</code> now performs zero heap work on the hot path. Fully backward-compatible: every v1.5.0 script runs unchanged.
+            </div>
+          </div>
+        </div>
+
+        <div class="rel-item">
+          <div class="rel-rail">
+            <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            <span class="line"></span>
+          </div>
+          <div class="rel-card">
+            <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
+              <span class="rel-ver">1.5.0</span>
+              <span class="rel-date">Apr 9, 2026</span>
+              <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="rel-body">
+              <strong>Major feature release.</strong> Added <code>return_files</code> (per-file list in result dict), <code>export_csv</code> (UTF-8 CSV inventory, RFC 4180-compliant, zero deps), <code>largest_n</code> (top-N largest files via per-thread min-heap, O(log N) per file), <code>find_duplicates</code> (two-phase size + CRC32 detection, zero I/O for unique-size files), <code>regex_filter</code> (POSIX <code>regexec</code> on Linux/macOS for GIL-free path filtering, Python <code>re</code> fallback on Windows). Per-thread <code>FileInfo</code> array pre-allocated at 65,536 entries — zero reallocations for typical scans. All new features are strictly opt-in: default <code>anscom.scan(".")</code> runs the identical hot path as v1.3.0. Removed <code>export_excel</code> (was crashing on Windows due to an openpyxl <code>Workbook.read_only</code> exception); use <code>export_csv</code> + <code>pandas.to_excel()</code> instead.
+            </div>
+          </div>
+        </div>
+
+        <div class="rel-item">
+          <div class="rel-rail">
+            <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            <span class="line"></span>
+          </div>
+          <div class="rel-card">
+            <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
+              <span class="rel-ver">1.4.0</span>
+              <span class="rel-date">Apr 9, 2026</span>
+              <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="rel-body">
+              <span class="rel-none">Interim release, superseded by v1.5.0 the same day. No separate notes published.</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="rel-item">
+          <div class="rel-rail">
+            <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            <span class="line"></span>
+          </div>
+          <div class="rel-card">
+            <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
+              <span class="rel-ver">1.3.0</span>
+              <span class="rel-date">Mar 15, 2026</span>
+              <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="rel-body">
+              <strong>Export release.</strong> Added <code>export_json</code> (native, zero dependencies), <code>export_tree</code> (DFS tree to <code>.txt</code>), and <code>export_excel</code> (structured <code>.xlsx</code> with openpyxl). MSVC Windows compiler compatibility fix for <code>uint64_t</code> / <code>stdint.h</code>.
+            </div>
+          </div>
+        </div>
+
+        <div class="rel-item">
+          <div class="rel-rail">
+            <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            <span class="line"></span>
+          </div>
+          <div class="rel-card">
+            <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
+              <span class="rel-ver">1.0.0</span>
+              <span class="rel-date">Mar 13, 2026</span>
+              <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="rel-body">
+              <strong>Major release.</strong> Terabyte-scale filesystem scanning. Multi-threaded worker pool, <code>getdents64</code> direct syscall backend (Linux), FNV-1a hash table for O(1) extension lookup, per-thread statistics with zero shared locks, slab path allocator, extension whitelisting, silent mode, <code>min_size</code> filter, and live callback interface.
+            </div>
+          </div>
+        </div>
+
+        <div class="rel-item">
+          <div class="rel-rail">
+            <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            <span class="line"></span>
+          </div>
+          <div class="rel-card">
+            <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
+              <span class="rel-ver">0.6.0</span>
+              <span class="rel-date">Jan 15, 2026</span>
+              <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="rel-body">Added features like the data tree and many more.</div>
+          </div>
+        </div>
+
+        <div class="rel-item">
+          <div class="rel-rail">
+            <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            <span class="line"></span>
+          </div>
+          <div class="rel-card">
+            <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
+              <span class="rel-ver">0.5.0</span>
+              <span class="rel-date">Jan 15, 2026</span>
+              <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="rel-body"><span class="rel-none">No notes published for this release.</span></div>
+          </div>
+        </div>
+
+        <div class="rel-item">
+          <div class="rel-rail">
+            <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+            <span class="line"></span>
+          </div>
+          <div class="rel-card">
+            <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
+              <span class="rel-ver">0.4.0</span>
+              <span class="rel-date">Jan 15, 2026</span>
+              <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+            </button>
+            <div class="rel-body">Release of the basic version with the concept of anscom.</div>
+          </div>
+        </div>
+
+      </div>
+
+      <div class="rel-foot">
+        <a href="https://pypi.org/project/anscom/#history" target="_blank" rel="noopener">All releases on PyPI</a>
+        <a href="#changelog" onclick="closeReleases()">Full changelog</a>
+      </div>
+    </div>
+  </div>
   <div class="search">
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
     <input id="searchInput" type="text" placeholder="Search docs" oninput="filterNav(this.value)" />
@@ -1332,176 +1540,6 @@ r <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(<span
   </div>
 </footer>
 
-<!-- ===================== RELEASE HISTORY DRAWER ===================== -->
-<div class="rel-scrim" onclick="closeReleases()"></div>
-<aside class="rel-drawer" id="relDrawer" role="dialog" aria-modal="true" aria-labelledby="relTitle" aria-hidden="true">
-  <div class="rel-head">
-    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-    <h3 id="relTitle">Release history</h3>
-    <span class="sub">10 versions</span>
-    <button class="icon-btn rel-close" onclick="closeReleases()" aria-label="Close release history">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-    </button>
-  </div>
-
-  <div class="rel-list" id="relList">
-
-    <div class="rel-item current open">
-      <div class="rel-rail">
-        <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" fill="currentColor" fill-opacity=".22"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-        <span class="line"></span>
-      </div>
-      <div class="rel-card">
-        <button class="rel-btn" onclick="relToggle(this)" aria-expanded="true">
-          <span class="rel-ver">1.5.2</span>
-          <span class="rel-tag">THIS VERSION</span>
-          <span class="rel-date">Jul 29, 2026</span>
-          <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="rel-body">
-          <strong>Mascot.</strong> Added <code>about()</code> — prints Chuhi, the anscom mascot (the house mouse of a Kolkata apartment), as original ASCII art with a short credit line, then returns <code>None</code>. Fully backward-compatible: no scan behavior, call signature, or output format changed.
-        </div>
-      </div>
-    </div>
-
-    <div class="rel-item">
-      <div class="rel-rail">
-        <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-        <span class="line"></span>
-      </div>
-      <div class="rel-card">
-        <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
-          <span class="rel-ver">1.5.1</span>
-          <span class="rel-date">Jul 28, 2026</span>
-          <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="rel-body">
-          <strong>Ergonomics &amp; correctness.</strong> Added <code>pwd()</code> (returns the current working directory as an absolute string — the Unix <code>pwd</code>, as a value), no-argument <code>scan()</code> (defaults to the current working directory), and <code>scanned_path</code> in every result dict (absolute path actually walked). Fixed Python reference leaks in result-dict construction (<code>PyDict_SetItemString</code> / <code>PyList_Append</code> do not steal references). The per-thread file buffer is no longer pre-allocated on count-only scans — a plain <code>anscom.scan()</code> now performs zero heap work on the hot path. Fully backward-compatible: every v1.5.0 script runs unchanged.
-        </div>
-      </div>
-    </div>
-
-    <div class="rel-item">
-      <div class="rel-rail">
-        <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-        <span class="line"></span>
-      </div>
-      <div class="rel-card">
-        <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
-          <span class="rel-ver">1.5.0</span>
-          <span class="rel-date">Apr 9, 2026</span>
-          <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="rel-body">
-          <strong>Major feature release.</strong> Added <code>return_files</code> (per-file list in result dict), <code>export_csv</code> (UTF-8 CSV inventory, RFC 4180-compliant, zero deps), <code>largest_n</code> (top-N largest files via per-thread min-heap, O(log N) per file), <code>find_duplicates</code> (two-phase size + CRC32 detection, zero I/O for unique-size files), <code>regex_filter</code> (POSIX <code>regexec</code> on Linux/macOS for GIL-free path filtering, Python <code>re</code> fallback on Windows). Per-thread <code>FileInfo</code> array pre-allocated at 65,536 entries — zero reallocations for typical scans. All new features are strictly opt-in: default <code>anscom.scan(".")</code> runs the identical hot path as v1.3.0. Removed <code>export_excel</code> (was crashing on Windows due to an openpyxl <code>Workbook.read_only</code> exception); use <code>export_csv</code> + <code>pandas.to_excel()</code> instead.
-        </div>
-      </div>
-    </div>
-
-    <div class="rel-item">
-      <div class="rel-rail">
-        <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-        <span class="line"></span>
-      </div>
-      <div class="rel-card">
-        <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
-          <span class="rel-ver">1.4.0</span>
-          <span class="rel-date">Apr 9, 2026</span>
-          <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="rel-body">
-          <span class="rel-none">Interim release, superseded by v1.5.0 the same day. No separate notes published.</span>
-        </div>
-      </div>
-    </div>
-
-    <div class="rel-item">
-      <div class="rel-rail">
-        <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-        <span class="line"></span>
-      </div>
-      <div class="rel-card">
-        <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
-          <span class="rel-ver">1.3.0</span>
-          <span class="rel-date">Mar 15, 2026</span>
-          <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="rel-body">
-          <strong>Export release.</strong> Added <code>export_json</code> (native, zero dependencies), <code>export_tree</code> (DFS tree to <code>.txt</code>), and <code>export_excel</code> (structured <code>.xlsx</code> with openpyxl). MSVC Windows compiler compatibility fix for <code>uint64_t</code> / <code>stdint.h</code>.
-        </div>
-      </div>
-    </div>
-
-    <div class="rel-item">
-      <div class="rel-rail">
-        <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-        <span class="line"></span>
-      </div>
-      <div class="rel-card">
-        <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
-          <span class="rel-ver">1.0.0</span>
-          <span class="rel-date">Mar 13, 2026</span>
-          <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="rel-body">
-          <strong>Major release.</strong> Terabyte-scale filesystem scanning. Multi-threaded worker pool, <code>getdents64</code> direct syscall backend (Linux), FNV-1a hash table for O(1) extension lookup, per-thread statistics with zero shared locks, slab path allocator, extension whitelisting, silent mode, <code>min_size</code> filter, and live callback interface.
-        </div>
-      </div>
-    </div>
-
-    <div class="rel-item">
-      <div class="rel-rail">
-        <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-        <span class="line"></span>
-      </div>
-      <div class="rel-card">
-        <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
-          <span class="rel-ver">0.6.0</span>
-          <span class="rel-date">Jan 15, 2026</span>
-          <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="rel-body">Added features like the data tree and many more.</div>
-      </div>
-    </div>
-
-    <div class="rel-item">
-      <div class="rel-rail">
-        <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-        <span class="line"></span>
-      </div>
-      <div class="rel-card">
-        <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
-          <span class="rel-ver">0.5.0</span>
-          <span class="rel-date">Jan 15, 2026</span>
-          <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="rel-body"><span class="rel-none">No notes published for this release.</span></div>
-      </div>
-    </div>
-
-    <div class="rel-item">
-      <div class="rel-rail">
-        <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
-        <span class="line"></span>
-      </div>
-      <div class="rel-card">
-        <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
-          <span class="rel-ver">0.4.0</span>
-          <span class="rel-date">Jan 15, 2026</span>
-          <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
-        </button>
-        <div class="rel-body">Release of the basic version with the concept of anscom.</div>
-      </div>
-    </div>
-
-  </div>
-
-  <div class="rel-foot">
-    <a href="https://pypi.org/project/anscom/#history" target="_blank" rel="noopener">All releases on PyPI</a>
-    <a href="#changelog" onclick="closeReleases()">Full changelog</a>
-  </div>
-</aside>
-
 <script>
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
 
@@ -1520,26 +1558,38 @@ function toggleTheme(){
 function toggleGroup(head){ head.parentElement.classList.toggle('collapsed'); }
 function toggleSidebar(){ document.body.classList.toggle('sb-open'); }
 
-/* RELEASE DRAWER */
-let relLastFocus=null;
+/* RELEASE DROPDOWN */
 function openReleases(e){
-  if(e){ e.preventDefault(); }
-  relLastFocus=document.activeElement;
+  if(e){ e.preventDefault(); e.stopPropagation(); }
   document.body.classList.add('rel-open');
   document.body.classList.remove('sb-open');
-  $('#relDrawer').setAttribute('aria-hidden','false');
+  const t=$('#relTrigger'), p=$('#relPanel');
+  t.setAttribute('aria-expanded','true');
+  p.setAttribute('aria-hidden','false');
   $('.rel-close').focus();
 }
-function closeReleases(){
+function closeReleases(refocus){
+  if(!document.body.classList.contains('rel-open')) return;
   document.body.classList.remove('rel-open');
-  $('#relDrawer').setAttribute('aria-hidden','true');
-  if(relLastFocus) relLastFocus.focus();
+  const t=$('#relTrigger'), p=$('#relPanel');
+  t.setAttribute('aria-expanded','false');
+  p.setAttribute('aria-hidden','true');
+  if(refocus===true) t.focus();
+}
+function toggleReleases(e){
+  if(e){ e.preventDefault(); e.stopPropagation(); }
+  document.body.classList.contains('rel-open') ? closeReleases(true) : openReleases();
 }
 function relToggle(btn){
   const item=btn.closest('.rel-item');
   const open=item.classList.toggle('open');
   btn.setAttribute('aria-expanded',open?'true':'false');
 }
+/* click anywhere outside the panel closes it */
+document.addEventListener('click',e=>{
+  if(!document.body.classList.contains('rel-open')) return;
+  if(!e.target.closest('.rel-anchor')) closeReleases();
+});
 
 /* OS TABS */
 function osTab(btn){
@@ -1612,7 +1662,7 @@ function filterNav(q){
 document.addEventListener('keydown',e=>{
   if(e.key==='/'&&document.activeElement.tagName!=='INPUT'){ e.preventDefault(); $('#searchInput').focus(); }
   if(e.key==='Escape'){
-    if(document.body.classList.contains('rel-open')){ closeReleases(); return; }
+    if(document.body.classList.contains("rel-open")){ closeReleases(true); return; }
     $('#searchInput').blur(); filterNav(''); $('#searchInput').value='';
   }
 });
