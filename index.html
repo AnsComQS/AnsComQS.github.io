@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>anscom documentation — Native Filesystem Intelligence Engine</title>
-<meta name="description" content="Official documentation for anscom v1.5.1 — a high-performance native C recursive file scanner for Python." />
+<meta name="description" content="Official documentation for anscom v1.5.2 — a high-performance native C recursive file scanner for Python." />
 <style>
 /* ============================================================
    THEME TOKENS  (VS Code–style docs)
@@ -330,6 +330,76 @@ main{flex:1;min-width:0;padding:40px 48px 120px;max-width:940px}
 .os-pane{display:none}
 .os-pane.active{display:block}
 
+/* ============================================================
+   RELEASE HISTORY DRAWER
+   ============================================================ */
+.rel-scrim{
+  position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;
+  opacity:0;pointer-events:none;transition:opacity .22s;
+}
+body.rel-open .rel-scrim{opacity:1;pointer-events:auto}
+.rel-drawer{
+  position:fixed;top:0;right:0;height:100vh;width:452px;max-width:93vw;z-index:201;
+  background:var(--bg);border-left:1px solid var(--border);
+  display:flex;flex-direction:column;
+  box-shadow:-16px 0 44px rgba(0,0,0,.38);
+  transform:translateX(103%);transition:transform .28s cubic-bezier(.4,0,.2,1);
+}
+body.rel-open .rel-drawer{transform:none}
+.rel-head{
+  display:flex;align-items:center;gap:10px;padding:15px 18px;
+  border-bottom:1px solid var(--border);background:var(--bg-alt);flex-shrink:0;
+}
+.rel-head h3{font-size:15px;font-weight:600;letter-spacing:-.01em}
+.rel-head .sub{font-size:12px;color:var(--text-4);margin-left:2px}
+.rel-close{margin-left:auto}
+.rel-list{flex:1;overflow-y:auto;padding:16px 18px 70px}
+.rel-list::-webkit-scrollbar{width:8px}
+.rel-list::-webkit-scrollbar-thumb{background:var(--border-strong);border-radius:4px}
+.rel-item{display:flex;gap:13px;align-items:stretch}
+.rel-rail{width:24px;flex-shrink:0;display:flex;flex-direction:column;align-items:center}
+.rel-rail .cube{flex-shrink:0;margin-top:14px;color:var(--text-4)}
+.rel-item.current .rel-rail .cube{color:var(--accent)}
+.rel-rail .line{flex:1;width:1px;background:var(--border);margin:4px 0 0}
+.rel-item:last-child .rel-rail .line{display:none}
+.rel-card{
+  flex:1;min-width:0;margin-bottom:12px;border:1px solid var(--border);
+  border-radius:8px;background:var(--bg-card);overflow:hidden;
+}
+.rel-item.current .rel-card{border-color:var(--accent-bd);background:var(--bg-alt)}
+.rel-btn{
+  width:100%;display:flex;align-items:center;gap:9px;text-align:left;
+  background:none;border:none;cursor:pointer;padding:12px 14px;
+  font-family:inherit;color:inherit;
+}
+.rel-btn:hover{background:var(--accent-soft)}
+.rel-btn:focus-visible{outline:2px solid var(--accent-bd);outline-offset:-2px}
+.rel-ver{font-size:15px;font-weight:700;color:var(--text);letter-spacing:-.01em}
+.rel-date{font-size:12px;color:var(--text-4);white-space:nowrap}
+.rel-tag{
+  font-size:9.5px;font-weight:700;letter-spacing:.07em;padding:2px 6px;border-radius:3px;
+  border:1px solid var(--accent-bd);color:var(--accent);white-space:nowrap;
+}
+.rel-chev{margin-left:auto;color:var(--text-4);transition:transform .18s;flex-shrink:0}
+.rel-item.open .rel-chev{transform:rotate(180deg)}
+.rel-body{display:none;padding:0 14px 14px;font-size:13px;color:var(--text-2);line-height:1.65}
+.rel-item.open .rel-body{display:block}
+.rel-body strong{color:var(--text)}
+.rel-body code{
+  font-size:11.8px;background:var(--bg-alt);border:1px solid var(--border-soft);
+  padding:1px 5px;border-radius:4px;color:var(--green);
+  font-family:"SF Mono","Cascadia Code",Consolas,monospace;
+}
+.rel-item.current .rel-body code{background:var(--bg-card)}
+.rel-none{color:var(--text-4);font-style:italic}
+.rel-foot{
+  padding:12px 18px;border-top:1px solid var(--border);background:var(--bg-alt);
+  font-size:12.5px;color:var(--text-3);display:flex;gap:16px;flex-shrink:0;
+}
+@media(prefers-reduced-motion:reduce){
+  .rel-drawer{transition:none}
+}
+
 /* callout */
 .note{
   display:flex;gap:12px;background:var(--bg-alt);border:1px solid var(--border);
@@ -420,7 +490,7 @@ body.sb-open .sb-scrim{display:block}
     <a href="#overview">Docs</a>
     <a href="#api-scan">API</a>
     <a href="#features">Features</a>
-    <a href="#changelog">Release Notes</a>
+    <a href="#changelog" onclick="openReleases(event)">Release Notes</a>
   </div>
   <div class="nav-spacer"></div>
   <div class="search">
@@ -512,6 +582,7 @@ body.sb-open .sb-scrim{display:block}
     <div class="sb-items">
       <a href="#enterprise">Enterprise Recipes</a>
       <a href="#changelog">Changelog</a>
+      <a href="#changelog" onclick="openReleases(event)">Release History</a>
       <a href="#mascot">Mascot</a>
       <a href="#license">License</a>
     </div>
@@ -524,7 +595,7 @@ body.sb-open .sb-scrim{display:block}
   <p class="page-sub">A high-performance, native&nbsp;C recursive file scanner for Python. Point it at any directory and it returns a complete, structured breakdown — file counts, categories, extensions, largest files, duplicates — in a single call, with constant memory at any scale.</p>
 
   <div class="badges">
-    <span class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg> v1.5.1</span>
+    <span class="badge"><svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="12" r="10"/></svg> v1.5.2</span>
     <span class="badge">Python 3.6+</span>
     <span class="badge">Windows · Linux · macOS</span>
     <span class="badge">MIT License</span>
@@ -594,7 +665,7 @@ body.sb-open .sb-scrim{display:block}
     <p>It uses direct kernel syscalls — <code>getdents64</code> on Linux, <code>FindFirstFileW</code> on Windows, <code>readdir</code>/<code>lstat</code> on macOS — a multi-threaded work queue, and per-thread statistics accumulation. It never loads file contents into memory (except an optional bounded read for duplicate detection), never follows symlinks, and its memory footprint does not grow with the number of files on disk.</p>
     <p>Unlike <code>os.walk</code> or <code>pathlib.rglob</code>, the entire traversal runs in C with the GIL released, so scanning tens of millions of files uses no more memory than scanning tens of thousands. The result is always a plain Python <code>dict</code>.</p>
     <div class="note"><span class="ni"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg></span>
-    <div><strong>New in v1.5.1.</strong> <code>anscom.pwd()</code> returns the current directory, <code>scan()</code> now works with no arguments (defaults to the current directory), and every result includes a <code>scanned_path</code> key. <code>silent=True</code> is now fully silent. See the <a href="#changelog">changelog</a>.</div></div>
+    <div><strong>New in v1.5.2.</strong> <code>anscom.about()</code> prints Chuhi, the anscom mascot, then returns <code>None</code> — no scan behavior changed. v1.5.1 added <code>pwd()</code>, no-argument <code>scan()</code>, and the <code>scanned_path</code> key. See the <a href="#changelog" onclick="openReleases(event)">release history</a>.</div></div>
   </section>
 
   <!-- ===================== INSTALL ===================== -->
@@ -626,7 +697,7 @@ body.sb-open .sb-scrim{display:block}
         <div class="term linux" data-copy="pip install --upgrade anscom">
           <div class="term-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="t">aditya@anscom: ~</span></div>
           <div class="term-body"><span class="pu">aditya@anscom</span><span class="pc">:</span><span class="pp">~</span><span class="psym">$</span> pip install --upgrade anscom
-<span class="out">Successfully installed anscom-1.5.1</span>
+<span class="out">Successfully installed anscom-1.5.2</span>
 <span class="pu">aditya@anscom</span><span class="pc">:</span><span class="pp">~</span><span class="psym">$</span> <span class="cur"></span></div>
         </div>
         <p style="font-size:13.5px;color:var(--text-3)">On Debian/Ubuntu, use <code>pip3</code> instead if <code>pip</code> is not on your PATH, or install into a virtualenv to avoid <code>externally-managed-environment</code>.</p>
@@ -636,7 +707,7 @@ body.sb-open .sb-scrim{display:block}
         <div class="term mac" data-copy="pip3 install --upgrade anscom">
           <div class="term-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="t">aditya — -zsh — 80×24</span></div>
           <div class="term-body"><span class="pu">aditya@MacBook-Pro</span> <span class="pp">~</span> <span class="psym">%</span> pip3 install --upgrade anscom
-<span class="out">Successfully installed anscom-1.5.1</span>
+<span class="out">Successfully installed anscom-1.5.2</span>
 <span class="pu">aditya@MacBook-Pro</span> <span class="pp">~</span> <span class="psym">%</span> <span class="cur"></span></div>
         </div>
         <p style="font-size:13.5px;color:var(--text-3)">macOS uses <code>pip3</code> / <code>python3</code>. If <code>pip3</code> is missing, install the Command Line Tools with <code>xcode-select --install</code> first.</p>
@@ -647,7 +718,7 @@ body.sb-open .sb-scrim{display:block}
           <div class="term-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="t">Command Prompt</span></div>
           <div class="term-body"><span class="out">Microsoft Windows [Version 10.0.22631.3737]</span>
 <span class="pcwd">C:\Users\aditya&gt;</span>pip install --upgrade anscom
-<span class="out">Successfully installed anscom-1.5.1</span>
+<span class="out">Successfully installed anscom-1.5.2</span>
 <span class="pcwd">C:\Users\aditya&gt;</span><span class="cur"></span></div>
         </div>
         <p style="font-size:13.5px;color:var(--text-3)">If <code>pip</code> is not recognised, use the launcher: <code>py -m pip install --upgrade anscom</code>.</p>
@@ -657,7 +728,7 @@ body.sb-open .sb-scrim{display:block}
         <div class="term ps" data-copy="pip install --upgrade anscom">
           <div class="term-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="t">Windows PowerShell</span></div>
           <div class="term-body"><span class="pcwd">PS C:\Users\aditya&gt;</span> pip install --upgrade anscom
-<span class="out">Successfully installed anscom-1.5.1</span>
+<span class="out">Successfully installed anscom-1.5.2</span>
 <span class="pcwd">PS C:\Users\aditya&gt;</span> <span class="cur"></span></div>
         </div>
         <p style="font-size:13.5px;color:var(--text-3)">Same command as CMD. For a per-user install without admin rights, add <code>--user</code>.</p>
@@ -1116,9 +1187,18 @@ r <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(<span
   <!-- ===================== CHANGELOG ===================== -->
   <section class="doc-sec" id="changelog">
     <h2>Changelog</h2>
+    <p>Ten releases since January 2026. <a href="#changelog" onclick="openReleases(event)">Open the release history</a> for the full timeline in a side panel.</p>
 
     <div class="cl-entry">
-      <div class="cl-ver">v1.5.1 <span class="cl-date">July 2026 · current</span></div>
+      <div class="cl-ver">v1.5.2 <span class="cl-date">29 July 2026 · current</span></div>
+      <ul>
+        <li><strong>Added</strong> <code>about()</code> — prints Chuhi, the anscom mascot (the house mouse of a Kolkata apartment), as original ASCII art with a short credit line, then returns <code>None</code>.</li>
+        <li>Fully backward-compatible: no scan behavior, call signature, or output format changed.</li>
+      </ul>
+    </div>
+
+    <div class="cl-entry old">
+      <div class="cl-ver">v1.5.1 <span class="cl-date">28 July 2026</span></div>
       <ul>
         <li><strong>Added</strong> <code>pwd()</code> — the current working directory as an absolute string.</li>
         <li><strong>Added</strong> no-argument <code>scan()</code> — <code>path</code> is optional and defaults to the current directory.</li>
@@ -1131,32 +1211,63 @@ r <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(<span
     </div>
 
     <div class="cl-entry old">
-      <div class="cl-ver">v1.5.0 <span class="cl-date">April 2026</span></div>
+      <div class="cl-ver">v1.5.0 <span class="cl-date">09 April 2026</span></div>
       <ul>
         <li>Added <code>return_files</code>, <code>export_csv</code>, <code>largest_n</code>, <code>find_duplicates</code>, <code>regex_filter</code>.</li>
-        <li>Removed <code>export_excel</code> (crashed on Windows) — use <code>export_csv</code> + <code>pandas.to_excel()</code>.</li>
+        <li>Per-thread <code>FileInfo</code> array pre-allocated at 65,536 entries — zero reallocations for typical scans.</li>
+        <li>Removed <code>export_excel</code> (crashed on Windows via an openpyxl <code>Workbook.read_only</code> exception) — use <code>export_csv</code> + <code>pandas.to_excel()</code>.</li>
       </ul>
     </div>
 
     <div class="cl-entry old">
-      <div class="cl-ver">v1.3.0 <span class="cl-date">March 2026</span></div>
+      <div class="cl-ver">v1.4.0 <span class="cl-date">09 April 2026</span></div>
       <ul>
-        <li>Added <code>export_json</code> and <code>export_tree</code>. MSVC / Windows build fixes.</li>
+        <li>Interim release, superseded by v1.5.0 the same day. No separate notes published.</li>
       </ul>
     </div>
 
     <div class="cl-entry old">
-      <div class="cl-ver">v1.0.0 <span class="cl-date">March 2026</span></div>
+      <div class="cl-ver">v1.3.0 <span class="cl-date">15 March 2026</span></div>
       <ul>
-        <li>Multi-threaded worker pool, <code>getdents64</code> backend, FNV-1a hash table, per-thread stats, slab allocator, <code>ignore_junk</code>, <code>min_size</code>, <code>extensions</code>, <code>callback</code>, <code>silent</code>.</li>
+        <li>Export release. Added <code>export_json</code> (native, zero dependencies), <code>export_tree</code> (DFS tree to <code>.txt</code>), and <code>export_excel</code> (structured <code>.xlsx</code> via openpyxl).</li>
+        <li>MSVC compatibility fix for <code>uint64_t</code> / <code>stdint.h</code>.</li>
+      </ul>
+    </div>
+
+    <div class="cl-entry old">
+      <div class="cl-ver">v1.0.0 <span class="cl-date">13 March 2026</span></div>
+      <ul>
+        <li>Terabyte-scale filesystem scanning: multi-threaded worker pool, <code>getdents64</code> direct syscall backend on Linux, FNV-1a hash table for O(1) extension lookup, per-thread statistics with zero shared locks, slab path allocator.</li>
+        <li>Extension whitelisting, <code>ignore_junk</code>, <code>min_size</code>, <code>silent</code> mode, and the live <code>callback</code> interface.</li>
+      </ul>
+    </div>
+
+    <div class="cl-entry old">
+      <div class="cl-ver">v0.6.0 <span class="cl-date">15 January 2026</span></div>
+      <ul>
+        <li>Added the data tree view and other early features.</li>
+      </ul>
+    </div>
+
+    <div class="cl-entry old">
+      <div class="cl-ver">v0.5.0 <span class="cl-date">15 January 2026</span></div>
+      <ul>
+        <li>Maintenance release. No notes published.</li>
+      </ul>
+    </div>
+
+    <div class="cl-entry old">
+      <div class="cl-ver">v0.4.0 <span class="cl-date">15 January 2026</span></div>
+      <ul>
+        <li>First public release of the basic version — the original anscom concept.</li>
       </ul>
     </div>
   </section>
 
   <!-- ===================== MASCOT ===================== -->
   <section class="doc-sec" id="mascot">
-    <h2>Mascot</h2>
-    <p>Meet <strong>Chuhi</strong> — the anscom mascot. Run <code>anscom.about()</code> to print it in your own terminal.</p>
+    <h2>Mascot <span class="pill new">new in 1.5.2</span></h2>
+    <p>Meet <strong>Chuhi</strong> — the anscom mascot, the house mouse of a Kolkata apartment. Run <code>anscom.about()</code> to print the original ASCII art with its credit line in your own terminal; the call returns <code>None</code> and touches nothing else.</p>
     <div class="term linux" style="max-width:640px" data-copy="python3 -c &quot;import anscom; anscom.about()&quot;">
       <div class="term-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="t">aditya@anscom: ~</span></div>
       <div class="term-body" style="font-size:11px;line-height:1.35;padding:16px 18px"><span class="pu">aditya@anscom</span><span class="pc">:</span><span class="pp">~</span><span class="psym">$</span> python3 -c "import anscom; anscom.about()"
@@ -1217,9 +1328,179 @@ r <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(<span
     <a href="https://github.com/PC5518/anscom-nfie-python-extension" target="_blank" rel="noopener">GitHub</a>
     <a href="https://pypi.org/project/anscom/" target="_blank" rel="noopener">PyPI</a>
     <a href="#changelog">Changelog</a>
-    <span style="color:var(--text-4)">v1.5.1 · MIT</span>
+    <span style="color:var(--text-4)">v1.5.2 · MIT</span>
   </div>
 </footer>
+
+<!-- ===================== RELEASE HISTORY DRAWER ===================== -->
+<div class="rel-scrim" onclick="closeReleases()"></div>
+<aside class="rel-drawer" id="relDrawer" role="dialog" aria-modal="true" aria-labelledby="relTitle" aria-hidden="true">
+  <div class="rel-head">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:var(--text-3)"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+    <h3 id="relTitle">Release history</h3>
+    <span class="sub">10 versions</span>
+    <button class="icon-btn rel-close" onclick="closeReleases()" aria-label="Close release history">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+    </button>
+  </div>
+
+  <div class="rel-list" id="relList">
+
+    <div class="rel-item current open">
+      <div class="rel-rail">
+        <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z" fill="currentColor" fill-opacity=".22"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <span class="line"></span>
+      </div>
+      <div class="rel-card">
+        <button class="rel-btn" onclick="relToggle(this)" aria-expanded="true">
+          <span class="rel-ver">1.5.2</span>
+          <span class="rel-tag">THIS VERSION</span>
+          <span class="rel-date">Jul 29, 2026</span>
+          <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="rel-body">
+          <strong>Mascot.</strong> Added <code>about()</code> — prints Chuhi, the anscom mascot (the house mouse of a Kolkata apartment), as original ASCII art with a short credit line, then returns <code>None</code>. Fully backward-compatible: no scan behavior, call signature, or output format changed.
+        </div>
+      </div>
+    </div>
+
+    <div class="rel-item">
+      <div class="rel-rail">
+        <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <span class="line"></span>
+      </div>
+      <div class="rel-card">
+        <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
+          <span class="rel-ver">1.5.1</span>
+          <span class="rel-date">Jul 28, 2026</span>
+          <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="rel-body">
+          <strong>Ergonomics &amp; correctness.</strong> Added <code>pwd()</code> (returns the current working directory as an absolute string — the Unix <code>pwd</code>, as a value), no-argument <code>scan()</code> (defaults to the current working directory), and <code>scanned_path</code> in every result dict (absolute path actually walked). Fixed Python reference leaks in result-dict construction (<code>PyDict_SetItemString</code> / <code>PyList_Append</code> do not steal references). The per-thread file buffer is no longer pre-allocated on count-only scans — a plain <code>anscom.scan()</code> now performs zero heap work on the hot path. Fully backward-compatible: every v1.5.0 script runs unchanged.
+        </div>
+      </div>
+    </div>
+
+    <div class="rel-item">
+      <div class="rel-rail">
+        <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <span class="line"></span>
+      </div>
+      <div class="rel-card">
+        <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
+          <span class="rel-ver">1.5.0</span>
+          <span class="rel-date">Apr 9, 2026</span>
+          <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="rel-body">
+          <strong>Major feature release.</strong> Added <code>return_files</code> (per-file list in result dict), <code>export_csv</code> (UTF-8 CSV inventory, RFC 4180-compliant, zero deps), <code>largest_n</code> (top-N largest files via per-thread min-heap, O(log N) per file), <code>find_duplicates</code> (two-phase size + CRC32 detection, zero I/O for unique-size files), <code>regex_filter</code> (POSIX <code>regexec</code> on Linux/macOS for GIL-free path filtering, Python <code>re</code> fallback on Windows). Per-thread <code>FileInfo</code> array pre-allocated at 65,536 entries — zero reallocations for typical scans. All new features are strictly opt-in: default <code>anscom.scan(".")</code> runs the identical hot path as v1.3.0. Removed <code>export_excel</code> (was crashing on Windows due to an openpyxl <code>Workbook.read_only</code> exception); use <code>export_csv</code> + <code>pandas.to_excel()</code> instead.
+        </div>
+      </div>
+    </div>
+
+    <div class="rel-item">
+      <div class="rel-rail">
+        <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <span class="line"></span>
+      </div>
+      <div class="rel-card">
+        <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
+          <span class="rel-ver">1.4.0</span>
+          <span class="rel-date">Apr 9, 2026</span>
+          <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="rel-body">
+          <span class="rel-none">Interim release, superseded by v1.5.0 the same day. No separate notes published.</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="rel-item">
+      <div class="rel-rail">
+        <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <span class="line"></span>
+      </div>
+      <div class="rel-card">
+        <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
+          <span class="rel-ver">1.3.0</span>
+          <span class="rel-date">Mar 15, 2026</span>
+          <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="rel-body">
+          <strong>Export release.</strong> Added <code>export_json</code> (native, zero dependencies), <code>export_tree</code> (DFS tree to <code>.txt</code>), and <code>export_excel</code> (structured <code>.xlsx</code> with openpyxl). MSVC Windows compiler compatibility fix for <code>uint64_t</code> / <code>stdint.h</code>.
+        </div>
+      </div>
+    </div>
+
+    <div class="rel-item">
+      <div class="rel-rail">
+        <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <span class="line"></span>
+      </div>
+      <div class="rel-card">
+        <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
+          <span class="rel-ver">1.0.0</span>
+          <span class="rel-date">Mar 13, 2026</span>
+          <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="rel-body">
+          <strong>Major release.</strong> Terabyte-scale filesystem scanning. Multi-threaded worker pool, <code>getdents64</code> direct syscall backend (Linux), FNV-1a hash table for O(1) extension lookup, per-thread statistics with zero shared locks, slab path allocator, extension whitelisting, silent mode, <code>min_size</code> filter, and live callback interface.
+        </div>
+      </div>
+    </div>
+
+    <div class="rel-item">
+      <div class="rel-rail">
+        <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <span class="line"></span>
+      </div>
+      <div class="rel-card">
+        <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
+          <span class="rel-ver">0.6.0</span>
+          <span class="rel-date">Jan 15, 2026</span>
+          <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="rel-body">Added features like the data tree and many more.</div>
+      </div>
+    </div>
+
+    <div class="rel-item">
+      <div class="rel-rail">
+        <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <span class="line"></span>
+      </div>
+      <div class="rel-card">
+        <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
+          <span class="rel-ver">0.5.0</span>
+          <span class="rel-date">Jan 15, 2026</span>
+          <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="rel-body"><span class="rel-none">No notes published for this release.</span></div>
+      </div>
+    </div>
+
+    <div class="rel-item">
+      <div class="rel-rail">
+        <svg class="cube" width="21" height="21" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>
+        <span class="line"></span>
+      </div>
+      <div class="rel-card">
+        <button class="rel-btn" onclick="relToggle(this)" aria-expanded="false">
+          <span class="rel-ver">0.4.0</span>
+          <span class="rel-date">Jan 15, 2026</span>
+          <svg class="rel-chev" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+        </button>
+        <div class="rel-body">Release of the basic version with the concept of anscom.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="rel-foot">
+    <a href="https://pypi.org/project/anscom/#history" target="_blank" rel="noopener">All releases on PyPI</a>
+    <a href="#changelog" onclick="closeReleases()">Full changelog</a>
+  </div>
+</aside>
 
 <script>
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s);
@@ -1238,6 +1519,27 @@ function toggleTheme(){
 /* SIDEBAR groups */
 function toggleGroup(head){ head.parentElement.classList.toggle('collapsed'); }
 function toggleSidebar(){ document.body.classList.toggle('sb-open'); }
+
+/* RELEASE DRAWER */
+let relLastFocus=null;
+function openReleases(e){
+  if(e){ e.preventDefault(); }
+  relLastFocus=document.activeElement;
+  document.body.classList.add('rel-open');
+  document.body.classList.remove('sb-open');
+  $('#relDrawer').setAttribute('aria-hidden','false');
+  $('.rel-close').focus();
+}
+function closeReleases(){
+  document.body.classList.remove('rel-open');
+  $('#relDrawer').setAttribute('aria-hidden','true');
+  if(relLastFocus) relLastFocus.focus();
+}
+function relToggle(btn){
+  const item=btn.closest('.rel-item');
+  const open=item.classList.toggle('open');
+  btn.setAttribute('aria-expanded',open?'true':'false');
+}
 
 /* OS TABS */
 function osTab(btn){
@@ -1309,7 +1611,10 @@ function filterNav(q){
 /* "/" focuses search */
 document.addEventListener('keydown',e=>{
   if(e.key==='/'&&document.activeElement.tagName!=='INPUT'){ e.preventDefault(); $('#searchInput').focus(); }
-  if(e.key==='Escape'){ $('#searchInput').blur(); filterNav(''); $('#searchInput').value=''; }
+  if(e.key==='Escape'){
+    if(document.body.classList.contains('rel-open')){ closeReleases(); return; }
+    $('#searchInput').blur(); filterNav(''); $('#searchInput').value='';
+  }
 });
 </script>
 </body>
