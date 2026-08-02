@@ -231,12 +231,104 @@ main{flex:1;min-width:0;padding:40px 48px 120px;max-width:940px}
   position:absolute;top:8px;right:8px;width:28px;height:28px;border-radius:6px;
   background:var(--bg-alt);border:1px solid var(--border);color:var(--text-3);
   cursor:pointer;display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .15s;
+  z-index:3;
 }
-.codeblock:hover .copy-btn{opacity:1}
+.codeblock:hover .copy-btn,.term:hover .copy-btn{opacity:1}
 .copy-btn:hover{color:var(--text);background:var(--bg-card)}
 .copy-btn.done{color:var(--green)}
 .tok-key{color:var(--code-key)}.tok-str{color:var(--code-str)}.tok-com{color:var(--code-com)}
 .tok-fn{color:var(--code-fn)}.tok-num{color:var(--code-num)}.tok-punct{color:var(--code-punct)}
+
+/* ============================================================
+   REAL TERMINAL BLOCKS  (per-OS chrome + prompts)
+   ============================================================ */
+.term{
+  position:relative;border-radius:9px;overflow:hidden;margin:16px 0;
+  border:1px solid var(--border);box-shadow:var(--shadow);
+}
+.term .copy-btn{background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.16);color:#d8d8dc}
+.term .copy-btn:hover{background:rgba(255,255,255,.16);color:#fff}
+.term-bar{
+  display:flex;align-items:center;gap:6px;padding:8px 12px;
+  background:#2b2b2f;border-bottom:1px solid rgba(255,255,255,.08);
+}
+.term-bar .d{width:11px;height:11px;border-radius:50%;flex-shrink:0}
+.term-bar .r{background:#ff5f57}.term-bar .y{background:#febc2e}.term-bar .g{background:#28c840}
+.term-bar .t{
+  margin-left:8px;font-size:11.5px;color:#b7b8bc;
+  font-family:"SF Mono","Cascadia Code",Consolas,monospace;white-space:nowrap;
+}
+.term-body{
+  padding:14px 16px;overflow-x:auto;font-size:12.8px;line-height:1.75;
+  font-family:"SF Mono","Cascadia Code",Consolas,"Liberation Mono",monospace;
+  white-space:pre;background:#16161a;color:#e2e2e5;
+}
+.term-body .out{color:#a8a9ad}
+.term-body .cm{color:#8d8e93}
+/* prompt pieces — never selected when copying */
+.pu,.pc,.pp,.psym,.pcwd{user-select:none;-webkit-user-select:none}
+
+/* Ubuntu / Linux */
+.term.linux .term-bar{background:#2a1420}
+.term.linux .term-body{background:#300a24;color:#e8e6e3}
+.term.linux .pu{color:#8ae234;font-weight:700}
+.term.linux .pc{color:#e8e6e3}
+.term.linux .pp{color:#729fcf;font-weight:700}
+.term.linux .psym{color:#e8e6e3}
+
+/* macOS Terminal.app (Pro profile) */
+.term.mac .term-bar{background:#3a3a3c}
+.term.mac .term-body{background:#101010;color:#e6e6e6}
+.term.mac .pu,.term.mac .pp,.term.mac .psym{color:#e6e6e6}
+
+/* Windows Command Prompt */
+.term.cmd .term-bar{background:#1f1f1f}
+.term.cmd .term-body{background:#0c0c0c;color:#cccccc}
+.term.cmd .pcwd{color:#cccccc}
+
+/* Windows PowerShell */
+.term.ps .term-bar{background:#1f1f1f}
+.term.ps .term-body{background:#012456;color:#eeedf0}
+.term.ps .pcwd{color:#eeedf0}
+
+/* blinking block cursor */
+.cur{
+  display:inline-block;width:8px;height:14px;background:#f5f543;
+  vertical-align:-2px;margin-left:2px;animation:blink 1.05s steps(1) infinite;
+}
+.term.cmd .cur,.term.ps .cur{background:#e6e6e6}
+.term.mac .cur{background:#e6e6e6}
+@keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.cur{animation:none}}
+
+/* token colors stay dark-theme inside terminals, in both site themes */
+.term-body .tok-key{color:#c3c5c8}
+.term-body .tok-str{color:#a9abae}
+.term-body .tok-com{color:#8d8e93}
+.term-body .tok-fn{color:#c9b988}
+.term-body .tok-num{color:#8fb996}
+.term-body .tok-punct{color:#c7cdd4}
+
+/* hero card terminal keeps the card layout */
+.hc-right.term{margin:0;flex:0 0 340px;display:flex;flex-direction:column;border-radius:9px}
+.hc-right.term .term-body{flex:1;font-size:12.4px}
+
+/* ============================================================
+   OS TABS
+   ============================================================ */
+.os-tabs-wrap{margin:20px 0}
+.os-tabs{display:flex;gap:2px;flex-wrap:wrap;border-bottom:1px solid var(--border)}
+.os-tab{
+  background:none;border:none;border-bottom:2px solid transparent;
+  color:var(--text-3);font-family:inherit;font-size:13.5px;font-weight:500;
+  padding:9px 14px;cursor:pointer;display:inline-flex;align-items:center;gap:7px;
+  margin-bottom:-1px;
+}
+.os-tab:hover{color:var(--text)}
+.os-tab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
+.os-tab:focus-visible{outline:2px solid var(--accent-bd);outline-offset:-2px;border-radius:4px}
+.os-pane{display:none}
+.os-pane.active{display:block}
 
 /* callout */
 .note{
@@ -290,7 +382,7 @@ footer a{color:var(--text-2)}
   main{padding:32px 24px 100px}
   .card-grid{grid-template-columns:1fr 1fr}
   .hero-card{flex-direction:column}
-  .hc-right{flex:1}
+  .hc-right,.hc-right.term{flex:1}
 }
 @media(max-width:760px){
   .nav-links,.search{display:none}
@@ -304,6 +396,7 @@ footer a{color:var(--text-2)}
   .page-title{font-size:32px}
   main{padding:26px 18px 90px}
   footer{padding:26px 18px;flex-direction:column}
+  .os-tab{padding:9px 10px;font-size:13px}
 }
 .sb-scrim{display:none;position:fixed;inset:51px 0 0 0;background:rgba(0,0,0,.5);z-index:80}
 body.sb-open .sb-scrim{display:block}
@@ -447,14 +540,15 @@ body.sb-open .sb-scrim{display:block}
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </a>
     </div>
-    <div class="hc-right">
-      <div class="hc-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span>python3</span></div>
-      <div class="hc-code mono"><span class="tok-key">import</span> anscom
-
-result <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>()  <span class="tok-com"># scans the current dir</span>
-
-<span class="tok-fn">print</span>(result[<span class="tok-str">"total_files"</span>])
-<span class="tok-fn">print</span>(result[<span class="tok-str">"scanned_path"</span>])</div>
+    <div class="hc-right term linux" data-copy="python3">
+      <div class="term-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="t">aditya@anscom: ~</span></div>
+      <div class="term-body"><span class="pu">aditya@anscom</span><span class="pc">:</span><span class="pp">~</span><span class="psym">$</span> python3
+<span class="out">Python 3.12.3 (main) on linux</span>
+<span class="psym">&gt;&gt;&gt;</span> <span class="tok-key">import</span> anscom
+<span class="psym">&gt;&gt;&gt;</span> result <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>()  <span class="tok-com"># current dir</span>
+<span class="psym">&gt;&gt;&gt;</span> result[<span class="tok-str">"total_files"</span>]
+<span class="out">21008</span>
+<span class="psym">&gt;&gt;&gt;</span> <span class="cur"></span></div>
     </div>
   </div>
 
@@ -463,8 +557,8 @@ result <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(
   <div class="card-grid">
     <a class="do-card" href="#install">
       <div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg></div>
-      <h3>Install anscom on Linux, Mac, Unix, Microsoft Windows </h3>
-      <p><code>pip3 install anscom</code> on Windows, Linux, or macOS. No configuration required.</p>
+      <h3>Install anscom on Linux, macOS, Unix, or Windows</h3>
+      <p><code>pip install anscom</code> on Linux and Windows, <code>pip3 install anscom</code> on macOS. No configuration required.</p>
     </a>
     <a class="do-card" href="#quickstart">
       <div class="ic"><svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 17 10 11 4 5"/><line x1="12" y1="19" x2="20" y2="19"/></svg></div>
@@ -506,11 +600,96 @@ result <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(
   <!-- ===================== INSTALL ===================== -->
   <section class="doc-sec" id="install">
     <h2>Installation</h2>
-    <p>anscom is published on PyPI and works on Python&nbsp;3.6 and later.</p>
-    <div class="codeblock"><span class="lang">bash</span><pre><span class="tok-com"># install / upgrade</span>
-pip install --upgrade anscom</pre></div>
-    <p>On Linux and macOS the default source build is portable. To compile with CPU-specific optimizations tuned to your machine (best when you build and run on the same host), opt in with an environment variable:</p>
-    <div class="codeblock"><span class="lang">bash</span><pre>ANSCOM_NATIVE=1 pip install anscom</pre></div>
+    <p>anscom is published on PyPI and works on Python&nbsp;3.6 and later. Pick your platform — macOS ships its own system Python, so use <code>pip3</code> there; on Linux and Windows <code>pip</code> is the usual entry point.</p>
+
+    <div class="os-tabs-wrap">
+      <div class="os-tabs" role="tablist" aria-label="Install command by platform">
+        <button class="os-tab active" role="tab" aria-selected="true" data-pane="linux" onclick="osTab(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+          Linux
+        </button>
+        <button class="os-tab" role="tab" aria-selected="false" data-pane="mac" onclick="osTab(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M16.4 12.9c0-2.4 2-3.6 2.1-3.6-1.1-1.7-2.9-1.9-3.6-1.9-1.5-.2-3 .9-3.8.9-.8 0-2-.9-3.3-.9-1.7 0-3.2 1-4.1 2.5-1.7 3-.4 7.5 1.3 9.9.8 1.2 1.8 2.5 3.1 2.5 1.2-.1 1.7-.8 3.2-.8 1.5 0 1.9.8 3.2.8 1.3 0 2.2-1.2 3-2.4.9-1.4 1.3-2.7 1.3-2.8-.1 0-2.4-.9-2.4-3.7zM14 5.4c.7-.8 1.1-2 1-3.1-1 0-2.2.7-2.9 1.5-.6.7-1.2 1.9-1 3 1.1.1 2.2-.6 2.9-1.4z"/></svg>
+          macOS
+        </button>
+        <button class="os-tab" role="tab" aria-selected="false" data-pane="cmd" onclick="osTab(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="6 9 9 12 6 15"/><line x1="11" y1="15" x2="16" y2="15"/></svg>
+          Windows (CMD)
+        </button>
+        <button class="os-tab" role="tab" aria-selected="false" data-pane="ps" onclick="osTab(this)">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><polyline points="7 9 11 12 7 15"/><line x1="13" y1="15" x2="17" y2="15"/></svg>
+          PowerShell
+        </button>
+      </div>
+
+      <div class="os-pane active" data-pane="linux">
+        <div class="term linux" data-copy="pip install --upgrade anscom">
+          <div class="term-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="t">aditya@anscom: ~</span></div>
+          <div class="term-body"><span class="pu">aditya@anscom</span><span class="pc">:</span><span class="pp">~</span><span class="psym">$</span> pip install --upgrade anscom
+<span class="out">Successfully installed anscom-1.5.1</span>
+<span class="pu">aditya@anscom</span><span class="pc">:</span><span class="pp">~</span><span class="psym">$</span> <span class="cur"></span></div>
+        </div>
+        <p style="font-size:13.5px;color:var(--text-3)">On Debian/Ubuntu, use <code>pip3</code> instead if <code>pip</code> is not on your PATH, or install into a virtualenv to avoid <code>externally-managed-environment</code>.</p>
+      </div>
+
+      <div class="os-pane" data-pane="mac">
+        <div class="term mac" data-copy="pip3 install --upgrade anscom">
+          <div class="term-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="t">aditya — -zsh — 80×24</span></div>
+          <div class="term-body"><span class="pu">aditya@MacBook-Pro</span> <span class="pp">~</span> <span class="psym">%</span> pip3 install --upgrade anscom
+<span class="out">Successfully installed anscom-1.5.1</span>
+<span class="pu">aditya@MacBook-Pro</span> <span class="pp">~</span> <span class="psym">%</span> <span class="cur"></span></div>
+        </div>
+        <p style="font-size:13.5px;color:var(--text-3)">macOS uses <code>pip3</code> / <code>python3</code>. If <code>pip3</code> is missing, install the Command Line Tools with <code>xcode-select --install</code> first.</p>
+      </div>
+
+      <div class="os-pane" data-pane="cmd">
+        <div class="term cmd" data-copy="pip install --upgrade anscom">
+          <div class="term-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="t">Command Prompt</span></div>
+          <div class="term-body"><span class="out">Microsoft Windows [Version 10.0.22631.3737]</span>
+<span class="pcwd">C:\Users\aditya&gt;</span>pip install --upgrade anscom
+<span class="out">Successfully installed anscom-1.5.1</span>
+<span class="pcwd">C:\Users\aditya&gt;</span><span class="cur"></span></div>
+        </div>
+        <p style="font-size:13.5px;color:var(--text-3)">If <code>pip</code> is not recognised, use the launcher: <code>py -m pip install --upgrade anscom</code>.</p>
+      </div>
+
+      <div class="os-pane" data-pane="ps">
+        <div class="term ps" data-copy="pip install --upgrade anscom">
+          <div class="term-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="t">Windows PowerShell</span></div>
+          <div class="term-body"><span class="pcwd">PS C:\Users\aditya&gt;</span> pip install --upgrade anscom
+<span class="out">Successfully installed anscom-1.5.1</span>
+<span class="pcwd">PS C:\Users\aditya&gt;</span> <span class="cur"></span></div>
+        </div>
+        <p style="font-size:13.5px;color:var(--text-3)">Same command as CMD. For a per-user install without admin rights, add <code>--user</code>.</p>
+      </div>
+    </div>
+
+    <h3>Build with CPU-specific optimizations</h3>
+    <p>On Linux and macOS the default source build is portable. To compile tuned to your own machine (best when you build and run on the same host), opt in with an environment variable:</p>
+
+    <div class="os-tabs-wrap">
+      <div class="os-tabs" role="tablist" aria-label="Native build by platform">
+        <button class="os-tab active" role="tab" aria-selected="true" data-pane="nlinux" onclick="osTab(this)">Linux</button>
+        <button class="os-tab" role="tab" aria-selected="false" data-pane="nmac" onclick="osTab(this)">macOS</button>
+      </div>
+      <div class="os-pane active" data-pane="nlinux">
+        <div class="term linux" data-copy="ANSCOM_NATIVE=1 pip install anscom">
+          <div class="term-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="t">aditya@anscom: ~</span></div>
+          <div class="term-body"><span class="pu">aditya@anscom</span><span class="pc">:</span><span class="pp">~</span><span class="psym">$</span> ANSCOM_NATIVE=1 pip install anscom
+<span class="out">Building wheel for anscom (pyproject.toml) ... done</span>
+<span class="pu">aditya@anscom</span><span class="pc">:</span><span class="pp">~</span><span class="psym">$</span> <span class="cur"></span></div>
+        </div>
+      </div>
+      <div class="os-pane" data-pane="nmac">
+        <div class="term mac" data-copy="ANSCOM_NATIVE=1 pip3 install anscom">
+          <div class="term-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="t">aditya — -zsh — 80×24</span></div>
+          <div class="term-body"><span class="pu">aditya@MacBook-Pro</span> <span class="pp">~</span> <span class="psym">%</span> ANSCOM_NATIVE=1 pip3 install anscom
+<span class="out">Building wheel for anscom (pyproject.toml) ... done</span>
+<span class="pu">aditya@MacBook-Pro</span> <span class="pp">~</span> <span class="psym">%</span> <span class="cur"></span></div>
+        </div>
+      </div>
+    </div>
+
     <div class="note warn"><span class="ni"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg></span>
     <div><strong>Windows source builds</strong> require the "Desktop development with C++" workload from Visual Studio Build Tools. Pre-built wheels avoid this where available.</div></div>
   </section>
@@ -534,12 +713,79 @@ result <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(
 
 <span class="tok-key">for</span> cat, count <span class="tok-key">in</span> result[<span class="tok-str">"categories"</span>].<span class="tok-fn">items</span>():
     <span class="tok-key">if</span> count:
-        <span class="tok-fn">print</span>(<span class="tok-str">f"{cat:20s} {count:>10,}"</span>)</pre></div>
+        <span class="tok-fn">print</span>(<span class="tok-str">f"{cat:20s} {count:&gt;10,}"</span>)</pre></div>
+    <p>Running that script from a shell:</p>
+    <div class="os-tabs-wrap">
+      <div class="os-tabs" role="tablist" aria-label="Run the script by platform">
+        <button class="os-tab active" role="tab" aria-selected="true" data-pane="rlinux" onclick="osTab(this)">Linux</button>
+        <button class="os-tab" role="tab" aria-selected="false" data-pane="rmac" onclick="osTab(this)">macOS</button>
+        <button class="os-tab" role="tab" aria-selected="false" data-pane="rcmd" onclick="osTab(this)">Windows (CMD)</button>
+      </div>
+      <div class="os-pane active" data-pane="rlinux">
+        <div class="term linux" data-copy="python3 audit.py">
+          <div class="term-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="t">aditya@anscom: ~/projects</span></div>
+          <div class="term-body"><span class="pu">aditya@anscom</span><span class="pc">:</span><span class="pp">~/projects</span><span class="psym">$</span> python3 audit.py
+<span class="out">21008 files in 1.519 s
+Scanned: /home/aditya/projects</span>
+<span class="pu">aditya@anscom</span><span class="pc">:</span><span class="pp">~/projects</span><span class="psym">$</span> <span class="cur"></span></div>
+        </div>
+      </div>
+      <div class="os-pane" data-pane="rmac">
+        <div class="term mac" data-copy="python3 audit.py">
+          <div class="term-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="t">projects — -zsh — 80×24</span></div>
+          <div class="term-body"><span class="pu">aditya@MacBook-Pro</span> <span class="pp">projects</span> <span class="psym">%</span> python3 audit.py
+<span class="out">21008 files in 1.612 s
+Scanned: /Users/aditya/projects</span>
+<span class="pu">aditya@MacBook-Pro</span> <span class="pp">projects</span> <span class="psym">%</span> <span class="cur"></span></div>
+        </div>
+      </div>
+      <div class="os-pane" data-pane="rcmd">
+        <div class="term cmd" data-copy="python audit.py">
+          <div class="term-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="t">Command Prompt</span></div>
+          <div class="term-body"><span class="pcwd">C:\Users\aditya\projects&gt;</span>python audit.py
+<span class="out">21008 files in 1.744 s
+Scanned: C:\Users\aditya\projects</span>
+<span class="pcwd">C:\Users\aditya\projects&gt;</span><span class="cur"></span></div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- ===================== VERIFY ===================== -->
   <section class="doc-sec" id="verify">
     <h2>Verify</h2>
+    <p>One line confirms the extension imported and the C engine is live.</p>
+    <div class="os-tabs-wrap">
+      <div class="os-tabs" role="tablist" aria-label="Verify by platform">
+        <button class="os-tab active" role="tab" aria-selected="true" data-pane="vlinux" onclick="osTab(this)">Linux</button>
+        <button class="os-tab" role="tab" aria-selected="false" data-pane="vmac" onclick="osTab(this)">macOS</button>
+        <button class="os-tab" role="tab" aria-selected="false" data-pane="vps" onclick="osTab(this)">PowerShell</button>
+      </div>
+      <div class="os-pane active" data-pane="vlinux">
+        <div class="term linux" data-copy="python3 -c &quot;import anscom; print(anscom.scan('.', silent=True)['total_files'])&quot;">
+          <div class="term-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="t">aditya@anscom: ~</span></div>
+          <div class="term-body"><span class="pu">aditya@anscom</span><span class="pc">:</span><span class="pp">~</span><span class="psym">$</span> python3 -c "import anscom; print(anscom.scan('.', silent=True)['total_files'])"
+<span class="out">1284</span>
+<span class="pu">aditya@anscom</span><span class="pc">:</span><span class="pp">~</span><span class="psym">$</span> <span class="cur"></span></div>
+        </div>
+      </div>
+      <div class="os-pane" data-pane="vmac">
+        <div class="term mac" data-copy="python3 -c &quot;import anscom; print(anscom.scan('.', silent=True)['total_files'])&quot;">
+          <div class="term-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="t">aditya — -zsh — 80×24</span></div>
+          <div class="term-body"><span class="pu">aditya@MacBook-Pro</span> <span class="pp">~</span> <span class="psym">%</span> python3 -c "import anscom; print(anscom.scan('.', silent=True)['total_files'])"
+<span class="out">1284</span>
+<span class="pu">aditya@MacBook-Pro</span> <span class="pp">~</span> <span class="psym">%</span> <span class="cur"></span></div>
+        </div>
+      </div>
+      <div class="os-pane" data-pane="vps">
+        <div class="term ps" data-copy="python -c &quot;import anscom; print(anscom.scan('.', silent=True)['total_files'])&quot;">
+          <div class="term-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="t">Windows PowerShell</span></div>
+          <div class="term-body"><span class="pcwd">PS C:\Users\aditya&gt;</span> python -c "import anscom; print(anscom.scan('.', silent=True)['total_files'])"
+<span class="out">1284</span>
+<span class="pcwd">PS C:\Users\aditya&gt;</span> <span class="cur"></span></div>
+        </div>
+      </div>
+    </div>
     <div class="codeblock"><span class="lang">python</span><pre><span class="tok-key">import</span> anscom
 r <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(<span class="tok-str">"."</span>, silent<span class="tok-punct">=</span><span class="tok-key">True</span>)
 <span class="tok-fn">print</span>(<span class="tok-str">f"anscom is working. Files found: {r['total_files']}"</span>)</pre></div>
@@ -744,13 +990,18 @@ df.<span class="tok-fn">to_excel</span>(<span class="tok-str">"report.xlsx"</spa
     <p>With <code>show_tree=True</code>, anscom prints a DFS-ordered tree as each entry is discovered and, optionally, mirrors it to a file. Workers are forced to 1 for strict ordering; lines are streamed with no buffer, so a 50-million-entry filesystem produces 50 million lines without memory growth.</p>
     <div class="codeblock"><span class="lang">python</span><pre>anscom.<span class="tok-fn">scan</span>(<span class="tok-str">"."</span>, show_tree<span class="tok-punct">=</span><span class="tok-key">True</span>, max_depth<span class="tok-punct">=</span><span class="tok-num">4</span>,
             export_tree<span class="tok-punct">=</span><span class="tok-str">"tree.txt"</span>, silent<span class="tok-punct">=</span><span class="tok-key">True</span>)</pre></div>
-    <div class="codeblock"><pre>  |-- [src]
+    <div class="term linux" data-copy="python3 tree_scan.py">
+      <div class="term-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="t">aditya@anscom: ~/project</span></div>
+      <div class="term-body"><span class="pu">aditya@anscom</span><span class="pc">:</span><span class="pp">~/project</span><span class="psym">$</span> python3 tree_scan.py
+<span class="out">  |-- [src]
   |   |-- main.py
   |   |-- [lib]
   |   |   |-- utils.py
   |-- config.json
   |-- [tests]
-  |   |-- test_core.py</pre></div>
+  |   |-- test_core.py</span>
+<span class="pu">aditya@anscom</span><span class="pc">:</span><span class="pp">~/project</span><span class="psym">$</span> <span class="cur"></span></div>
+    </div>
     <p><code>[brackets]</code> mark directories; unbracketed names are files.</p>
   </section>
 
@@ -758,7 +1009,10 @@ df.<span class="tok-fn">to_excel</span>(<span class="tok-str">"report.xlsx"</spa
   <section class="doc-sec" id="report">
     <h2>Report Format</h2>
     <p>When <code>silent=False</code> (the default), anscom prints a summary report and an extension breakdown on completion. <code>silent=True</code> suppresses everything — banner, live counter, and report.</p>
-    <div class="codeblock"><pre>=== SUMMARY REPORT ================================
+    <div class="term linux" data-copy="python3 -c &quot;import anscom; anscom.scan('/data')&quot;">
+      <div class="term-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="t">aditya@anscom: ~</span></div>
+      <div class="term-body"><span class="pu">aditya@anscom</span><span class="pc">:</span><span class="pp">~</span><span class="psym">$</span> python3 -c "import anscom; anscom.scan('/data')"
+<span class="out">=== SUMMARY REPORT ================================
 +-----------------+--------------+----------+
 | Category        | Count        | Percent  |
 +-----------------+--------------+----------+
@@ -772,7 +1026,9 @@ df.<span class="tok-fn">to_excel</span>(<span class="tok-str">"report.xlsx"</spa
 +-----------------+--------------+----------+
 
 Time     : 1.5186 seconds
-Errors   : 0 (permission denied / inaccessible)</pre></div>
+Errors   : 0 (permission denied / inaccessible)</span>
+<span class="pu">aditya@anscom</span><span class="pc">:</span><span class="pp">~</span><span class="psym">$</span> <span class="cur"></span></div>
+    </div>
     <p>With <code>largest_n</code> or <code>find_duplicates</code> enabled, a "TOP N LARGEST FILES" and/or "DUPLICATES SUMMARY" section is appended.</p>
   </section>
 
@@ -901,9 +1157,10 @@ r <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(<span
   <section class="doc-sec" id="mascot">
     <h2>Mascot</h2>
     <p>Meet <strong>Chuhi</strong> — the anscom mascot. Run <code>anscom.about()</code> to print it in your own terminal.</p>
-    <div class="hc-right" style="max-width:620px;">
-      <div class="hc-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span>anscom.about()</span></div>
-      <pre class="mono" style="padding:18px 20px;font-size:11px;line-height:1.35;color:var(--text-2);overflow-x:auto;white-space:pre;margin:0;">                                       +#                                      
+    <div class="term linux" style="max-width:640px" data-copy="python3 -c &quot;import anscom; anscom.about()&quot;">
+      <div class="term-bar"><span class="d r"></span><span class="d y"></span><span class="d g"></span><span class="t">aditya@anscom: ~</span></div>
+      <div class="term-body" style="font-size:11px;line-height:1.35;padding:16px 18px"><span class="pu">aditya@anscom</span><span class="pc">:</span><span class="pp">~</span><span class="psym">$</span> python3 -c "import anscom; anscom.about()"
+<span class="out">                                       +#                                      
                                       *---+                     ()              
                                       -----+                  =:+=+%           
                                       #--------.%.+@@....   #-==----+          
@@ -935,9 +1192,10 @@ r <span class="tok-punct">=</span> anscom.<span class="tok-fn">scan</span>(<span
      %%#   -%%=    #%%    %%#  %%%       -%%-       %%%     %%#  =%%-   #%%:   %%#
    =%%%%%%%%%%#   -%%.   -%%.  =%%%%%#  *%%        %%+      %%+  %%+   .%%-   -%%:
   #%#::::::-%%%   %%+    %%=       +%%  #%%       .%%+    -%%+  %%%    %%*    %%= 
-+%%=        %%%  %%%    %%%  #%%%#%%%.  -%%%%%%%-  *%%%%%%%=   +%%.   *%%    #%%  </pre>
-      <div style="padding:10px 20px 16px;border-top:1px solid var(--border);font-size:12px;color:var(--text-3);text-align:center;">Chuhi — the anscom mascot</div>
++%%=        %%%  %%%    %%%  #%%%#%%%.  -%%%%%%%-  *%%%%%%%=   +%%.   *%%    #%%  </span>
+<span class="pu">aditya@anscom</span><span class="pc">:</span><span class="pp">~</span><span class="psym">$</span> <span class="cur"></span></div>
     </div>
+    <p style="font-size:12.5px;color:var(--text-3)">Chuhi — the anscom mascot. Prints the same on macOS (<code>python3</code>) and on Windows (<code>python</code>).</p>
   </section>
 
   <!-- ===================== LICENSE ===================== -->
@@ -981,23 +1239,35 @@ function toggleTheme(){
 function toggleGroup(head){ head.parentElement.classList.toggle('collapsed'); }
 function toggleSidebar(){ document.body.classList.toggle('sb-open'); }
 
+/* OS TABS */
+function osTab(btn){
+  const wrap=btn.closest('.os-tabs-wrap');
+  const pane=btn.dataset.pane;
+  wrap.querySelectorAll('.os-tab').forEach(b=>{
+    const on=b===btn;
+    b.classList.toggle('active',on);
+    b.setAttribute('aria-selected',on?'true':'false');
+  });
+  wrap.querySelectorAll('.os-pane').forEach(p=>p.classList.toggle('active',p.dataset.pane===pane));
+}
+
 /* COPY */
 function copyText(text,btn){
   navigator.clipboard.writeText(text).then(()=>{
     const old=btn.innerHTML; btn.classList.add('done');
-    if(btn.classList.contains('btn-primary')){ const t=btn.childNodes; btn.dataset.o=btn.innerHTML; btn.innerHTML='✓ copied'; }
-    else { btn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>'; }
-    setTimeout(()=>{ btn.classList.remove('done'); btn.innerHTML=btn.dataset.o||old; },1400);
+    btn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>';
+    setTimeout(()=>{ btn.classList.remove('done'); btn.innerHTML=old; },1400);
   });
 }
 
-/* add copy buttons to code blocks */
-$$('.codeblock').forEach(cb=>{
-  const pre=cb.querySelector('pre'); if(!pre)return;
+/* add copy buttons to code blocks and terminals */
+$$('.codeblock, .term').forEach(cb=>{
+  const src=cb.querySelector('pre, .term-body'); if(!src)return;
   const btn=document.createElement('button');
   btn.className='copy-btn';
+  btn.setAttribute('aria-label','Copy command');
   btn.innerHTML='<svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>';
-  btn.onclick=()=>copyText(pre.innerText,btn);
+  btn.onclick=()=>copyText(cb.dataset.copy || src.innerText, btn);
   cb.appendChild(btn);
 });
 
